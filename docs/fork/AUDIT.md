@@ -2,7 +2,7 @@
 
 由 `python3 fork/scripts/generate-audit.py` 生成（`--check` 只比对）。主表是和上游基点（`src/fork/skills-source-commit.ts` 记录的提交）不同的每个文件，一个不多一个不少；末尾另列已恢复成上游或已删除的文件，它们必须和基点相同。`src/fork/audit-table.fork.test.ts` 检查表和仓库一致。
 
-共 450 行：delete 5，keep 424，revert-to-upstream 21。上游文件（不含 fork 目录）里的 fork 改动 817 行，涉及 150 个文件。
+共 450 行：delete 5，keep 424，revert-to-upstream 21。上游文件（不含 fork 目录）里的 fork 改动 805 行，涉及 150 个文件。
 
 | 文件                                                                                    | 功能                     | 决定 | 原因                                                                                                                                              |
 | --------------------------------------------------------------------------------------- | ------------------------ | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -362,7 +362,7 @@
 | `src/renderer/src/runtime/runtime-file-range-client.ts`                                 | F046 终端文件链接        | keep | 上游文件，fork 改动 9 行。F046：分页 CSV 预览的 stat 和按段读各在开头一行，工作区外的主机文件按绝对路径读（files.hostFile.*）                     |
 | `src/renderer/src/runtime/runtime-file-read-client.ts`                                  | INFRA 登记/工程/文档     | keep | 上游文件，fork 改动 5 行                                                                                                                          |
 | `src/renderer/src/runtime/runtime-terminal-artifact-read.ts`                            | F046 终端文件链接        | keep | 上游文件，fork 改动 15 行。F046：授权读给不了的大文本交给 readLargeHostFile 分段读；二进制预览交给 pageLargeHostPreview（图片、PDF 分段读）       |
-| `src/renderer/src/store/folder-workspaces/folder-workspace-mutations.ts`                | SB 侧栏/工作区           | keep | 上游文件，fork 改动 13 行                                                                                                                         |
+| `src/renderer/src/store/folder-workspaces/folder-workspace-mutations.ts`                | SB 侧栏/工作区           | keep | 上游文件，fork 改动 15 行                                                                                                                         |
 | `src/renderer/src/store/project-groups/project-group-removal-state.ts`                  | SB 侧栏/项目组           | keep | 上游文件，fork 改动 2 行                                                                                                                          |
 | `src/renderer/src/store/repos/repo-add-actions.ts`                                      | INFRA 登记/工程/文档     | keep | 上游文件，fork 改动 5 行                                                                                                                          |
 | `src/renderer/src/store/repos/repo-state.ts`                                            | INFRA 登记/工程/文档     | keep | 上游文件，fork 改动 1 行                                                                                                                          |
@@ -415,7 +415,7 @@
 | `src/shared/protocol-version.ts`                                                        | F047 工作区仓库          | keep | 上游文件，fork 改动 2 行                                                                                                                          |
 | `src/shared/release-channel.ts`                                                         | UPD 应用内更新           | keep | 上游文件，fork 改动 4 行                                                                                                                          |
 | `src/shared/rpc-contract/folder-workspace-params.ts`                                    | SB 侧栏/工作区           | keep | 上游文件，fork 改动 5 行                                                                                                                          |
-| `src/shared/rpc-contract/rpc-params-catalog.generated.ts`                               | INFRA 登记/工程/文档     | keep | 上游文件，fork 改动 24 行                                                                                                                         |
+| `src/shared/rpc-contract/rpc-params-catalog.generated.ts`                               | INFRA 登记/工程/文档     | keep | 上游文件，fork 改动 10 行                                                                                                                         |
 | `src/shared/rpc-contract/worktree-params.ts`                                            | SB 侧栏/工作区           | keep | 上游文件，fork 改动 3 行                                                                                                                          |
 | `src/shared/runtime-rpc-call-queue.ts`                                                  | F046 终端文件链接        | keep | 上游文件，fork 改动 4 行。F046：分段读 files.hostDocPreview.readChunk、files.hostFile.readChunk 和上游 files.readDocPreviewChunk 一样走 bulk 通道 |
 | `src/shared/sidebar-list/empty-project-placeholder-repos.ts`                            | SB 侧栏                  | keep | 上游文件，fork 改动 3 行                                                                                                                          |
