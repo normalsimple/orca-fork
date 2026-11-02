@@ -23,7 +23,7 @@ import { MobileSegmentedControl } from '../components/MobileSegmentedControl'
 import { MobileSourceControlHubCommitsPage } from './MobileSourceControlHubCommitsPage'
 import { MobileSourceControlNextStepBar } from './MobileSourceControlNextStepBar'
 import { useMobileSourceControlNextStep } from './use-mobile-source-control-next-step'
-import { OptionPager } from '../components/BottomDrawer'
+import { OptionPager } from '../components/bottom-drawer/BottomDrawer'
 import { useSourceControlHubNavigation } from './use-source-control-hub-navigation'
 import { styles } from './mobile-source-control-styles'
 import { hubStyles } from './mobile-source-control-hub-styles'
@@ -207,7 +207,7 @@ export function MobileSourceControlPanel({
     review,
     prState: prController.prSidebarState,
     reviewsSupported: isHostedRepo && prBranch !== null,
-    refetchPr,
+    rereadPr: prController.rereadPRSidebarAfterWrite,
     headSha: prHeadSha,
     showWorkflowErrors: activeTab !== 'changes',
     onMerge: openMergeSheet

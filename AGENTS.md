@@ -4,10 +4,10 @@
 - **Test**: `pnpm test [path/to/file.test.ts] --maxWorkers=2`; incremental: `pnpm test:changed [path] --maxWorkers=2` ([details](.github/CONTRIBUTING.md#targeting-local-tests)). Separate rendered UI E2E checks need explicit, reproducible viewport/state.
 - **Lint/format**: Basic: `pnpm exec oxlint <files>`; full lint gate: `pnpm lint`; formatting: `pnpm exec oxfmt --check <files>` (fix: `--write`). Applicable gates include `pnpm check:code-quality:changed <base>` and `pnpm check:flaky-test-pattern-ratchet`.
 
-Optional: `pnpm check:changed --maxWorkers=2`; if selection fans out excessively, use scoped checks and report limits. Use the PR base (default `origin/main`; `ORCA_CODE_QUALITY_BASE=<ref>` for stacks). `--base=HEAD` and dirty-only checks provide incremental evidence only.
-
 > [!IMPORTANT]
-> Always lint changed files before making/pushing-to PRs (so CI never fails on it)
+> Run `pnpm check:changed` after your last edit/rebase, right before every push. Never `--no-verify`.
+
+If selection fans out excessively, use scoped checks and report limits. Use the PR base (default `origin/main`; `ORCA_CODE_QUALITY_BASE=<ref>` for stacks). `--base=HEAD` and dirty-only checks provide incremental evidence only.
 
 # Don't Poll the CI
 
@@ -47,18 +47,17 @@ Before writing new logic at any scale extend or generalize it instead of buildin
 
 Never use vague names like `helpers`, `utils`, `common`, `misc`, or `shared-stuff` for files, folders, or modules. They carry zero info and tend to become dumping grounds. Name files after what they _actually_ contain — prefer the concrete domain concept (e.g. `tab-group-state.ts`, `terminal-orphan-cleanup.ts`) over the generic role (`tabs-helpers.ts`, `terminal-utils.ts`). If you find yourself reaching for `helpers`, the file probably has more than one responsibility and should be split, or there's a better name hiding in the code that describes what the functions operate on.
 
-## Type Assertions: Prefer Checked Types
-
-Avoid type assertions except `as const`. Unavoidable casts need a line-specific `SAFETY:` explanation:
-
 # First Class Citizens
 
 Every change must consider these areas:
 
-1. Cross-Platform Support (mac/linux/windows) * Guard platform-specific behavior at runtime; use platform-aware shortcuts, paths, and existing process wrappers. Before changing platform-specific code, processes, shells, shortcuts, paths, or native modules, read [`docs/agents-md-refs/cross-platform-support.md`](./docs/agents-md-refs/cross-platform-support.md).
-2. Remote hosts * Features should work locally and on remote hosts
+1. Cross-Platform Support (mac/linux/windows)
+   - Guard platform-specific behavior at runtime; use platform-aware shortcuts, paths, and existing process wrappers. Before changing platform-specific code, processes, shells, shortcuts, paths, or native modules, read [`docs/agents-md-refs/cross-platform-support.md`](./docs/agents-md-refs/cross-platform-support.md).
+2. Remote hosts
+   - Features should work locally and on remote hosts
 3. Mobile
-4. Folder Workspaces * Don't assume every workspace is a git worktree.
+4. Folder Workspaces
+   - Don't assume every workspace is a git worktree.
 
 # Footguns
 
