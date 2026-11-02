@@ -34,7 +34,7 @@ import {
 } from './folder-workspace-catalog'
 import { getFolderWorkspaceHostId } from '../../../../shared/folder-workspace-execution-host'
 import {
-  folderSidebarFieldsNotApplied,
+  folderWorkspaceUpdateNotApplied,
   folderWorkspaceUpdateRequest
 } from '../../../../shared/fork-hooks/sidebar-field-clear'
 import * as chatDrafts from '../slices/worktrees/teardown/removed-worktree-chat-drafts'
@@ -198,11 +198,7 @@ export function createFolderWorkspaceMutationActions(
           })
           return false
         }
-        if (
-          (updates.diffComments !== undefined && updated.diffComments === undefined) ||
-          (updates.linkedItems !== undefined && updated.linkedItems === undefined) ||
-          folderSidebarFieldsNotApplied(updates, updated)
-        ) {
+        if (folderWorkspaceUpdateNotApplied(updates, updated)) {
           // Older hosts can strip optional fields; reconcile instead of reporting an unsaved edit.
           await reconcileFailedFolderWorkspaceUpdate({
             target,

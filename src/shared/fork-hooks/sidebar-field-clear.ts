@@ -122,6 +122,18 @@ export function folderSidebarFieldsNotApplied(
   return sidebarFieldsToClear(updates).some((field) => updated[field] !== undefined)
 }
 
+/** 宿主回复丢掉了这次写入的字段：上游的可选字段，以及侧栏分组和清除。 */
+export function folderWorkspaceUpdateNotApplied(
+  updates: SidebarFields & { diffComments?: unknown; linkedItems?: unknown },
+  updated: SidebarFields & { diffComments?: unknown; linkedItems?: unknown }
+): boolean {
+  return (
+    (updates.diffComments !== undefined && updated.diffComments === undefined) ||
+    (updates.linkedItems !== undefined && updated.linkedItems === undefined) ||
+    folderSidebarFieldsNotApplied(updates, updated)
+  )
+}
+
 /**
  * 把解码后的侧栏字段写进文件夹工作区。
  * 字段自己的 `undefined` 表示清除，不能和「这次没改」混在一起。
