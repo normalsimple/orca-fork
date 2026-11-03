@@ -11,7 +11,7 @@
 - F024 停用说明：[docs/fork/skill-update-flow.md](docs/fork/skill-update-flow.md)
 - 登记入口：上游在三个地方各调用一次 fork 入口。`src/main/index.ts` 在 preflight 之前调用 `registerForkDesktopMain()`（`src/fork/main/register-electron.ts`），preflight 要用登记的密钥库；它依次登记 `registerForkModules()`（`src/fork/register.ts`）、只在 Electron 主进程的部分，以及 `registerForkMainModules()`（`src/fork/main/register-main.ts`）。`src/renderer/src/main.tsx` 在模块开头调用 `registerForkRenderer()`（`src/fork/register-renderer.tsx`），先 `registerForkModules()` 登记分组模式，再 `registerForkRendererModules()` 登记界面插槽。`src/main/orcad/orcad-entry.ts` 的 `startOrcad` 在上游 `installOrcadHostAdapters()` 之前调用 `installForkOrcadHost()`（`register-main.ts`），它只调用 `registerForkMainModules()`；orcad 不加载 `register.ts` 和 `register-electron.ts`，所以不引入 Electron。
   - `register.ts`（主进程和界面都调用，不静态引入 electron、node:fs 或界面组件）：fork 构建标记、host-directory 分组模式和删除项目组的「仅取消分组」选项、保留旧主机漏发的 `sidebarGroupId`、Ego Lite 的设置行名字和导入提示。
-  - `register-main.ts`（桌面主进程和 orcad）：fork 构建标记、Ego Lite（名字、导入提示和追加进上游 `CHROMIUM_BROWSERS` 的浏览器定义）、历史会话扫描进程的堆内存和扫描策略、启动时不等浏览器分区代理、运行时导入的 git 根、删除项目组时保留文件夹工作区、在软删除过的路径上新建时清掉归档。
+  - `register-main.ts`（桌面主进程和 orcad）：fork 构建标记、Ego Lite（名字、导入提示和追加进上游 `CHROMIUM_BROWSERS` 的浏览器定义）、历史会话扫描进程的堆内存和扫描策略、启动时不等浏览器分区代理、运行时导入的 git 根、删除项目组时保留文件夹工作区、在软删除过的路径上新建时清掉归档、Linux 上 Antigravity ACP 跳过内核 IPv6 检查。
   - `register-electron.ts`（只在 Electron 主进程）：macOS 文件密钥库、权限助手参数、F046 工作区外文档预览的读取、F051 文档预览免授权。
   - `register-renderer.tsx`（仅界面）：fork 语言包、侧栏行计划和各个插槽、跨组拖放、删除工作区和软删除归档、创建弹窗的种子、导入后的回调、SSH 重连重绘、聊天盖层的画布样式、F046 工作区外的主机文件和大文件分段读、端口 Forward、历史会话的列表呈现和默认主机、源代码管理的工作区仓库。
 - 目录约定：只在主进程运行的 fork 代码放 `src/fork/main/`；引用渲染进程的 fork 代码用 `.tsx`；`*.fork.test.ts` 是 node 测试，渲染进程测试用 `.fork.test.tsx`。tsconfig 只按这三条通配：node 工程收 `src/fork/**/*.ts`，web 工程收 `src/fork/**/*.ts` 和 `*.tsx`，排除 `src/fork/main/**` 和 `src/fork/**/*.fork.test.ts`。fork 文件引用了所在工程不包含的文件时 tsc 自己报 TS6307；`src/fork/tsconfig-boundaries.mjs` 只在 fork 测试（`src/fork/tsconfig-boundaries.fork.test.ts`）里跑，不挂在 `pnpm tc` 前面。用到真实 SQLite 的 fork 测试由上游的 `findSqliteRuntimeTests()` 按 import 找到，`config/scripts/vitest-node-runtime-files.mjs` 与上游一致。
@@ -302,3 +302,11 @@ launchd 里签名可能停在 Orca Local Signing 的钥匙串确认上。`--boot
 智能体会话（历史转录也在这只宿主里）不进 `.pane`。它和终端都是 `RetainedPaneHost`，由 fragment 直接挂在工作区表面或浮动面板上，xterm 是旁边那只宿主里的兄弟，不是 `.native-chat-pane-shell` 的兄弟。会话宿主还看得见（没有 `inert`）时，同一分栏组里其他宿主的 `.xterm` 用同一套 `pointer-events` / `visibility` 藏起来，包括已经 `display: none` 或 `inert` 的终端：隐藏宿主上的 WebGL 层仍可能画在转录上面。盖层变成 `inert` 后选择器不再命中，切回终端不会一直灰。另一分栏组、盖层自己里面的画布不受影响。分栏组第一次出现时往同一张样式表补一条规则，不挂 MutationObserver。
 
 `RetainedPaneHost` 多两处钩子调用（`src/shared/fork-hooks/covered-terminal-group.ts`）：渲染时写 `data-retained-pane-group`，布局时记下这个组。未登记时没有属性、也没有这些规则。智能体会话盖层组件本身仍是上游。这是一个可以报给上游的 bug（macOS 把 WebGL 画布合成到 z-10 的 HTML 之上）。测试是 `src/fork/terminal/covered-terminal-canvas.fork.test.tsx`，窗格盖层用真实的 `NativeChatPaneCover`，会话盖层用真实的 `RetainedPaneHost`。
+
+## F052 没有 IPv6 的 Linux 上启动 Antigravity ACP
+
+Antigravity ACP 仍钉在 1.4.1。这一版的 `agy_acp_server.par` 在 google3 初始化里强制创建 `AF_INET6` socket。内核 `CONFIG_IPV6=n`（关掉 IPv6 的 Docker 容器常见）时进程 `SIGABRT`，安装校验失败，界面是 “Antigravity couldn't start on this host, so it wasn't installed.” 不要求主机打开 IPv6，也不改主机网络说明。
+
+Linux 上每次启动都在已有的 `--uid=` 后面加上 `--enforce_kernel_ipv6_support=false`。安装校验（`probeAntigravityAcpServer`）和正式会话（`ANTIGRAVITY_LAUNCH_SPEC.args`，登录也走这里）都展开同一个钩子。macOS 和 Windows 不追加。未登记时 Linux 仍只有 `--uid=`。
+
+钩子 `src/shared/fork-hooks/antigravity-acp-args.ts`。参数在 `src/fork/main/antigravity-acp-ipv6.ts`，由 `register-main.ts` 登记，桌面和 orcad 都有：SSH 远端的安装和会话在那台主机的 orcad 上启动。1.4.2 到 1.4.5 会在会话开始时往工作区写 `skills/system/run-workflow/SKILL.md`，不升 pin。测试不跑官方二进制，用假服务器核对 argv。

@@ -25,6 +25,8 @@ FORK_ROOT = re.compile(r'^(src/fork/|src/shared/fork-hooks/|fork/|docs/fork/|FOR
 
 # Ordered: the first matching substring names the feature.
 FEATURES = [
+    ('antigravity-acp', 'F052 无 IPv6 的 Antigravity'),
+    ('acp-launch-specs.ts', 'F052 无 IPv6 的 Antigravity'),
     ('ego-lite', 'F049 Cookie 导入'),
     ('cookie', 'F049 Cookie 导入'),
     ('browser-workspace-types', 'F049 Cookie 导入'),
@@ -139,6 +141,8 @@ REASONS = {
     'src/main/runtime/rpc/methods/index.ts': 'fork 的 RPC 方法（F046 主机读取、F047 工作区仓库）经 src/fork/main/rpc-methods.ts 一行摊进 ALL_RPC_METHODS',
     'src/main/runtime/rpc/rpc-params-type-parity.ts': '类型对齐检查跳过 ForkRpcMethodName（schema 在 src/fork）',
     'src/main/ipc/doc-preview-grant-ipc.ts': 'F051：铸 grant 后一行 openDocPreviewAccess，整个请求根放行，不弹文件夹提示',
+    'src/main/antigravity/antigravity-acp-runtime-probe.ts': 'F052：Linux 安装校验在 --uid= 后展开 antigravityAcpLinuxArgs()；未登记时仍只有 --uid=',
+    'src/main/acp/acp-launch-specs.ts': 'F052：Linux 会话启动（含登录）在 --uid= 后展开 antigravityAcpLinuxArgs()；未登记时仍只有 --uid=',
     'src/shared/runtime-rpc-call-queue.ts': 'F046：分段读 files.hostDocPreview.readChunk、files.hostFile.readChunk 和上游 files.readDocPreviewChunk 一样走 bulk 通道',
     'src/renderer/src/runtime/runtime-terminal-artifact-read.ts': 'F046：授权读给不了的大文本交给 readLargeHostFile 分段读；二进制预览交给 pageLargeHostPreview（图片、PDF 分段读）',
     'src/renderer/src/components/editor/csv/csv-file-content.ts': 'F046：开头先问 readHostCsv，工作区外的主机 CSV 过了分页阈值用上游的分页预览，否则整份读',

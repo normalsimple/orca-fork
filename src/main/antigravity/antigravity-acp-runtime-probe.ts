@@ -6,6 +6,7 @@ import { join } from 'node:path'
 import { createAcpAgentConnection, type AcpAgentConnection } from '../acp/acp-agent-connection'
 import type { InitializeResponse } from '../acp/generated/acp-protocol.generated'
 import { runAgentModelCatalogSession } from '../native-chat/agent-model-catalog/agent-model-catalog-probe-runner'
+import { antigravityAcpLinuxArgs } from '../../shared/fork-hooks/antigravity-acp-args'
 import { ANTIGRAVITY_ACP_ENV, scrubAntigravityAcpEnvironment } from './antigravity-acp-environment'
 
 const PROBE_TIMEOUT_MS = 90_000
@@ -38,7 +39,7 @@ export async function probeAntigravityAcpServer(
       () => {
         probe.connection = createAcpAgentConnection({
           command,
-          args: process.platform === 'linux' ? ['--uid='] : [],
+          args: process.platform === 'linux' ? ['--uid=', ...antigravityAcpLinuxArgs()] : [],
           cwd: home,
           env: { ...ANTIGRAVITY_ACP_ENV, GEMINI_HOME: home, TMPDIR: home, TEMP: home, TMP: home },
           envToDelete: scrubAntigravityAcpEnvironment({}, process.env)

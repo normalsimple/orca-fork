@@ -45,6 +45,7 @@ import {
   ANTIGRAVITY_ACP_ENV,
   scrubAntigravityAcpEnvironment
 } from '../antigravity/antigravity-acp-environment'
+import { antigravityAcpLinuxArgs } from '../../shared/fork-hooks/antigravity-acp-args'
 import {
   ANTIGRAVITY_LAUNCH_GATE,
   answerAntigravityChatAuth,
@@ -264,7 +265,7 @@ export const ANTIGRAVITY_LAUNCH_SPEC = {
   command: ANTIGRAVITY_ACP_COMMAND,
   ignoreAgentCommandSetting: true,
   // Without --uid=, the Linux server drops root launches to nobody.
-  args: () => (process.platform === 'linux' ? ['--uid='] : []),
+  args: () => (process.platform === 'linux' ? ['--uid=', ...antigravityAcpLinuxArgs()] : []),
   env: ANTIGRAVITY_ACP_ENV,
   scrubEnvironment: scrubAntigravityAcpEnvironment,
   dialect: ANTIGRAVITY_ACP_DIALECT,
