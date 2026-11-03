@@ -4,7 +4,7 @@ import type { UpdateStatus } from '../../shared/update-status-types'
 import {
   AUTO_UPDATE_CHECK_INTERVAL_MS,
   AUTO_UPDATE_RETRY_INTERVAL_MS
-} from '../../main/updater/updater-state'
+} from '../../main/updater/lifecycle/updater-state'
 import {
   consumeForkBackgroundDownloadFailure,
   failForkStaging,

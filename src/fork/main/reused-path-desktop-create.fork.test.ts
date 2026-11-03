@@ -46,25 +46,25 @@ vi.mock('../../main/source-control/hosted-review', async () =>
 vi.mock('../../main/ipc/worktree-symlinks', async () =>
   (await import('../../main/ipc/worktrees-test-module-mocks')).worktreeSymlinksModuleMock()
 )
-vi.mock('../../main/hooks', async () =>
+vi.mock('../../main/workspace-hooks/hooks', async () =>
   (await import('../../main/ipc/worktrees-test-module-mocks')).hooksModuleMock()
 )
-vi.mock('../../main/setup-runner-script-text', async (importOriginal) =>
+vi.mock('../../main/workspace-hooks/setup-runner-script-text', async (importOriginal) =>
   (await import('../../main/ipc/worktrees-test-module-mocks')).setupRunnerScriptTextModuleMock(
     (await importOriginal()) as Record<string, unknown>
   )
 )
-vi.mock('../../main/worktree-runner-script', async (importOriginal) =>
+vi.mock('../../main/workspace-hooks/worktree-runner-script', async (importOriginal) =>
   (await import('../../main/ipc/worktrees-test-module-mocks')).worktreeRunnerScriptModuleMock(
     (await importOriginal()) as Record<string, unknown>
   )
 )
-vi.mock('../../main/effective-hook-config', async (importOriginal) =>
+vi.mock('../../main/workspace-hooks/effective-hook-config', async (importOriginal) =>
   (await import('../../main/ipc/worktrees-test-module-mocks')).effectiveHookConfigModuleMock(
     (await importOriginal()) as Record<string, unknown>
   )
 )
-vi.mock('../../main/setup-hook-env-vars', async (importOriginal) =>
+vi.mock('../../main/workspace-hooks/setup-hook-env-vars', async (importOriginal) =>
   (await import('../../main/ipc/worktrees-test-module-mocks')).setupHookEnvVarsModuleMock(
     (await importOriginal()) as Record<string, unknown>
   )
@@ -74,23 +74,23 @@ vi.mock('../../main/ipc/worktree-logic', async (importOriginal) =>
     (await importOriginal()) as Record<string, unknown>
   )
 )
-vi.mock('../../main/terminal-history-deletion', async () =>
+vi.mock('../../main/pty/history/terminal-history-deletion', async () =>
   (await import('../../main/ipc/worktrees-test-module-mocks')).terminalHistoryDeletionModuleMock()
 )
 vi.mock('../../main/ports/advertised-url-watcher', async () =>
   (await import('../../main/ipc/worktrees-test-module-mocks')).advertisedUrlWatcherModuleMock()
 )
-vi.mock('../../main/workspace-cleanup-scan-snapshot', async () =>
+vi.mock('../../main/workspaces/cleanup/workspace-cleanup-scan-snapshot', async () =>
   (
     await import('../../main/ipc/worktrees-test-module-mocks')
   ).workspaceCleanupScanSnapshotModuleMock()
 )
-vi.mock('../../main/workspace-space-analysis-snapshot', async () =>
+vi.mock('../../main/workspaces/space-analysis/workspace-space-analysis-snapshot', async () =>
   (
     await import('../../main/ipc/worktrees-test-module-mocks')
   ).workspaceSpaceAnalysisSnapshotModuleMock()
 )
-vi.mock('../../main/workspace-cleanup-removal-snapshot-prune', async () =>
+vi.mock('../../main/workspaces/cleanup/workspace-cleanup-removal-snapshot-prune', async () =>
   (
     await import('../../main/ipc/worktrees-test-module-mocks')
   ).workspaceCleanupRemovalSnapshotPruneModuleMock()

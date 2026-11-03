@@ -68,7 +68,7 @@ describe('fork mode labels and the SSH remove dialog', () => {
 
   it("matches upstream's hardcoded dialog labels", () => {
     const source = readFileSync(
-      join(process.cwd(), 'src/renderer/src/components/settings/SshTargetDestructiveActions.tsx'),
+      join(process.cwd(), 'src/renderer/src/components/settings/ssh/targets/SshTargetDestructiveActions.tsx'),
       'utf8'
     )
     expect(source).toContain(

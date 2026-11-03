@@ -11,7 +11,7 @@ vi.mock('electron', () => ({
   net: { fetch: netFetch, request: netRequest }
 }))
 
-vi.mock('../main/updater-release-api-token', () => ({
+vi.mock('../main/updater/releases/updater-release-api-token', () => ({
   resolveReleaseApiToken,
   rejectReleaseApiToken: () => undefined
 }))
@@ -22,10 +22,10 @@ vi.mock('../main/git/gh-rate-limit-breaker', () => ({
 }))
 
 import { AgentStateRulesLiveUpdater } from '../main/runtime/agent-state-rules/agent-state-rules-live-update'
-import { fetchChangelog } from '../main/updater-changelog'
-import { fetchNudge } from '../main/updater-nudge'
-import { fetchNewerReleaseTagsWithReadiness } from '../main/updater-prerelease-feed'
-import { listReleaseBuilds, resolveTargetBuild } from '../main/updater-release-builds'
+import { fetchChangelog } from '../main/updater/releases/updater-changelog'
+import { fetchNudge } from '../main/updater/nudges/nudge-campaign'
+import { fetchNewerReleaseTagsWithReadiness } from '../main/updater/releases/updater-prerelease-feed'
+import { listReleaseBuilds, resolveTargetBuild } from '../main/updater/releases/updater-release-builds'
 import { FORK_UPSTREAM_RELEASE_BLOCKED, registerForkBuild } from '../shared/fork-hooks/update-feed'
 import { getReleaseNotesUrlForVersion } from '../shared/release-channel'
 

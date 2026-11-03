@@ -14,7 +14,7 @@ import {
   revokeDocPreviewGrant,
   type DocPreviewOwner
 } from '../browser/doc-preview-grant-registry'
-import { isTrustedBrowserRenderer } from './browser-renderer-trust'
+import { isTrustedBrowserRenderer } from './browser/browser-renderer-trust'
 import { openDocPreviewAccess } from '../../shared/fork-hooks/doc-preview-access'
 
 export type DocPreviewGrantRequest = {

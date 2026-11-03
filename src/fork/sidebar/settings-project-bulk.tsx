@@ -6,7 +6,7 @@ import { Checkbox } from '../../renderer/src/components/ui/checkbox'
 import {
   buildSettingsProjectList,
   removeSettingsProjectFromAllHosts
-} from '../../renderer/src/components/settings/settings-project-list'
+} from '../../renderer/src/components/settings/navigation/settings-project-list'
 import { useAppStore } from '../../renderer/src/store'
 import { registerSettingsProjectBulk } from '../../shared/fork-hooks/sidebar-chrome'
 

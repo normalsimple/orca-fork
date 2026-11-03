@@ -27,7 +27,7 @@ vi.mock('@/lib/browser-cookie-import-toast', () => ({
   emitBrowserCookieImportToast: vi.fn()
 }))
 
-import { BrowserProfileRow } from '../renderer/src/components/settings/BrowserProfileRow'
+import { BrowserProfileRow } from '../renderer/src/components/settings/browser/profiles/BrowserProfileRow'
 import { registerEgoLiteCookieBrowser } from './ego-lite-cookie-browser'
 
 const profile: BrowserSessionProfile = {

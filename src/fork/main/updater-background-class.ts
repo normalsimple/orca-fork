@@ -1,6 +1,6 @@
 // fork: the fork's updater methods, as a class between upstream's UpdaterDownloadInstall and
 // UpdaterSetup, so they read the updater's protected state without living in upstream files.
-import { UpdaterDownloadInstall } from '../../main/updater/updater-download-install'
+import { UpdaterDownloadInstall } from '../../main/updater/lifecycle/updater-download-install'
 import {
   FORK_BACKGROUND_CHECK_FAILURE_LOG,
   armForkBackgroundDownload,

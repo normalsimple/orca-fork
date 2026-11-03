@@ -6,12 +6,13 @@ import { describe, expect, it } from 'vitest'
 // 上游新加了一处时这个测试会失败：先加门，再把文件加进清单。
 const GATED_SOURCES = [
   'src/main/runtime/agent-state-rules/agent-state-rules-live-update.ts',
-  'src/main/updater-changelog.ts',
-  'src/main/updater-nudge.ts',
-  'src/main/updater-prerelease-feed.ts',
-  'src/main/updater-release-builds.ts',
-  'src/main/updater/updater-setup.ts',
-  'src/main/wsl/wsl-hosts-policy-live-update.ts',
+  'src/main/updater/lifecycle/updater-setup.ts',
+  'src/main/updater/nudges/nudge-campaign.ts',
+  'src/main/updater/releases/updater-changelog.ts',
+  'src/main/updater/releases/updater-prerelease-feed.ts',
+  'src/main/updater/releases/updater-release-builds.ts',
+  'src/main/updater/releases/updater-release-readiness.ts',
+  'src/main/wsl/host-lifecycle/wsl-hosts-policy-live-update.ts',
   'src/shared/release-channel.ts'
 ]
 

@@ -8,16 +8,16 @@ vi.mock('../../main/ipc/worktree-symlinks', () => ({
   createWorktreeLinkedPaths: vi.fn(),
   createWorktreeSharedPaths: vi.fn()
 }))
-vi.mock('../../main/git/worktree-include-file', () => ({
+vi.mock('../../main/git/worktrees/content-paths/worktree-include-file', () => ({
   resolveWorktreeIncludePaths: vi.fn(async () => [])
 }))
-vi.mock('../../main/git/worktree-shared-directories', () => ({
+vi.mock('../../main/git/worktrees/content-paths/worktree-shared-directories', () => ({
   resolveWorktreeSharedDirectories: vi.fn(async () => [])
 }))
 
 import { materializeRuntimeLocalWorktree } from '../../main/runtime/runtime-local-worktree-materialization'
-import { buildProvisionedRootMeta } from '../../main/provisioned-root-checkout'
-import { createWorktreeCreateTimingRecorder } from '../../main/worktree-create-timing'
+import { buildProvisionedRootMeta } from '../../main/workspaces/catalog/provisioned-root-checkout'
+import { createWorktreeCreateTimingRecorder } from '../../main/workspaces/creation/worktree-create-timing'
 import { registerReusedPathUnarchive } from '../../shared/fork-hooks/reused-path-unarchive'
 
 const repo: Repo = {
