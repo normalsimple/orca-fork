@@ -4,47 +4,6 @@
       "collapseAll": "Collapse all groups",
       "otherHosts": "Other configured hosts"
     },
-    "sourceControl": {
-      "compare": {
-        "change": "Use",
-        "clear": "Clear",
-        "label": "Compare target",
-        "placeholder": "origin/main",
-        "saveFailed": "Couldn't save the compare target: {{error}}"
-      },
-      "empty": "No git repositories in this workspace.",
-      "group": {
-        "branch": "Branch changes",
-        "staged": "Staged",
-        "unstaged": "Unstaged",
-        "untracked": "Untracked"
-      },
-      "listError": "Couldn't list repositories: {{error}}",
-      "loading": "Looking for repositories…",
-      "noChanges": "No repositories with changes.",
-      "onlyChanged": "Only show changed",
-      "refresh": "Refresh",
-      "repo": {
-        "aheadBehind": "{{ahead}} ahead, {{behind}} behind",
-        "changeCount": "{{count}} changed",
-        "compareUnavailable": "Branch compare unavailable: {{reason}}",
-        "noCompareTarget": "No compare target",
-        "other": "Other",
-        "otherCount": "{{count}} uninitialized",
-        "readError": "Couldn't read status: {{error}}",
-        "root": "This workspace",
-        "uninitialized": "Uninitialized submodule"
-      },
-      "scope": {
-        "current": "Current repo",
-        "remoteHost": "This SSH host isn't served by Orca's server yet. Reconnect it to see workspace repos.",
-        "unreachable": "Can't reach the host to check workspace repos.",
-        "updateHost": "Update the host to compare nested repositories",
-        "workspace": "Workspace repos"
-      },
-      "timedOut": "Repository search timed out.",
-      "truncated": "Some repositories were not listed."
-    },
     "settings": {
       "confirmRemove": "Confirm",
       "removeProjects": "Remove {{value0}}",

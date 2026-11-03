@@ -45,7 +45,6 @@ import {
   registerCoveredTerminalGroupRules
 } from './terminal/covered-terminal-canvas'
 import { registerNestedCopyDemotion } from './terminal/file-link-nested-demotion'
-import { registerWorkspaceRepositorySourceControl } from './source-control/register'
 import { registerHostFileDocPreviews } from './terminal/host-file-doc-preview'
 import { registerLargeHostFileReads } from './terminal/large-host-file-read'
 import { registerHostCsvPreviews } from './terminal/host-file-csv-preview'
@@ -97,7 +96,6 @@ export function registerForkRendererModules(): void {
   )
   enableWorkspacePortForward()
   registerAiVaultRendererModules()
-  registerWorkspaceRepositorySourceControl()
 }
 
 /** Renderer entry (src/renderer/src/main.tsx): grouping modes first, then the render slots. */

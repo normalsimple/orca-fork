@@ -4,47 +4,6 @@
       "collapseAll": "折叠所有分组",
       "otherHosts": "其他已配置主机"
     },
-    "sourceControl": {
-      "compare": {
-        "change": "使用",
-        "clear": "清除",
-        "label": "比较目标",
-        "placeholder": "origin/main",
-        "saveFailed": "保存比较目标失败：{{error}}"
-      },
-      "empty": "这个工作区里没有 git 仓库。",
-      "group": {
-        "branch": "分支变更",
-        "staged": "已暂存",
-        "unstaged": "未暂存",
-        "untracked": "未跟踪"
-      },
-      "listError": "列出仓库失败：{{error}}",
-      "loading": "正在查找仓库…",
-      "noChanges": "没有仓库有改动。",
-      "onlyChanged": "只显示有改动的",
-      "refresh": "刷新",
-      "repo": {
-        "aheadBehind": "领先 {{ahead}}，落后 {{behind}}",
-        "changeCount": "{{count}} 项改动",
-        "compareUnavailable": "无法比较分支：{{reason}}",
-        "noCompareTarget": "未设置比较目标",
-        "other": "其他",
-        "otherCount": "{{count}} 个未初始化",
-        "readError": "读取状态失败：{{error}}",
-        "root": "当前工作区",
-        "uninitialized": "未初始化的子模块"
-      },
-      "scope": {
-        "current": "当前仓库",
-        "remoteHost": "这台 SSH 主机还没有由 Orca 服务端接管。重新连接后才能查看工作区仓库。",
-        "unreachable": "连不上这台主机，暂时查不了工作区仓库。",
-        "updateHost": "请先更新这台主机，才能查看嵌套仓库",
-        "workspace": "工作区仓库"
-      },
-      "timedOut": "查找仓库超时。",
-      "truncated": "还有仓库没有列出来。"
-    },
     "settings": {
       "confirmRemove": "确认",
       "removeProjects": "移除 {{value0}}",

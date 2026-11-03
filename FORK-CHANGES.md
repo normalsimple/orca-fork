@@ -13,7 +13,7 @@
   - `register.ts`（主进程和界面都调用，不静态引入 electron、node:fs 或界面组件）：fork 构建标记、host-directory 分组模式和删除项目组的「仅取消分组」选项、保留旧主机漏发的 `sidebarGroupId`、Ego Lite 的设置行名字和导入提示。
   - `register-main.ts`（桌面主进程和 orcad）：fork 构建标记、Ego Lite（名字、导入提示和追加进上游 `CHROMIUM_BROWSERS` 的浏览器定义）、历史会话扫描进程的堆内存和扫描策略、启动时不等浏览器分区代理、运行时导入的 git 根、删除项目组时保留文件夹工作区、在软删除过的路径上新建时清掉归档、Linux 上 Antigravity ACP 跳过内核 IPv6 检查。
   - `register-electron.ts`（只在 Electron 主进程）：macOS 文件密钥库、权限助手参数、F046 工作区外文档预览的读取、F051 文档预览免授权。
-  - `register-renderer.tsx`（仅界面）：fork 语言包、侧栏行计划和各个插槽、跨组拖放、删除工作区和软删除归档、创建弹窗的种子、导入后的回调、SSH 重连重绘、聊天盖层的画布样式、F046 工作区外的主机文件和大文件分段读、端口 Forward、历史会话的列表呈现和默认主机、源代码管理的工作区仓库。
+  - `register-renderer.tsx`（仅界面）：fork 语言包、侧栏行计划和各个插槽、跨组拖放、删除工作区和软删除归档、创建弹窗的种子、导入后的回调、SSH 重连重绘、聊天盖层的画布样式、F046 工作区外的主机文件和大文件分段读、端口 Forward、历史会话的列表呈现和默认主机。
 - 目录约定：只在主进程运行的 fork 代码放 `src/fork/main/`；引用渲染进程的 fork 代码用 `.tsx`；`*.fork.test.ts` 是 node 测试，渲染进程测试用 `.fork.test.tsx`。tsconfig 只按这三条通配：node 工程收 `src/fork/**/*.ts`，web 工程收 `src/fork/**/*.ts` 和 `*.tsx`，排除 `src/fork/main/**` 和 `src/fork/**/*.fork.test.ts`。fork 文件引用了所在工程不包含的文件时 tsc 自己报 TS6307；`src/fork/tsconfig-boundaries.mjs` 只在 fork 测试（`src/fork/tsconfig-boundaries.fork.test.ts`）里跑，不挂在 `pnpm tc` 前面。用到真实 SQLite 的 fork 测试由上游的 `findSqliteRuntimeTests()` 按 import 找到，`config/scripts/vitest-node-runtime-files.mjs` 与上游一致。
 
 ## 上游文件规则
@@ -76,7 +76,7 @@
 
 ## 界面中文
 
-fork 新增的界面文字（从 Orca 移除、已移除和隐藏的工作区、设置里批量移除项目、跨组拖放的提示、「主机」分组模式和「仅取消分组」、删除工作区的「同时删除文件夹」和保留文件夹的文案、源代码管理的工作区仓库、历史会话的「其他已配置主机」和「全部收起」、父目录导入提示）的英文在 `src/fork/i18n/en.json`，中文在 `src/fork/i18n/zh.json`。渲染进程登记时（`src/fork/i18n/locale-overlay.ts`）把两份分别合进 en 和 zh 语言包：只补缺少的键，上游已有的条目优先；其他语言经 i18next 的英文回退拿到英文。上游的 `en.json`、`en-runtime-required.json` 和 `zh.json` 都与上游一致，上游文件不翻译任何 fork 键。
+fork 新增的界面文字（从 Orca 移除、已移除和隐藏的工作区、设置里批量移除项目、跨组拖放的提示、「主机」分组模式和「仅取消分组」、删除工作区的「同时删除文件夹」和保留文件夹的文案、历史会话的「其他已配置主机」和「全部收起」、父目录导入提示）的英文在 `src/fork/i18n/en.json`，中文在 `src/fork/i18n/zh.json`。渲染进程登记时（`src/fork/i18n/locale-overlay.ts`）把两份分别合进 en 和 zh 语言包：只补缺少的键，上游已有的条目优先；其他语言经 i18next 的英文回退拿到英文。上游的 `en.json`、`en-runtime-required.json` 和 `zh.json` 都与上游一致，上游文件不翻译任何 fork 键。
 
 工作区右键菜单的「休眠」「删除所选」和数量写法由上游翻译（`auto.components.sidebar.workspaceBatchActionLabels.*`），SSH 连接状态名用上游 #34680 的 `settings.ssh.status.*`，fork 不再另做标签层。删除 SSH 目标对话框里上游写死的 `Remove` / `Removing` 仍经钩子 `ssh-target-remove-labels.ts` 翻译成“删除”/“正在删除”；没有登记时原样用上游的英文。
 
@@ -151,31 +151,9 @@ fork 加的部分，未登记时全部是上游行为：
 
 钩子 `src/shared/fork-hooks/doc-preview-access.ts`：`doc-preview-grant-ipc.ts` 铸 grant 后一行 `openDocPreviewAccess(grant.id)`。实现 `src/fork/main/doc-preview-open-access.ts` 用上游的 `authorizeDocPreviewDirectory` 放行请求根（传入口路径的第一段，它所在的目录就是请求根），只在桌面由 `register-electron.ts` 登记。未登记时什么都不做，grant 照旧只到入口。
 
-## F047 工作区里的多个仓库（只读）
+## F047 工作区里的多个仓库（已移除）
 
-一个需求目录常常是 Orca 工作区，根上还有好几份 git 检出（前端、客户端、后端、控制台各自的 feature 分支，很多是 `git worktree add`）。上游的源代码管理只看根仓库，嵌套仓库里的改动看不见。
-
-源代码管理多一个范围开关，按工作区记在本地：当前仓库（和上游完全一样）或工作区仓库。工作区范围里每个仓库一栏，有相对路径、分支、领先/落后，以及已暂存、未暂存、未跟踪、相对主干的提交。点文件打开 diff。比较目标存在这台主机上，键是主机、工作区绝对路径、仓库相对路径和分支；没有覆盖时用上游的 `getBaseRefDefault`（`origin/HEAD`，然后 `origin/main`、`origin/master`），再没有就显示未设置。不写工作区自己的 baseRef，也不查 MR/PR。范围表只记选了「工作区仓库」的工作区，切回当前仓库就删掉这一项；换工作区时范围按工作区 id 同步算出，第一帧不会沿用上一个工作区的范围。写 localStorage 失败不在点击里抛错。
-
-发现只看工作区根下的第一层：根仓库自己，加上直接子目录里带 `.git` 目录或文件的检出（`git worktree add` 的 `.git` 是文件，也算）。名字以 `.` 开头的子目录和 `node_modules` 跳过。目录软链不跟，就算目标还在工作区里面也不跟，避免深层检出借软链出现在第一层。发现到的仓库不再往下扫，所以子仓库里的子模块不会再各占一栏。第一层以下的检出（例如 `svc/api` 这种 worktree）不单独成组，父目录仍可能以未跟踪目录出现在根仓库的变更列表里。根上的 `.gitignore` 不影响这一层（嵌套检出经常被忽略）。数量上限、超时和逃出工作区的检查还在，按 realpath 去重。根仓库自己也占一行。根仓库 `.gitmodules` 里还没检出的子模块不单列，界面收进最后一栏、默认收起的「其他」。已经检出的路径（含第一层以下、目录里已有 `.git` 的）不收进「其他」。
-
-根仓库这一栏只去掉已经单独成栏的嵌套仓库的未跟踪条目（正好是该仓库根，或在它里面的未跟踪路径）。嵌套检出被报成未跟踪目录才去掉。已暂存或未暂存的 gitlink（根 `.gitmodules` 里已初始化的子模块有新提交，或指针已暂存）是根仓库自己的改动，留在根分组里，并算作有改动。根仓库自己的未跟踪文件、以及只是路径前缀撞车的文件，都留着。比较在 fork 的状态读取里做，不改上游 `git.status`。根仓库这一栏和上游 `git.status` 一样带共享链接路径；嵌套仓库不带（那些路径相对根）。
-
-有未提交改动、或领先比较目标的仓库排在前面并自动展开；没有改动的收起。根仓库固定在最上面：它是打开的这个工作区，收起时只有一行，下面的仓库按改动集合重排时它不跳。「其他」固定在最后。栏目标题直接显示未提交数量和领先/落后。排序只看「哪些仓库有改动」这个集合，条数变化不重排。用户手动展开过的栏不会被自动收起，手动收起的也不会被下一轮自动展开。这一栏按工作区 id 作为 key，换工作区时不把展开状态带到同名子仓库上。「只显示有改动的」记在本机 localStorage（`orca.fork.source-control-only-changed`，整个面板一份，不按工作区分），缺省为关。状态还没回来、或者比较还在算的仓库先留在列表里，避免比较结果到达前被滤掉。比较已经结束但不是 ready（出错、基线无效、没有合并基线、HEAD 还没出生）且没有未提交文件时，视为没有改动，打开过滤后不再一直留着。`git status` 读失败的仓库写出原因，排前面并展开，「只显示有改动的」不滤掉它。分支比较给不出结果（基线不存在、没有共同祖先、比较出错）时写出原因。列出仓库失败时写出原因，不一直停在「正在查找仓库…」。
-
-新 RPC 是 `git.workspaceRepositories` 和它的 `status`、`branchCompare`、`diff`、`branchDiff`、`setCompareTarget`。不往上游的 `git.status` 等参数里加 `repositoryPath`：旧主机会丢掉不认识的字段，静默返回根仓库。方法在 `src/fork/main/git-workspace/methods.ts`，和 F046 的主机方法一起由 `src/fork/main/rpc-methods.ts` 汇成 `FORK_RPC_METHODS`，`src/main/runtime/rpc/methods/index.ts` 一行展开进 `ALL_RPC_METHODS`；以后 fork 加 RPC 方法只改这个 fork 文件。参数 schema 在 `src/fork/git-workspace/params.ts`，直接扩展上游的 `GitDiff`、`GitBranchDiff`、`GitBranchCompare`；生成的 `rpc-params-catalog.generated.ts` 把这些方法列为未编目，`rpc-params-type-parity.ts` 只在 `Exclude<…>` 那一行加上 `ForkRpcMethodName`（同在 `rpc-methods.ts`）。处理函数从 RPC 上下文里的运行时解析工作区目标（`resolveRuntimeGitTarget` 在运行时上是 protected，用 `in` 加 `typeof` 的类型守卫检查后调用；`methods.fork.test.ts` 用真的 `OrcaRuntimeService` 跑一遍，上游改名会让测试失败），然后把上游的 `RuntimeGitStatusCommands`、`RuntimeGitDiffCommands` 原样用在嵌套仓库的路径上：路径规范化（`normalizeRuntimeGitRelativePath`）、WSL 路由、传输上限都跟上游 `git.status`、`git.diff`、`git.branchDiff`、`git.branchCompare` 一致。能力 `fork.git.workspace-repositories.v1` 放在 `src/shared/fork-hooks/git-workspace-capability.ts`，在 `protocol-version.ts` 的 `RUNTIME_CAPABILITIES` 中间展开一行，这样 CLI 工程不用包含 `src/fork`。渲染进程对本地桌面视为已有这个能力；配对或托管主机用 `runtimeEnvironmentSupportsCapability` 探测。`repositoryPath` 不能逃出工作区，realpath 也不能顺着软链跑出去，并且必须在这次发现结果里。
-
-`ssh:` 和 `runtime:` 的工作区在读任何文件之前就拒绝：桌面进程不能按远端路径扫自己的磁盘。托管 SSH 主机的请求目标是 `environment`，方法在那台主机的 orcad 上执行，开关等能力探测通过再打开。上游从 1.4.225 起每台 SSH 主机都在连接时部署或转换成 orcad，工作区行变成 `runtime:<环境>`，F047 按 environment 目标走那台主机的 orcad。桌面上仍直接标成 `ssh:` 的仓库，以及只有 `connectionId` 的旧 SSH 行，是还没转换或被拒绝接管的主机，上游自己的源代码管理在这些行上也读不了 git：开关灰掉，提示重新连接这台主机。上游已经删掉桌面上经 SSH 跑 git 的路子（#27215、#27477、#27644），fork 不另做 SSH git provider。配对或托管主机探测不到能力时提示更新主机，探测本身失败时提示连不上；面板开着时每 15 秒再探一次，重连或升级之后不用切换工作区。
-
-默认比较目标按仓库、分支（分离 HEAD 也算一档）和 HEAD 记住，五分钟过期，最多留 64 条；手动刷新或 HEAD 变了立刻重算。分支比较在第一次、刷新、HEAD 或比较目标变化时做；状态里带一次 rev-parse 得到的基线提交，它变了就重比，否则满一分钟再比。这是每次状态轮询、每个仓库多出来的一次 background rev-parse：比较目标解析只给出 ref 名，没有可以共用的 oid。比较目标的写入用上游的 `withFileTransactionLock` 跨进程串起来（桌面和共用 userData 的 `orca serve` 同时写也不丢），锁里读、合并、写临时文件再 rename。文件在但读不了（坏 JSON、不是这一版的格式、不是缺文件的读错误）就不覆盖。读不加锁，而且是异步的，状态轮询不在主进程里同步读文件。比较目标保存失败（主机拒绝、文件读不了）时输入框下面说明原因，草稿留着。
-
-轮询和上游状态轮询一样（上游的 `createCoalescedPollRunner` 加 `installWindowVisibilityInterval`）：窗口不可见时停，显示时立刻补一轮；同一时间只跑一轮，一轮跑得慢就按耗时拉长间隔；失败按 2 秒起翻倍退避，最多 30 秒。手动刷新只强制一轮。面板切走再回来时沿用上一次比较到哪里，不把所有仓库重比一遍。内容没变的结果不触发重画。状态和 diff 请求只查成员：一分钟内的上一轮列表（包括超时截断的）都能用，查不到再按列表的 5 秒缓存判一次（同一个工作区最多 5 秒重扫一次），仍不在就拒绝。列出仓库是 5 秒缓存，超时的结果不当完整列表用。远端调用的超时是列出仓库 20 秒（发现本身最多 15 秒，扫描超时也能带着 `timedOut` 回来），其余 15 秒。
-
-diff 标签只有在这条路由和能力允许时才先要清单；发现失败或主机没有这个方法就退回上游，并短时间记住，避免每个文件再探一次。已经确定落在嵌套仓库里的路径不会改拿根仓库的 diff。面板记下的仓库清单超过一分钟就先重新发现；发现失败时有旧清单按旧清单分流。暂存区的改名带上旧路径（加仓库前缀），和上游一样只在暂存区用。嵌套仓库里的冲突文件按普通 diff 只读打开，不走上游按根工作区跟踪的冲突流程；根仓库的冲突仍走上游。
-
-上游文件里：`panel.tsx` 只把 `return (` 改成 `return renderSourceControlScope(`（钩子 `source-control-scope.ts`），JSX 和结尾不动；fork 面板自己调用上游的 `useSourceControlWorktreeContext`，拿到和上游面板同一个工作区、同一条路由；文件夹工作区仍走上游原来的提前返回。加载 diff 的 `useEditorPanelDiffContentLoader.ts` 把上游的读取写成 `readUpstream` 函数，后面两行：一行拼输入，一行 `forkWorkspaceRepositoryDiff(fork, readUpstream) ?? readUpstream()`（钩子 `workspace-repository-diff.ts`，未登记时同步返回 null），上游的三元表达式一行没动，没有类型断言。两个钩子都由 `src/fork/source-control/register.tsx` 登记。
-
-这一步只读，暂存、取消暂存和提交不做。服务端可以把嵌套仓库的目标原样交给上游的 `RuntimeGitStagingCommands` 和 `commitRuntimeGit`，旧主机用一个新的能力挡住即可；难处在界面：上游的提交还有按工作区保存的草稿、合并或变基进行中的处理、钩子失败后的恢复提示、进行中的 git 变更检测和 AI 生成提交信息。在 fork 的列表里另做一套，要么少掉这些边界（出错时用户不知道仓库处于什么状态），要么复制一份上游提交流程、以后跟着漂移。需要在嵌套检出里提交时，把它当成自己的 Orca 工作区打开（`git worktree add` 的检出可以直接导入），用上游完整的面板。
+源代码管理不再有「当前仓库 / 工作区仓库」。发现嵌套 git 仓库、比较目标记忆、根仓库变更列表里去掉嵌套条目、`git.workspaceRepositories` 及其 `status`、`branchCompare`、`diff`、`branchDiff`、`setCompareTarget`，以及渲染进程的范围开关和 diff 分流，都已删除。`panel.tsx`、`useEditorPanelDiffContentLoader.ts` 和 `protocol-version.ts` 回到上游，源代码管理只看当前这一个仓库。嵌套检出要单独打开成自己的工作区。本机 localStorage 里以前的 `orca.fork.source-control-scope`、`orca.fork.source-control-only-changed`，以及主机上的 `git-workspace-compare-targets.json`，不再读取。
 
 ## F048 删除工作区默认保留文件夹
 

@@ -1561,12 +1561,6 @@ export const RPC_METHODS_WITHOUT_SHARED_PARAMS: readonly string[] = [
   'files.hostDocPreview.readChunk',
   'files.hostFile.readChunk',
   'files.hostFile.stat',
-  'git.workspaceRepositories',
-  'git.workspaceRepositories.branchCompare',
-  'git.workspaceRepositories.branchDiff',
-  'git.workspaceRepositories.diff',
-  'git.workspaceRepositories.setCompareTarget',
-  'git.workspaceRepositories.status',
   'orchestration.send',
   'orchestration.taskUpdate'
 ]

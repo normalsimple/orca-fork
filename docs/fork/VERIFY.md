@@ -66,20 +66,6 @@ An older fork orcad does not grant paths outside the workspace without `crossWor
 17. In a local Mac workspace, local HTML follows the link-routing setting (system browser or in-app page), and a file of another local workspace still switches to it (upstream behavior).
 18. With a paired client or phone, if available: files outside every workspace open (upstream #33958).
 
-### F047 workspace repositories
+### F047 workspace repositories (removed)
 
-Use a requirement directory that is itself a git repository and holds `frontend/` (a plain clone), `backend/` (from `git worktree add`), `.cache/` (with a `.git`, skipped), `node_modules/pkg/` (skipped), `linked/` (a directory symlink to a repository elsewhere, skipped), and a submodule registered in the root `.gitmodules` but not initialized. Run the list locally first, then with the same layout on the Linux host.
-
-1. Source control, Workspace repos: the root is first; changed or ahead repositories come next, expanded; clean ones are collapsed; Other is last and collapsed, holding the uninitialized submodule. Headers show the branch, `N changed` and `X ahead, Y behind`.
-2. Click an unstaged file in `backend`: the diff is `backend`'s own, not the root's whole-file addition.
-3. `git mv a.ts b.ts` in `frontend`: it is under Staged and opens as a rename diff (old content on the left).
-4. Make a merge conflict in `frontend`: the conflicted file opens as a plain diff and the tab survives the next poll; the root's Current repo panel shows no conflict banner.
-5. Expand `backend`, set the compare target to `origin/develop` and click Use: ahead/behind updates within seconds and survives an Orca restart. `origin/nope` shows `Branch compare unavailable: …` in that group. `-x` shows `Couldn't save the compare target: …` under the input and keeps the draft. Clear returns to the default (`origin/HEAD`).
-6. Corrupt `frontend/.git/index`: that group moves up, expands and shows `Couldn't read status: …`; Only show changed does not hide it. Repairing the index restores it.
-7. Minimize the window with the panel open: no git processes start every few seconds; restoring the window refreshes once.
-8. Workspace A on Workspace repos, B on Current repo: switching keeps each choice with no flash of the other view.
-9. Open a diff tab of a nested repository's file, close source control, wait over a minute (or restart): the tab still shows that repository's diff.
-10. On the Linux host (orcad deployed by this build), the switch enables after the probe, and the list, status, diffs and compare target come from the host.
-11. Drop the network or the SSH connection with that panel open: `Can't reach the host to check workspace repos.`; after reconnecting, the switch comes back within about 15 seconds without switching workspaces.
-12. A host with an older orcad that lacks the capability: the switch is disabled with `Update the host to compare nested repositories` and no new method is sent.
-13. An `ssh:` row that orcad does not serve yet: the switch is disabled with the reconnect hint.
+Source Control is the upstream single-repo view. There is no Current repo / Workspace repos switch, and nested repositories in the workspace are not listed.
