@@ -26,6 +26,33 @@ vi.mock('electron', async () =>
 vi.mock('../../main/git/worktree', async () =>
   (await import('../../main/ipc/worktrees-test-module-mocks')).gitWorktreeModuleMock()
 )
+vi.mock('../../main/git/worktrees/catalog/worktree-scan-cache', async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
+  listWorktrees: (await import('../../main/ipc/worktrees-test-module-mocks')).listWorktreesMock,
+  listWorktreesSharedStrictAllowingTrueEmpty: (
+    await import('../../main/ipc/worktrees-test-module-mocks')
+  ).listWorktreesMock,
+  listWorktreesSharedStrict: (await import('../../main/ipc/worktrees-test-module-mocks'))
+    .listWorktreesMock
+}))
+vi.mock('../../main/git/worktrees/catalog/worktree-listing', async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
+  listWorktreesStrict: (await import('../../main/ipc/worktrees-test-module-mocks')).listWorktreesMock,
+  describeCreatedWorktree: (await import('../../main/ipc/worktrees-test-module-mocks'))
+    .describeCreatedWorktreeMock
+}))
+vi.mock('../../main/git/worktrees/creation/worktree-add', async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
+  addWorktree: (await import('../../main/ipc/worktrees-test-module-mocks')).addWorktreeMock
+}))
+vi.mock('../../main/git/worktrees/creation/worktree-sparse-add', async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
+  addSparseWorktree: (await import('../../main/ipc/worktrees-test-module-mocks')).addSparseWorktreeMock
+}))
+vi.mock('../../main/git/command-runner/git-exec-file', async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
+  gitExecFileAsync: (await import('../../main/ipc/worktrees-test-module-mocks')).gitExecFileAsyncMock
+}))
 vi.mock('../../main/git/runner', async () =>
   (await import('../../main/ipc/worktrees-test-module-mocks')).gitRunnerModuleMock()
 )
