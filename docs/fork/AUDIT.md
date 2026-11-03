@@ -2,7 +2,7 @@
 
 由 `python3 fork/scripts/generate-audit.py` 生成（`--check` 只比对）。主表是和上游基点（`src/fork/skills-source-commit.ts` 记录的提交）不同的每个文件，一个不多一个不少；末尾另列已恢复成上游或已删除的文件，它们必须和基点相同。`src/fork/audit-table.fork.test.ts` 检查表和仓库一致。
 
-共 456 行：delete 44，keep 388，revert-to-upstream 24。上游文件（不含 fork 目录）里的 fork 改动 841 行，涉及 150 个文件。
+共 456 行：delete 44，keep 388，revert-to-upstream 24。上游文件（不含 fork 目录）里的 fork 改动 806 行，涉及 150 个文件。
 
 | 文件                                                                                    | 功能                        | 决定 | 原因                                                                                                                                              |
 | --------------------------------------------------------------------------------------- | --------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -269,7 +269,7 @@
 | `src/main/updater/releases/updater-changelog.ts`                                        | UPD 应用内更新              | keep | 上游文件，fork 改动 4 行                                                                                                                          |
 | `src/main/updater/releases/updater-prerelease-feed.ts`                                  | UPD 应用内更新              | keep | 上游文件，fork 改动 4 行                                                                                                                          |
 | `src/main/updater/releases/updater-release-builds.ts`                                   | UPD 应用内更新              | keep | 上游文件，fork 改动 7 行                                                                                                                          |
-| `src/main/updater/releases/updater-release-feed.ts`                                     | UPD 应用内更新              | keep | 上游文件，fork 改动 4 行                                                                                                                          |
+| `src/main/updater/releases/updater-release-feed.ts`                                     | UPD 应用内更新              | keep | 上游文件，fork 改动 2 行                                                                                                                          |
 | `src/main/updater/releases/updater-release-readiness.ts`                                | UPD 应用内更新              | keep | 上游文件，fork 改动 13 行                                                                                                                         |
 | `src/main/updater/updater-events.ts`                                                    | UPD 应用内更新              | keep | 上游文件，fork 改动 40 行。UPD：后台下载适配器挂在上游事件上；checking 时的两次清理由适配器决定是否保留已下载版本                                 |
 | `src/main/updater/updater-handler-context.ts`                                           | UPD 应用内更新              | keep | 上游文件，fork 改动 3 行                                                                                                                          |
@@ -380,7 +380,7 @@
 | `src/shared/project-group-types.ts`                                                     | SB 侧栏/项目组              | keep | 上游文件，fork 改动 2 行                                                                                                                          |
 | `src/shared/release-channel.ts`                                                         | UPD 应用内更新              | keep | 上游文件，fork 改动 4 行                                                                                                                          |
 | `src/shared/rpc-contract/folder-workspace-params.ts`                                    | SB 侧栏/工作区              | keep | 上游文件，fork 改动 5 行                                                                                                                          |
-| `src/shared/rpc-contract/rpc-params-catalog.generated.ts`                               | INFRA 登记/工程/文档        | keep | 上游文件，fork 改动 37 行                                                                                                                         |
+| `src/shared/rpc-contract/rpc-params-catalog.generated.ts`                               | INFRA 登记/工程/文档        | keep | 上游文件，fork 改动 4 行                                                                                                                          |
 | `src/shared/rpc-contract/worktree-params.ts`                                            | SB 侧栏/工作区              | keep | 上游文件，fork 改动 3 行                                                                                                                          |
 | `src/shared/runtime-rpc-call-queue.ts`                                                  | F046 终端文件链接           | keep | 上游文件，fork 改动 4 行。F046：分段读 files.hostDocPreview.readChunk、files.hostFile.readChunk 和上游 files.readDocPreviewChunk 一样走 bulk 通道 |
 | `src/shared/sidebar-list/empty-project-placeholder-repos.ts`                            | SB 侧栏                     | keep | 上游文件，fork 改动 3 行                                                                                                                          |
