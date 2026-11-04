@@ -34,10 +34,7 @@ import {
 } from './folder-workspace-catalog'
 import '../../../../shared/folder-workspaces/folder-workspace-execution-host'
 import { getFolderWorkspaceHostId } from '../../../../shared/folder-workspaces/folder-workspace-host-id'
-import {
-  folderWorkspaceUpdateNotApplied,
-  folderWorkspaceUpdateRequest
-} from '../../../../shared/fork-hooks/sidebar-field-clear'
+import { folderWorkspaceUpdateNotApplied, folderWorkspaceUpdateRequest } from '../../../../shared/fork-hooks/sidebar-field-clear'
 import * as chatDrafts from '../slices/worktrees/teardown/removed-worktree-chat-drafts'
 
 export type FolderWorkspaceUpdateField = keyof FolderWorkspaceUpdates
