@@ -4,7 +4,7 @@ import {
   registerAiVaultDefaultHostScope,
   resetAiVaultForkHooksForTests
 } from '../../shared/fork-hooks/ai-vault'
-import { resolveAiVaultHostScopeDefaults } from '../../renderer/src/components/right-sidebar/ai-vault-host-scope'
+import { resolveAiVaultHostScopeDefaults } from '../../renderer/src/components/right-sidebar/ai-vault/scope/ai-vault-host-scope'
 
 afterEach(() => {
   resetAiVaultForkHooksForTests()

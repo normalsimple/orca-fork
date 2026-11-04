@@ -11,7 +11,7 @@ import { registerForkModules } from '../register'
 import { registerForkRendererModules } from '../register-renderer'
 
 // No agent sessions at all, as in a profile that never ran one.
-vi.mock('../../renderer/src/components/right-sidebar/ai-vault-session-refresh', () => ({
+vi.mock('../../renderer/src/components/right-sidebar/ai-vault/scanning/ai-vault-session-refresh', () => ({
   useAiVaultSessionRefresh: () => ({
     error: null,
     loading: false,
@@ -22,7 +22,7 @@ vi.mock('../../renderer/src/components/right-sidebar/ai-vault-session-refresh', 
   })
 }))
 // The panel's delete action needs the app's confirmation dialog provider.
-vi.mock('../../renderer/src/components/right-sidebar/ai-vault-session-delete-action', () => ({
+vi.mock('../../renderer/src/components/right-sidebar/ai-vault/session-actions/ai-vault-session-delete-action', () => ({
   useAiVaultSessionDeleteAction: () => vi.fn()
 }))
 
@@ -64,7 +64,7 @@ afterEach(() => {
 
 it('opens the Agents panel of an empty profile without an update loop', async () => {
   const { default: AiVaultPanel } =
-    await import('../../renderer/src/components/right-sidebar/AiVaultPanel')
+    await import('../../renderer/src/components/right-sidebar/ai-vault/panel/AiVaultPanel')
   // act flushes the mount's effects and the store and status reads they start.
   await act(async () => {
     render(

@@ -4,7 +4,7 @@
 import {
   CHROMIUM_BROWSERS,
   type ChromiumBrowserDef
-} from '../../main/browser/cookies/sources/browser-cookie-detection-types'
+} from '../../main/browser/cookies/sources/browser-cookie-source-profiles'
 import {
   EGO_LITE_BROWSER_FAMILY,
   EGO_LITE_KEYCHAIN_ACCOUNT,

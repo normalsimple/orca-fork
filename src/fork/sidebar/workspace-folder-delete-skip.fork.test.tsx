@@ -73,7 +73,7 @@ vi.mock('@/store/selectors', () => ({
   }
 }))
 
-vi.mock('@/components/editor/editor-model-owner', () => ({
+vi.mock('@/components/editor/model-lifetime/identity/editor-model-owner', () => ({
   resolveEditorModelOwner: () => ({ environmentId: null, hostId: 'local' }),
   getEditorModelOwnerKey: () => ''
 }))
@@ -86,7 +86,7 @@ import { toast } from 'sonner'
 import {
   runWorktreeBatchDelete,
   runWorktreeDelete
-} from '@/components/sidebar/delete-worktree-flow'
+} from '@/components/sidebar/workspace-actions/deletion/delete-worktree-flow'
 import { DURABLE_WORKSPACE_ARCHIVE_STORAGE_KEY } from './durable-workspace-archive'
 
 const storage = new Map<string, string>()

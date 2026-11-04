@@ -5,7 +5,7 @@ import { join, relative, resolve } from 'node:path'
 import { createElement } from 'react'
 import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import { SidebarGroupByToggle } from '../renderer/src/components/sidebar/SidebarGroupByToggle'
+import { SidebarGroupByToggle } from '../renderer/src/components/sidebar/worktree-list/controls/SidebarGroupByToggle'
 
 const ROOT = resolve(__dirname, '../..')
 // Upstream files where the fork added a useSyncExternalStore call (none: they call fork hooks).

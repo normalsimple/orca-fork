@@ -5,8 +5,8 @@ import { normalizeRuntimePathForComparison } from '../../shared/cross-platform-p
 import { LOCAL_EXECUTION_HOST_ID, type ExecutionHostId } from '../../shared/execution-host'
 import { composeWorktreeId } from '../../shared/worktree/id'
 import type { ForkPostImportDetails } from '../../shared/fork-hooks/post-import'
-// 文件夹主机解析已从目录模块搬到 shared，签名仍是工作区加项目组列表。
-import { getFolderWorkspaceHostId } from '../../shared/folder-workspace-execution-host'
+// 文件夹主机解析在 folder-workspace-host-id，签名仍是工作区加项目组列表。
+import { getFolderWorkspaceHostId } from '../../shared/folder-workspaces/folder-workspace-host-id'
 import { findRepoForHost } from '@/store/slices/repo-host-identity'
 import { getProjectGroupHostId } from '@/store/slices/project-group-owner-routing'
 import {

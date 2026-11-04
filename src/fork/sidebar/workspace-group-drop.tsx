@@ -2,7 +2,7 @@
 import { toast } from 'sonner'
 import { getWorktreeExecutionHostId, normalizeExecutionHostId } from '../../shared/execution-host'
 import type { ExecutionHostId } from '../../shared/execution-host'
-import { folderWorkspaceToWorktree } from '../../shared/folder-workspace-worktree'
+import { folderWorkspaceToWorktree } from '../../shared/folder-workspaces/folder-workspace-worktree'
 import { getWorktreeHostIdentity } from '../../shared/worktree/host-qualified-identity'
 import { findRepoForHost } from '../../renderer/src/store/slices/repo-host-identity'
 import {
@@ -10,9 +10,9 @@ import {
   type WorkspaceGroupDropArgs
 } from '../../shared/fork-hooks/sidebar-chrome'
 import { useAppStore } from '../../renderer/src/store'
-import type { WorktreeDragGroup } from '../../renderer/src/components/sidebar/worktree-manual-order'
-import { getWorktreeSidebarDragRectsForGroup } from '../../renderer/src/components/sidebar/worktree-sidebar-drag-autoscroll'
-import type { FolderWorkspace } from '../../shared/folder-workspace-types'
+import type { WorktreeDragGroup } from '../../renderer/src/components/sidebar/worktree-list/drag/worktree-manual-order'
+import { getWorktreeSidebarDragRectsForGroup } from '../../renderer/src/components/sidebar/worktree-list/drag/worktree-sidebar-drag-autoscroll'
+import type { FolderWorkspace } from '../../shared/folder-workspaces/folder-workspace-types'
 import type { ProjectGroup } from '../../shared/project-group-types'
 import type { Repo } from '../../shared/repo-types'
 import type { Worktree } from '../../shared/worktree/types'

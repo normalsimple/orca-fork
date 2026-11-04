@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { folderLabel } from '../../shared/ai-vault-session-filters'
+import { folderLabel } from '../../shared/ai-vault/session-display/ai-vault-session-filters'
 import {
   getLocalExecutionHostLabel,
   LOCAL_EXECUTION_HOST_ID,

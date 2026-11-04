@@ -1,7 +1,7 @@
 // What the sidebar shows under manual sort and what a group drop writes come from one order
 // (manual-order.ts): draw, drop, draw again, and the row is where the insertion line was.
 import { describe, expect, it } from 'vitest'
-import { buildWorktreeManualOrderCatalog } from '../../renderer/src/components/sidebar/worktree-manual-order-catalog'
+import { buildWorktreeManualOrderCatalog } from '../../renderer/src/components/sidebar/worktree-list/drag/worktree-manual-order-catalog'
 import { getWorktreeIdFromHostIdentity } from '../../shared/worktree/host-qualified-identity'
 import { manualOrderedRows } from './manual-order'
 import { draw, dropAndRedraw, insert, keyOf, shownIn, wt } from './group-drop-display.test-fixture'

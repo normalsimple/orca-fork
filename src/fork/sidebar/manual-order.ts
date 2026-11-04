@@ -3,8 +3,8 @@
 // manual order sorts by sortOrder (its creation time or the last Smart snapshot), as upstream's
 // manual sort does everywhere (smart-sort.ts, worktree-manual-order-catalog.ts); ties go to the
 // sort label, then the host-qualified identity.
-import type { FolderWorkspace } from '../../shared/folder-workspace-types'
-import { folderWorkspaceToWorktree } from '../../shared/folder-workspace-worktree'
+import type { FolderWorkspace } from '../../shared/folder-workspaces/folder-workspace-types'
+import { folderWorkspaceToWorktree } from '../../shared/folder-workspaces/folder-workspace-worktree'
 import { compareWorktreeSortLabel } from '../../shared/sidebar-list/smart-sort'
 import { getWorktreeHostIdentity } from '../../shared/worktree/host-qualified-identity'
 import type { Worktree } from '../../shared/worktree/types'

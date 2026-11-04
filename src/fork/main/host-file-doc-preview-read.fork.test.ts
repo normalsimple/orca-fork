@@ -12,11 +12,11 @@ vi.mock('../../main/ipc/runtime-environments/runtime-environment-registry-root',
   getRuntimeEnvironmentRegistryRoot: () => '/user-data'
 }))
 
-import { readDocPreviewFile } from '../../main/browser/doc-preview-file-reader'
+import { readDocPreviewFile } from '../../main/browser/document-preview/doc-preview-file-reader'
 import {
   mintDocPreviewGrant,
   revokeAllDocPreviewGrants
-} from '../../main/browser/doc-preview-grant-registry'
+} from '../../main/browser/document-preview/doc-preview-grant-registry'
 import { DOC_PREVIEW_FILE_CHANGED_MESSAGE } from '../../shared/doc-preview-file-access'
 import {
   openDocPreviewAccess,

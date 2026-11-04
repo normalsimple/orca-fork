@@ -5,12 +5,12 @@
 import { act, cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
-import type { default as AiVaultPanelComponent } from '../../renderer/src/components/right-sidebar/AiVaultPanel'
+import type { default as AiVaultPanelComponent } from '../../renderer/src/components/right-sidebar/ai-vault/panel/AiVaultPanel'
 import {
   connectedRuntimeStatus,
   publicRuntimeEnvironment
 } from '../../renderer/src/runtime/paired-runtime-environment-test-fixture'
-import type { AiVaultSession } from '../../shared/ai-vault-types'
+import type { AiVaultSession } from '../../shared/ai-vault/contracts/ai-vault-types'
 import {
   getLocalExecutionHostLabel,
   LOCAL_EXECUTION_HOST_ID,
@@ -69,7 +69,7 @@ function scanned(scope: string): AiVaultSession[] {
   return listed
 }
 
-vi.mock('../../renderer/src/components/right-sidebar/ai-vault-session-refresh', () => ({
+vi.mock('../../renderer/src/components/right-sidebar/ai-vault/scanning/ai-vault-session-refresh', () => ({
   useAiVaultSessionRefresh: (_scopePaths: readonly string[], scope: string) => ({
     error: null,
     loading: false,
@@ -79,10 +79,10 @@ vi.mock('../../renderer/src/components/right-sidebar/ai-vault-session-refresh', 
     loadedSessionLimit: null
   })
 }))
-vi.mock('../../renderer/src/components/right-sidebar/ai-vault-session-delete-action', () => ({
+vi.mock('../../renderer/src/components/right-sidebar/ai-vault/session-actions/ai-vault-session-delete-action', () => ({
   useAiVaultSessionDeleteAction: () => vi.fn()
 }))
-vi.mock('../../renderer/src/components/right-sidebar/AiVaultSessionRow', () => ({
+vi.mock('../../renderer/src/components/right-sidebar/ai-vault/session-list/AiVaultSessionRow', () => ({
   VaultSessionRow: (props: { session: AiVaultSession }) => <div>{props.session.title}</div>
 }))
 
@@ -100,7 +100,7 @@ beforeEach(async () => {
   const { useAppStore } = await import('@/store')
   ;(await import('../register')).registerForkModules()
   ;(await import('../register-renderer')).registerForkRendererModules()
-  AiVaultPanel = (await import('../../renderer/src/components/right-sidebar/AiVaultPanel')).default
+  AiVaultPanel = (await import('../../renderer/src/components/right-sidebar/ai-vault/panel/AiVaultPanel')).default
   useAppStore.setState({
     runtimeEnvironments: [
       publicRuntimeEnvironment({ id: BUILD_ENV, name: 'build-linux' }),

@@ -2,7 +2,7 @@
 // renderer cascade already does (projectGroupDeleteKeepsFolderWorkspaces). Upstream deletes them
 // with the group, so the next folder list made them vanish (their folders stay on disk).
 import { parseExecutionHostId } from '../../shared/execution-host'
-import type { FolderWorkspace } from '../../shared/folder-workspace-types'
+import type { FolderWorkspace } from '../../shared/folder-workspaces/folder-workspace-types'
 import type { PersistedState } from '../../shared/persisted-state-types'
 
 /**

@@ -53,7 +53,7 @@ vi.mock('../../renderer/src/i18n/i18n', () => ({
   translate: (_key: string, fallback: string) => fallback
 }))
 
-vi.mock('../../renderer/src/components/sidebar/stale-workspace-list-toast', () => ({
+vi.mock('../../renderer/src/components/sidebar/worktree-list/listing/stale-workspace-list-toast', () => ({
   showWorkspaceListChangedToast: vi.fn()
 }))
 

@@ -7,11 +7,9 @@ import {
   type ReactNode
 } from 'react'
 import { useAppStore } from '@/store'
-import {
-  isConnectedRuntimeHostState,
-  runtimeHostConnectionStateForEntry
-} from '@/runtime/runtime-host-connection-state'
-import type { RuntimeEnvironmentStatus } from '../../shared/runtime-host-status'
+import { runtimeHostConnectionStateForEntry } from '@/runtime/runtime-host-connection-state'
+import { isConnectedRuntimeHostState } from '../../shared/remote-runtime/host-status/runtime-host-connection-state'
+import type { RuntimeEnvironmentStatus } from '../../shared/remote-runtime/host-status/runtime-host-status'
 import {
   getExecutionHostLabel,
   getWorktreeExecutionHostId,
@@ -19,10 +17,10 @@ import {
   type ExecutionHostId,
   type ExecutionHostScope
 } from '../../shared/execution-host'
-import type { AiVaultHostScopeOption } from '../../renderer/src/components/right-sidebar/ai-vault-host-scope'
-import type { AiVaultPanelWorkspace } from '../../renderer/src/components/right-sidebar/ai-vault-panel-workspace'
-import type { AiVaultSessionListGroup } from '../../renderer/src/components/right-sidebar/ai-vault-session-filters'
-import { useAiVaultPanelWorkspace } from '../../renderer/src/components/right-sidebar/use-ai-vault-panel-workspace'
+import type { AiVaultHostScopeOption } from '../../renderer/src/components/right-sidebar/ai-vault/scope/ai-vault-host-scope'
+import type { AiVaultPanelWorkspace } from '../../renderer/src/components/right-sidebar/ai-vault/scope/ai-vault-panel-workspace'
+import type { AiVaultSessionListGroup } from '../../renderer/src/components/right-sidebar/ai-vault/session-list/ai-vault-session-filters'
+import { useAiVaultPanelWorkspace } from '../../renderer/src/components/right-sidebar/ai-vault/scope/use-ai-vault-panel-workspace'
 import { splitVaultHostMenu } from './host-menu'
 import {
   aiVaultHostRowsRegistered,

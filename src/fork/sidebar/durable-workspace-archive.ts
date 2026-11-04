@@ -6,7 +6,7 @@ import { normalizeRuntimePathForComparison } from '../../shared/cross-platform-p
 import {
   getFolderWorkspaceWorktreeHostId,
   folderWorkspaceRepoId
-} from '../../shared/folder-workspace-worktree'
+} from '../../shared/folder-workspaces/folder-workspace-worktree'
 import { folderWorkspaceKey } from '../../shared/workspace-scope'
 import type {
   DurableArchiveRow,

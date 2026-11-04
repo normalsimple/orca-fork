@@ -20,7 +20,7 @@ vi.mock('../../renderer/src/store', () => ({
   useAppStore: Object.assign(() => undefined, { getState: () => mocks.state })
 }))
 
-import { importNewExternalWorktreeInboxPaths } from '../../renderer/src/components/sidebar/new-external-worktrees-inbox-actions'
+import { importNewExternalWorktreeInboxPaths } from '../../renderer/src/components/sidebar/worktree-list/listing/new-external-worktrees-inbox-actions'
 import {
   registerImportedWorktreeReactivate,
   registerRemovedWorkspaceArchiveRelease,

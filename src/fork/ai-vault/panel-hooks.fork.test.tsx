@@ -5,14 +5,14 @@
 import { StrictMode, useState } from 'react'
 import { act, cleanup, render, renderHook } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { AiVaultSession } from '../../shared/ai-vault-types'
+import type { AiVaultSession } from '../../shared/ai-vault/contracts/ai-vault-types'
 import {
   ALL_EXECUTION_HOSTS_SCOPE,
   LOCAL_EXECUTION_HOST_ID,
   toRuntimeExecutionHostId
 } from '../../shared/execution-host'
-import type { AiVaultHostScopeOption } from '../../renderer/src/components/right-sidebar/ai-vault-host-scope'
-import type { AiVaultSessionListGroup } from '../../renderer/src/components/right-sidebar/ai-vault-session-filters'
+import type { AiVaultHostScopeOption } from '../../renderer/src/components/right-sidebar/ai-vault/scope/ai-vault-host-scope'
+import type { AiVaultSessionListGroup } from '../../renderer/src/components/right-sidebar/ai-vault/session-list/ai-vault-session-filters'
 import type * as HostMenu from './host-menu'
 import type * as PanelHooks from './panel-hooks'
 

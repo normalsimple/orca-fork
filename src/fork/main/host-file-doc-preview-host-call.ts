@@ -3,7 +3,7 @@
 import type { HostFileDocPreviewOutcome } from '../../shared/fork-hooks/host-file-doc-preview'
 import { callRuntimeEnvironment } from '../../main/ipc/runtime-environments/runtime-environment-transport-routing'
 import { getRuntimeEnvironmentRegistryRoot } from '../../main/ipc/runtime-environments/runtime-environment-registry-root'
-import type { DocPreviewGrant } from '../../main/browser/doc-preview-grant-registry'
+import type { DocPreviewGrant } from '../../main/browser/document-preview/doc-preview-grant-registry'
 import type { HostDocPreviewReadParams } from './host-file-methods'
 
 const READ_TIMEOUT_MS = 15_000

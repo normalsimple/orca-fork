@@ -15,8 +15,8 @@ import {
   registerWorkspaceFolderDelete,
   workspaceFolderDeleteRegistered
 } from '../../shared/fork-hooks/workspace-folder-delete'
-import type { WorktreeDeleteIdentity } from '../../renderer/src/components/sidebar/worktree-delete-request'
-import { runWorktreeDeletesInParallel } from '../../renderer/src/components/sidebar/delete-worktree-flow'
+import type { WorktreeDeleteIdentity } from '../../renderer/src/components/sidebar/workspace-actions/deletion/worktree-delete-request'
+import { runWorktreeDeletesInParallel } from '../../renderer/src/components/sidebar/workspace-actions/deletion/worktree-delete-execution'
 import { forkTranslate } from '../i18n/fork-translate'
 import { removeWorkspaceFromOrca } from './remove-workspace'
 

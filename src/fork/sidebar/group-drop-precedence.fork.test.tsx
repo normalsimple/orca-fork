@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 // The board and status hit tests read the DOM; a sidebar card drop never touches the board.
-vi.mock('../../renderer/src/components/sidebar/workspace-kanban-sidebar-drop', () => ({
+vi.mock('../../renderer/src/components/sidebar/workspace-board/drag/workspace-kanban-sidebar-drop', () => ({
   getWorkspaceKanbanSidebarDropGroups: () => [],
   getWorkspaceKanbanSidebarDropTarget: () => null,
   isWorkspaceKanbanSidebarDropPointInBoard: () => false,
   resolveWorkspaceKanbanSidebarFullLaneDropIndex: () => 0
 }))
-vi.mock('../../renderer/src/components/sidebar/workspace-kanban-card-pointer-drag-dom', () => ({
+vi.mock('../../renderer/src/components/sidebar/workspace-board/drag/workspace-kanban-card-pointer-drag-dom', () => ({
   resolveWorkspaceKanbanCardDropCommitTarget: () => ({ status: null, isPinDrop: false })
 }))
 vi.mock('../../renderer/src/components/sidebar/worktree-list/drag/status-target', () => ({

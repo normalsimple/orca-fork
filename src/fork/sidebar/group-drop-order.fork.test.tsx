@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { normalizeExecutionHostId, type ExecutionHostId } from '../../shared/execution-host'
 import type { Worktree } from '../../shared/worktree/types'
 import { hostDirectorySectionKey, looseHostSectionKey } from './section-keys'
-import { buildWorktreeManualOrderCatalog } from '../../renderer/src/components/sidebar/worktree-manual-order-catalog'
+import { buildWorktreeManualOrderCatalog } from '../../renderer/src/components/sidebar/worktree-list/drag/worktree-manual-order-catalog'
 import {
   composeWorktreeHostIdentity,
   getWorktreeIdFromHostIdentity

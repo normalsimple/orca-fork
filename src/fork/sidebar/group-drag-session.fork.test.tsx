@@ -4,11 +4,11 @@ import {
   getWorktreeDragGroups,
   getWorktreeDragIndexes
 } from '../../renderer/src/components/sidebar/worktree-list/drag/groups'
-import { getWorktreeDragUnitGroups } from '../../renderer/src/components/sidebar/worktree-drag-units'
+import { getWorktreeDragUnitGroups } from '../../renderer/src/components/sidebar/worktree-list/drag/worktree-drag-units'
 import {
   refreshWorktreeSidebarDragSession,
   type WorktreeSidebarDragSession
-} from '../../renderer/src/components/sidebar/worktree-sidebar-drag-autoscroll'
+} from '../../renderer/src/components/sidebar/worktree-list/drag/worktree-sidebar-drag-autoscroll'
 import {
   getWorktreeHostIdentity,
   getWorktreeIdFromHostIdentity

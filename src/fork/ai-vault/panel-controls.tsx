@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 import { normalizeExecutionHostScope, type ExecutionHostScope } from '../../shared/execution-host'
-import type { AiVaultSessionGroup } from '../../shared/ai-vault-session-filters'
+import type { AiVaultSessionGroup } from '../../shared/ai-vault/session-display/ai-vault-session-filters'
 import { forkTranslate } from '../i18n/fork-translate'
 import { otherVaultHosts, type VaultHostMenu } from './host-menu'
 import { aiVaultHostRowsRegistered, readAiVaultHostSessionCount } from './list-presentation'

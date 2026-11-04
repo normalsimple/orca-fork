@@ -3,7 +3,7 @@
 import {
   authorizeDocPreviewDirectory,
   getDocPreviewGrant
-} from '../../main/browser/doc-preview-grant-registry'
+} from '../../main/browser/document-preview/doc-preview-grant-registry'
 
 export function openWholeRequestBase(grantId: string): void {
   const grant = getDocPreviewGrant(grantId)

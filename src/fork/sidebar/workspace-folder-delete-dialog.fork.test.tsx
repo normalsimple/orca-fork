@@ -124,17 +124,17 @@ vi.mock('sonner', () => ({
   toast: { error: vi.fn(), success: vi.fn(), info: vi.fn() }
 }))
 
-vi.mock('../../renderer/src/components/sidebar/delete-worktree-flow', () => ({
+vi.mock('../../renderer/src/components/sidebar/workspace-actions/deletion/worktree-delete-execution', () => ({
   runWorktreeDeletesInParallel: vi.fn(async () => [])
 }))
 
-vi.mock('../../renderer/src/components/sidebar/stale-workspace-list-toast', () => ({
+vi.mock('../../renderer/src/components/sidebar/worktree-list/listing/stale-workspace-list-toast', () => ({
   showWorkspaceListChangedToast: vi.fn()
 }))
 
 import { toast } from 'sonner'
-import { runWorktreeDeletesInParallel } from '../../renderer/src/components/sidebar/delete-worktree-flow'
-import DeleteWorktreeDialog from '../../renderer/src/components/sidebar/DeleteWorktreeDialog'
+import { runWorktreeDeletesInParallel } from '../../renderer/src/components/sidebar/workspace-actions/deletion/worktree-delete-execution'
+import DeleteWorktreeDialog from '../../renderer/src/components/sidebar/workspace-actions/deletion/DeleteWorktreeDialog'
 
 function gitRepo(id = 'repo-1'): Repo {
   return {

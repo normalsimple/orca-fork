@@ -2,7 +2,7 @@
 // terminal grant per file (files.resolveTerminalPath, then files.readTerminalArtifactPreview),
 // 512 KiB of text, no fonts.
 import type { HostFileDocPreviewOutcome } from '../../shared/fork-hooks/host-file-doc-preview'
-import { resolveCanonicalDocPreviewPath } from '../../main/browser/doc-preview-grant-registry'
+import { resolveCanonicalDocPreviewPath } from '../../main/browser/document-preview/doc-preview-grant-registry'
 import {
   callHost,
   MissingHostFile,

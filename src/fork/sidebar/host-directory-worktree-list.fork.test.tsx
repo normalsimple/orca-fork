@@ -19,8 +19,8 @@ import {
   loadWorktreeList,
   mockStore,
   renderWorktreeListMarkup
-} from '../../renderer/src/components/sidebar/worktree-list-lineage-card-test-harness'
-import { setLineageFixtureState } from '../../renderer/src/components/sidebar/worktree-list-lineage-store-state'
+} from '../../renderer/src/components/sidebar/worktree-list/listing/worktree-list-lineage-card-test-harness'
+import { setLineageFixtureState } from './lineage-fixture-state'
 import { buildHostDirectoryRowPlan } from './host-directory-rows'
 import { installHostDirectoryRowPlan } from './install-row-plan'
 import { registerHostDirectoryMode } from './register-mode'
@@ -33,17 +33,17 @@ import {
 vi.mock('@/store', () => createAppStoreModuleMock())
 vi.mock('@tanstack/react-virtual', () => createReactVirtualModuleMock())
 vi.mock('@/hooks/useVirtualizedScrollAnchor', () => createVirtualizedScrollAnchorModuleMock())
-vi.mock('../../renderer/src/components/sidebar/project-header-drag', () =>
+vi.mock('../../renderer/src/components/sidebar/worktree-list/drag/project-header-drag', () =>
   createProjectHeaderDragModuleMock()
 )
-vi.mock('../../renderer/src/components/sidebar/WorktreeCard', () => createWorktreeCardModuleMock())
-vi.mock('../../renderer/src/components/sidebar/WorktreeCardAgents', () =>
+vi.mock('../../renderer/src/components/sidebar/workspace-card/surface/WorktreeCard', () => createWorktreeCardModuleMock())
+vi.mock('../../renderer/src/components/sidebar/workspace-card/activity/WorktreeCardAgents', () =>
   createWorktreeCardAgentsModuleMock()
 )
-vi.mock('../../renderer/src/components/sidebar/WorktreeTitleInlineRename', () =>
+vi.mock('../../renderer/src/components/sidebar/workspace-card/identity/WorktreeTitleInlineRename', () =>
   createWorktreeTitleInlineRenameModuleMock()
 )
-vi.mock('../../renderer/src/components/sidebar/WorktreeContextMenu', () =>
+vi.mock('../../renderer/src/components/sidebar/workspace-actions/context-menu/WorktreeContextMenu', () =>
   createWorktreeContextMenuModuleMock()
 )
 vi.mock('@/components/ui/tooltip', () => createTooltipModuleMock())

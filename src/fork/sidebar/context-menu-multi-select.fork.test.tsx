@@ -9,7 +9,7 @@ import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Worktree } from '../../shared/worktree/types'
 import { TooltipProvider } from '../../renderer/src/components/ui/tooltip'
-import WorktreeContextMenu from '../../renderer/src/components/sidebar/WorktreeContextMenu'
+import WorktreeContextMenu from '../../renderer/src/components/sidebar/workspace-actions/context-menu/WorktreeContextMenu'
 import { registerSidebarContextMenu } from '../../shared/fork-hooks/sidebar-chrome'
 import { registerWorktreeMenuGroups } from '../../shared/fork-hooks/worktree-menu-groups'
 
@@ -64,13 +64,13 @@ vi.mock('@/i18n/i18n', () => ({
   i18n: { language: 'en', on: () => {}, off: () => {} }
 }))
 
-vi.mock('@/components/sidebar/ProjectGroupNameDialog', () => ({
+vi.mock('@/components/sidebar/worktree-list/rows/ProjectGroupNameDialog', () => ({
   ProjectGroupNameDialog: () => null
 }))
-vi.mock('@/components/sidebar/WorktreeParentPickerPopover', () => ({
+vi.mock('@/components/sidebar/workspace-actions/parenting/WorktreeParentPickerPopover', () => ({
   WorktreeParentPickerPopover: () => null
 }))
-vi.mock('@/components/sidebar/WorktreeOpenInMenu', () => ({ WorktreeOpenInSubMenu: () => null }))
+vi.mock('@/components/sidebar/workspace-actions/open/WorktreeOpenInMenu', () => ({ WorktreeOpenInSubMenu: () => null }))
 
 const onMove = vi.fn()
 const onRemove = vi.fn()

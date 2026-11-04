@@ -8,8 +8,8 @@ import {
   clearWorktreeSleepIntent,
   markWorktreeSleepIntent
 } from '../../renderer/src/lib/worktree-sleep-intent'
-import { showWorkspaceListChangedToast } from '../../renderer/src/components/sidebar/stale-workspace-list-toast'
-import type { WorktreeDeleteIdentity } from '../../renderer/src/components/sidebar/worktree-delete-request'
+import { showWorkspaceListChangedToast } from '../../renderer/src/components/sidebar/worktree-list/listing/stale-workspace-list-toast'
+import type { WorktreeDeleteIdentity } from '../../renderer/src/components/sidebar/workspace-actions/deletion/worktree-delete-request'
 import { useAppStore } from '../../renderer/src/store'
 import type { Worktree } from '../../shared/worktree/types'
 import type { ExecutionHostId } from '../../shared/execution-host'

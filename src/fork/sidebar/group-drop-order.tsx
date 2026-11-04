@@ -1,13 +1,13 @@
 // Manual-order values a cross-group drop writes. Kept apart from the write plan so each stays small.
 import { normalizeExecutionHostId } from '../../shared/execution-host'
-import { folderWorkspaceToWorktree } from '../../shared/folder-workspace-worktree'
+import { folderWorkspaceToWorktree } from '../../shared/folder-workspaces/folder-workspace-worktree'
 import {
   getWorktreeHostIdentity,
   getWorktreeIdFromHostIdentity
 } from '../../shared/worktree/host-qualified-identity'
 import type { Worktree } from '../../shared/worktree/types'
 import { folderWorkspaceKey } from '../../shared/workspace-scope'
-import type { WorktreeDragGroup } from '../../renderer/src/components/sidebar/worktree-manual-order'
+import type { WorktreeDragGroup } from '../../renderer/src/components/sidebar/worktree-list/drag/worktree-manual-order'
 import { manualOrderKey, manualOrderedRows } from './manual-order'
 import { parseHostDirectorySectionKey } from './section-keys'
 import type { GroupDropState, GroupDropTarget } from './workspace-group-drop-plan'

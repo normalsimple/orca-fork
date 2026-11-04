@@ -19,7 +19,7 @@ import {
   resolveDocPreviewAuthorityPaths,
   toRuntimeWorktreeRelativePath,
   type DocPreviewGrant
-} from '../../main/browser/doc-preview-grant-registry'
+} from '../../main/browser/document-preview/doc-preview-grant-registry'
 import type { HostDocPreviewReadParams } from './host-file-methods'
 import {
   callHost,
