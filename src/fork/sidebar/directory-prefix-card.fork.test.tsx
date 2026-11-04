@@ -23,7 +23,7 @@ vi.mock('../../renderer/src/components/sidebar/WorktreeTitleInlineRename', () =>
 const { CARD_IDENTITY_PARTS } =
   await import('../../renderer/src/components/sidebar/workspace-card/card-identity-parts')
 
-const WORKTREE_PATH = '/Users/wencheng/work-log'
+const WORKTREE_PATH = '/tmp/orca-fixture/work-log'
 
 function drawTitle(overrides: { directoryLabel?: string; titleRenaming?: boolean }): string {
   const fields = {
