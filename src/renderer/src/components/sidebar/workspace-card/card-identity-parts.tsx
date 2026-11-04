@@ -2,6 +2,7 @@ import React from 'react'
 import { DetachedHeadBadge } from '@/components/DetachedHeadBadge'
 import { useWslHostDistro, WslHostMark } from '@/components/wsl-host-mark/WslHostMark'
 import { getWorktreeExecutionHostId } from '../../../../../shared/execution-host'
+import { renderWorktreeDirectoryPrefix } from '../../../../../shared/fork-hooks/sidebar-chrome'
 import CacheTimer from '../CacheTimer'
 import { TruncatedSidebarLabel } from '../truncated-sidebar-label'
 import type { WorktreeCardController } from '../use-worktree-card-controller'
@@ -33,7 +34,7 @@ const withoutTitleTooltip = (title: React.ReactElement): React.ReactElement => t
 
 function title(props: Readonly<Record<string, unknown>>, card: Card): React.ReactNode {
   const { affiliateListMode, worktree } = card
-  return (
+  const titleField = (
     <WorktreeTitleInlineRename
       displayName={card.visibleCardTitle}
       disabled={card.isDeleting || affiliateListMode}
@@ -52,6 +53,17 @@ function title(props: Readonly<Record<string, unknown>>, card: Card): React.Reac
         affiliateListMode ? undefined : () => card.setRenamingWorktreeId(null)
       }
     />
+  )
+  // 卡片模板替换了 WorktreeCardHeader 之后，主机目录行的项目名只剩数据、不再上屏。
+  // 重命名时让出标题位置；平时把 directory prefix 画在分支名前面，和旧标题栏一致。
+  if (card.titleRenaming) {
+    return titleField
+  }
+  return (
+    <>
+      {renderWorktreeDirectoryPrefix(card.directoryLabel, worktree.path)}
+      {titleField}
+    </>
   )
 }
 
