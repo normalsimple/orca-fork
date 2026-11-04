@@ -26,7 +26,7 @@ const { CARD_IDENTITY_PARTS } =
 const WORKTREE_PATH = '/Users/wencheng/work-log'
 
 function drawTitle(overrides: { directoryLabel?: string; titleRenaming?: boolean }): string {
-  const card = {
+  const fields = {
     affiliateListMode: false,
     directoryLabel: overrides.directoryLabel,
     titleRenaming: overrides.titleRenaming === true,
@@ -39,7 +39,9 @@ function drawTitle(overrides: { directoryLabel?: string; titleRenaming?: boolean
     renameRowKey: undefined,
     setRenamingWorktreeId: vi.fn(),
     worktree: { id: 'repo::work-log', path: WORKTREE_PATH }
-  } as unknown as WorktreeCardController
+  }
+  // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: 标题零件只读这些字段。卡片元素的上下文类型是完整 controller，这个夹具不挂整张卡。
+  const card = fields as unknown as WorktreeCardController
   return renderToStaticMarkup(
     <>{CARD_IDENTITY_PARTS.Title.render({ dimWhenRead: true, tooltip: false }, [], card)}</>
   )
