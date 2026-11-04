@@ -13,7 +13,7 @@ import {
   Trash2
 } from 'lucide-react'
 import { toast } from 'sonner'
-import { renderHostSectionMenuExtra } from '../../../../shared/fork-hooks/sidebar-chrome'
+import { renderHostSectionMenuExtra } from '../../../../../../shared/fork-hooks/sidebar-chrome'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,

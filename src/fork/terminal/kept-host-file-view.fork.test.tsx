@@ -88,6 +88,8 @@ describe('a server file another workspace holds', () => {
 
     expect(runtimeEnvironmentCallMock.mock.calls.map((call) => call[0].params)).toEqual([
       { worktree: 'id:wt-feat', pathText: SHARED, crossWorkspace: true },
+      // 上游先在当前工作区探一次授权；探不到能直接打开的授权时，fork 再要只读授权。
+      { worktree: 'id:wt-feat', pathText: SHARED },
       { worktree: 'id:wt-feat', pathText: SHARED }
     ])
     expect(activateAndRevealWorkspace).toHaveBeenCalledWith('wt-feat', {

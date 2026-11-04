@@ -20,8 +20,13 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock('@/lib/connection-context', () => ({
   getConnectionIdForFile: vi.fn(() => null),
+  getConnectionIdFromState: vi.fn(() => null),
   isWorktreeConnectionResolved: vi.fn(() => true)
 }))
+vi.mock('@/runtime/runtime-terminal-artifact-grant', async (importOriginal) => {
+  const actual = await importOriginal<Record<string, unknown>>()
+  return { ...actual, hostOpensGrantedFilesInPlace: vi.fn(async () => false) }
+})
 vi.mock('@/store', () => ({
   useAppStore: Object.assign(
     (select: (state: ReturnType<typeof mocks.getState>) => unknown) => select(mocks.getState()),

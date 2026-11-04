@@ -1,7 +1,7 @@
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import type { WorktreeGroupBy } from '../../../../../../shared/sidebar-list/row-types'
 import { GROUP_BY_OPTIONS } from './sidebar-workspace-option-items'
-import { useSidebarGroupByOptions } from '../../../../fork/sidebar/mode-labels'
+import { useSidebarGroupByOptions } from '../../../../../../fork/sidebar/mode-labels'
 
 type SidebarGroupByToggleProps = {
   groupBy: WorktreeGroupBy

@@ -14,7 +14,7 @@ import type {
   DeleteWorktreeDirtyChangePreview
 } from './delete-worktree-dirty-change-counts'
 import { translate } from '@/i18n/i18n'
-import { keptLineageText } from '../../../../shared/fork-hooks/workspace-folder-delete'
+import { keptLineageText } from '../../../../../../shared/fork-hooks/workspace-folder-delete'
 
 type DeleteWorktreeLineageNoticeProps = {
   descendants: readonly Worktree[]

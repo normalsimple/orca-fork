@@ -10,8 +10,8 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { renderSidebarContextMenu } from '../../../../shared/fork-hooks/sidebar-chrome'
-import { worktreeMenuGroups } from '../../../../shared/fork-hooks/worktree-menu-groups'
+import { renderSidebarContextMenu } from '../../../../../../shared/fork-hooks/sidebar-chrome'
+import { worktreeMenuGroups } from '../../../../../../shared/fork-hooks/worktree-menu-groups'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import {
   Copy,
