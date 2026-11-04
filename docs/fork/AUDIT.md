@@ -2,7 +2,7 @@
 
 由 `python3 fork/scripts/generate-audit.py` 生成（`--check` 只比对）。主表是和上游基点（`src/fork/skills-source-commit.ts` 记录的提交）不同的每个文件，一个不多一个不少；末尾另列已恢复成上游或已删除的文件，它们必须和基点相同。`src/fork/audit-table.fork.test.ts` 检查表和仓库一致。
 
-共 458 行：delete 44，keep 390，revert-to-upstream 24。上游文件（不含 fork 目录）里的 fork 改动 817 行，涉及 151 个文件。
+共 459 行：delete 44，keep 391，revert-to-upstream 24。上游文件（不含 fork 目录）里的 fork 改动 817 行，涉及 151 个文件。
 
 | 文件                                                                                                | 功能                        | 决定 | 原因                                                                                                                                              |
 | --------------------------------------------------------------------------------------------------- | --------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -162,6 +162,7 @@
 | `src/fork/sidebar/host-directory-sections.tsx`                                                      | SB 侧栏                     | keep | fork 自有文件                                                                                                                                     |
 | `src/fork/sidebar/host-directory-worktree-list.fork.test.tsx`                                       | SB 侧栏                     | keep | fork 自有文件（测试）                                                                                                                             |
 | `src/fork/sidebar/install-row-plan.tsx`                                                             | SB 侧栏                     | keep | fork 自有文件                                                                                                                                     |
+| `src/fork/sidebar/lineage-fixture-state.tsx`                                                        | SB 侧栏                     | keep | fork 自有文件                                                                                                                                     |
 | `src/fork/sidebar/manual-order.ts`                                                                  | SB 侧栏                     | keep | fork 自有文件                                                                                                                                     |
 | `src/fork/sidebar/membership.ts`                                                                    | SB 侧栏                     | keep | fork 自有文件                                                                                                                                     |
 | `src/fork/sidebar/menu-groups.fork.test.tsx`                                                        | SB 侧栏                     | keep | fork 自有文件（测试）                                                                                                                             |
