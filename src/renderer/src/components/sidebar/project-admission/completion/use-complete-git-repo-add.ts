@@ -1,0 +1,85 @@
+import { useCallback, useRef } from 'react'
+import { useAppStore } from '@/store/index'
+import { track } from '@/lib/telemetry'
+import type { AddRepoExistingWorkspaceSource } from '../../../../../../shared/telemetry-events'
+import {
+  buildAddRepoExistingWorkspacesTelemetry,
+  shouldTrackAddRepoExistingWorkspacesDetected
+} from '../dialog/add-repo-existing-workspaces-telemetry'
+import { compareWorktreeDisplayName } from '@/lib/worktree-display-name-order'
+import { finishProjectAddWithDefaultCheckout } from './project-added-default-checkout'
+import type { ExecutionHostId } from '../../../../../../shared/execution-host'
+import { withForkPostImportHandoff } from '../../../../../../shared/fork-hooks/post-import'
+import { selectWorktreesByRepo } from '@/store/workspace-record-selectors'
+
+export type GitRepoAddOutcome = { importedProjectGroupId?: string }
+
+export type CompleteGitRepoAdd = (
+  repoId: string,
+  source: AddRepoExistingWorkspaceSource,
+  executionHostId?: ExecutionHostId,
+  outcome?: GitRepoAddOutcome
+) => Promise<void>
+
+type CompleteGitRepoAddOptions = {
+  closeModal: () => void
+  setHideDefaultBranchWorkspace: (hide: boolean) => void
+  /** Hosted Add Project keeps the composer open and selects the project after normal telemetry. */
+  finishProjectAdd?: CompleteGitRepoAdd
+}
+
+export function useCompleteGitRepoAdd({
+  closeModal,
+  setHideDefaultBranchWorkspace,
+  finishProjectAdd
+}: CompleteGitRepoAddOptions): CompleteGitRepoAdd {
+  const detectedTelemetryTrackedRef = useRef<Set<string>>(new Set())
+
+  const completeGitRepoAdd = useCallback(
+    async (
+      repoId: string,
+      source: AddRepoExistingWorkspaceSource,
+      executionHostId?: ExecutionHostId,
+      outcome?: GitRepoAddOutcome
+    ): Promise<void> => {
+      const worktrees = (selectWorktreesByRepo(useAppStore.getState())[repoId] ?? []).filter(
+        (worktree) =>
+          executionHostId === undefined ||
+          worktree.hostId === executionHostId ||
+          (!worktree.hostId && executionHostId === 'local')
+      )
+      const sortedWorktrees = [...worktrees].sort((a, b) => {
+        if (a.lastActivityAt !== b.lastActivityAt) {
+          return b.lastActivityAt - a.lastActivityAt
+        }
+        return compareWorktreeDisplayName(a, b)
+      })
+      const existingWorkspaceTelemetry = buildAddRepoExistingWorkspacesTelemetry(
+        source,
+        sortedWorktrees
+      )
+      if (
+        existingWorkspaceTelemetry &&
+        shouldTrackAddRepoExistingWorkspacesDetected(existingWorkspaceTelemetry) &&
+        !detectedTelemetryTrackedRef.current.has(repoId)
+      ) {
+        detectedTelemetryTrackedRef.current.add(repoId)
+        track('add_repo_existing_workspaces_detected', existingWorkspaceTelemetry)
+      }
+      if (finishProjectAdd) {
+        await finishProjectAdd(repoId, source, executionHostId, outcome)
+        return
+      }
+      await finishProjectAddWithDefaultCheckout({
+        repoId,
+        source,
+        executionHostId,
+        closeModal,
+        setHideDefaultBranchWorkspace
+      })
+    },
+    [closeModal, finishProjectAdd, setHideDefaultBranchWorkspace]
+  )
+  // fork: the post-import handoff runs after this, even when it throws.
+  return withForkPostImportHandoff(completeGitRepoAdd)
+}

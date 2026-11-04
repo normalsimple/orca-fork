@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { shallow } from 'zustand/shallow'
 import { persistedUIValuesEqual } from '../../../../../../shared/persisted-ui-equality'
 import { useShallow } from 'zustand/react/shallow'
-import { useAppStore } from '@/store'
+import { useAppStore } from '@/store/index'
 import type { AppState } from '@/store/types'
 import type { Repo } from '../../../../../../shared/repo-types'
 import {
@@ -35,7 +35,7 @@ import {
   buildSidebarHostOptions,
   sidebarHostSemantics,
   createSidebarHostLabelsSelector
-} from '../../sidebar-host-options'
+} from '../controls/sidebar-host-options'
 import { selectPendingWorktreeCreationKeys } from './pending-worktree-creation-keys'
 import { sidebarModeRetainsHostHeaders } from '../../../../../../shared/fork-hooks/sidebar-group-mode'
 import { useSidebarGroupModeLabelsVersion } from '../../../../../../fork/sidebar/mode-labels'
@@ -147,6 +147,7 @@ export function useSidebarSectionRows(args: SectionRowsArgs) {
     () =>
       planSidebarRows({
         groupBy: args.groupBy,
+        sortBy: args.sortBy,
         worktrees,
         repoMap,
         repoOfWorktree,
@@ -171,6 +172,7 @@ export function useSidebarSectionRows(args: SectionRowsArgs) {
       }),
     [
       args.groupBy,
+      args.sortBy,
       worktrees,
       repoMap,
       repoOfWorktree,

@@ -9,7 +9,7 @@ import {
 } from '../execution-host'
 import type { ExecutionHostHealth } from '../execution-host-registry'
 import type { RuntimeCompatVerdict } from '../protocol-compat'
-import type { RuntimeHostBlockedReason } from '../runtime-host-status'
+import type { RuntimeHostBlockedReason } from '../remote-runtime/host-status/runtime-host-status'
 import type { SshConnectionStatus } from '../ssh-types'
 import { forkHeaderHostId } from '../fork-hooks/sidebar-group-mode'
 import type { Row } from './row-types'
