@@ -1,7 +1,7 @@
 // fork: 删除项目群组对话框的附加选项。未注册时不渲染，删除参数保持原值。
 
 import type { ReactNode } from 'react'
-import type { FolderWorkspace } from '../folder-workspace-types'
+import type { FolderWorkspace } from '../folder-workspaces/folder-workspace-types'
 import type { PersistedState } from '../persisted-state-types'
 import type { ProjectGroup } from '../project-group-types'
 

@@ -133,6 +133,7 @@ function hostDirectoryRows(args: {
   return planSidebarRows({
     // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: host-directory is a registered mode id, not one of the built-in literals.
     groupBy: HOST_DIRECTORY_GROUP_BY as WorktreeGroupBy,
+    sortBy: args.sortBy ?? 'recent',
     worktrees: args.worktrees,
     repoMap,
     ...(args.repoOfWorktree ? { repoOfWorktree: args.repoOfWorktree } : {}),

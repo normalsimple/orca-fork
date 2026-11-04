@@ -75,6 +75,7 @@ describe('pinned header label on a language switch', () => {
       useSidebarSectionRows({
         // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: host-directory is a registered mode id, not one of the built-in literals.
         groupBy: HOST_DIRECTORY_GROUP_BY as WorktreeGroupBy,
+        sortBy: 'recent',
         projectOrderBy: 'manual',
         pinnedDisplayPolicy: 'single-location',
         defaultHostId: 'local',
