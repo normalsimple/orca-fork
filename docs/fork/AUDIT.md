@@ -2,7 +2,7 @@
 
 由 `python3 fork/scripts/generate-audit.py` 生成（`--check` 只比对）。主表是和上游基点（`src/fork/skills-source-commit.ts` 记录的提交）不同的每个文件，一个不多一个不少；末尾另列已恢复成上游或已删除的文件，它们必须和基点相同。`src/fork/audit-table.fork.test.ts` 检查表和仓库一致。
 
-共 459 行：delete 44，keep 391，revert-to-upstream 24。上游文件（不含 fork 目录）里的 fork 改动 817 行，涉及 151 个文件。
+共 459 行：delete 46，keep 389，revert-to-upstream 24。上游文件（不含 fork 目录）里的 fork 改动 813 行，涉及 151 个文件。
 
 | 文件                                                                                                | 功能                        | 决定 | 原因                                                                                                                                              |
 | --------------------------------------------------------------------------------------------------- | --------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -27,7 +27,7 @@
 | `docs/fork/parity/sidebar.md`                                                                       | SB 侧栏                     | keep | fork 自有文件                                                                                                                                     |
 | `docs/fork/parity/ssh-import.md`                                                                    | SSH 状态                    | keep | fork 自有文件                                                                                                                                     |
 | `docs/fork/skill-update-flow.md`                                                                    | SKL 技能 pin                | keep | fork 自有文件                                                                                                                                     |
-| `electron.vite.config.ts`                                                                           | INFRA 登记/工程/文档        | keep | 上游文件，fork 改动 6 行。沙箱 preload 内联 Rolldown runtime 的插件；渲染进程的 ORCA_BUILD_COMMIT 取 skill pin（上游渲染进程只用它拼 skills add） |
+| `electron.vite.config.ts`                                                                           | INFRA 登记/工程/文档        | keep | 上游文件，fork 改动 2 行。渲染进程的 ORCA_BUILD_COMMIT 取 skill pin（上游渲染进程只用它拼 skills add）                                            |
 | `fork/push_github.sh`                                                                               | INFRA 登记/工程/文档        | keep | fork 自有文件                                                                                                                                     |
 | `fork/scripts/build-orcad-linux-prebuilds.sh`                                                       | F036 orcad 模板             | keep | fork 自有文件                                                                                                                                     |
 | `fork/scripts/check-commit-identity.test.sh`                                                        | INFRA 登记/工程/文档        | keep | fork 自有文件（测试）                                                                                                                             |
@@ -117,8 +117,6 @@
 | `src/fork/main/reused-path-desktop-create.fork.test.ts`                                             | F048 删除工作区             | keep | fork 自有文件（测试）                                                                                                                             |
 | `src/fork/main/reused-path-unarchive.fork.test.ts`                                                  | F048 删除工作区             | keep | fork 自有文件（测试）                                                                                                                             |
 | `src/fork/main/rpc-methods.ts`                                                                      | INFRA 登记/工程/文档        | keep | fork 自有文件                                                                                                                                     |
-| `src/fork/main/sandboxed-preload-runtime.fork.test.ts`                                              | INFRA 登记/工程/文档        | keep | fork 自有文件（测试）                                                                                                                             |
-| `src/fork/main/sandboxed-preload-runtime.ts`                                                        | INFRA 登记/工程/文档        | keep | fork 自有文件                                                                                                                                     |
 | `src/fork/main/startup/browser-session-proxy.fork.test.ts`                                          | AIV 历史会话                | keep | fork 自有文件（测试）                                                                                                                             |
 | `src/fork/main/startup/browser-session-proxy.ts`                                                    | AIV 历史会话                | keep | fork 自有文件                                                                                                                                     |
 | `src/fork/main/updater-background-class.ts`                                                         | UPD 应用内更新              | keep | fork 自有文件                                                                                                                                     |
@@ -400,73 +398,75 @@
 
 ## 已恢复成上游或已删除
 
-| 文件                                                                                 | 功能                      | 决定               | 原因                                                             |
-| ------------------------------------------------------------------------------------ | ------------------------- | ------------------ | ---------------------------------------------------------------- |
-| `config/scripts/compact-packaged-orcad-ripgrep.cjs`                                  | F036 orcad 模板           | revert-to-upstream | F036 在上游校验函数的默认参数里收窄目标                          |
-| `config/scripts/packaged-orcad-browser.cjs`                                          | F036 orcad 模板           | revert-to-upstream | F036 同上                                                        |
-| `config/scripts/vitest-node-runtime-files.mjs`                                       | INFRA 登记/工程/文档      | revert-to-upstream | SQLite 扫描已经找到两个 fork 测试                                |
-| `fork/scripts/release-personal-orca.mjs`                                             | INFRA 登记/工程/文档      | delete             | Mac 上从未使用                                                   |
-| `src/cli/skills-source-commit.ts`                                                    | SKL 技能 pin              | delete             | SKL pin 移到 src/fork/skills-source-commit.ts                    |
-| `src/fork/git-workspace/constants.ts`                                                | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/git-workspace/params.ts`                                                   | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/git-workspace/types.ts`                                                    | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/main/git-workspace/capability.fork.test.ts`                                | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/main/git-workspace/compare-target-store.ts`                                | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/main/git-workspace/compare-target.fork.test.ts`                            | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/main/git-workspace/compare-target.ts`                                      | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/main/git-workspace/discover.fork.test.ts`                                  | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/main/git-workspace/discover.ts`                                            | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/main/git-workspace/guard.fork.test.ts`                                     | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/main/git-workspace/guard.ts`                                               | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/main/git-workspace/methods.fork.test.ts`                                   | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/main/git-workspace/methods.ts`                                             | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/main/git-workspace/reads.ts`                                               | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/main/git-workspace/root-change-list.fork.test.ts`                          | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/main/git-workspace/root-status-entries.ts`                                 | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/main/git-workspace/route-guard.fork.test.ts`                               | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/main/orcad-serve-bind.ts`                                                  | F036 orcad 模板           | delete             | orcad-entry 恢复上游两行                                         |
-| `src/fork/source-control/branch-compare-due.fork.test.tsx`                           | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/source-control/compare-picker.tsx`                                         | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/source-control/desktop-git-route.ts`                                       | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/source-control/diff-loader.fork.test.tsx`                                  | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/source-control/diff-read.tsx`                                              | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/source-control/discovered-repos.ts`                                        | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/source-control/i18n.fork.test.tsx`                                         | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/source-control/poll-base-advance.fork.test.tsx`                            | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/source-control/poll-workspace-repos.tsx`                                   | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/source-control/register.tsx`                                               | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/source-control/repo-order.ts`                                              | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/source-control/repo-section.tsx`                                           | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/source-control/rpc-client.tsx`                                             | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/source-control/scope-memory.tsx`                                           | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/source-control/scope-panel.tsx`                                            | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/source-control/scope-switch.fork.test.tsx`                                 | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/source-control/workspace-groups.fork.test.tsx`                             | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/source-control/workspace-view.tsx`                                         | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/fork/ssh/ssh-status-labels.tsx`                                                 | SSH 状态                  | delete             | 没有调用方；SSH 状态名用上游 settings.ssh.status.*               |
-| `src/main/browser/cookies/sources/browser-cookie-detection.ts`                       | F049 Cookie 导入          | revert-to-upstream | F049 登记时把 Ego Lite 追加进 CHROMIUM_BROWSERS                  |
-| `src/main/browser/cookies/sources/browser-cookie-key.ts`                             | F049 Cookie 导入          | revert-to-upstream | F049 同上                                                        |
-| `src/main/external-editor-launch.ts`                                                 | INFRA 登记/工程/文档      | revert-to-upstream | 上游 #33877 之后没有 cursor:// URL 启动                          |
-| `src/main/host/electron-secret-store.ts`                                             | F038 密钥存储             | revert-to-upstream | F038 只在 preflight 一行选择密钥库                               |
-| `src/main/host/safe-storage-availability.ts`                                         | F038 密钥存储             | revert-to-upstream | F038 登记时把 guardedSafeStorage 路由到文件密钥库                |
-| `src/main/remote-ssh-editor-launch.ts`                                               | SSH 状态                  | revert-to-upstream | 上游 #33877 用 CLI 打开 SSH 上的 Cursor/VS Code/Zed              |
-| `src/main/runtime/workspaces/workspace-selectors.ts`                                 | SB 侧栏/工作区            | revert-to-upstream | 只多了一行注释                                                   |
-| `src/main/updater-fork-background.ts`                                                | UPD 应用内更新            | delete             | UPD 接线移到 src/fork/main/updater-background-wiring.ts          |
-| `src/main/updater/updater-build-selection.ts`                                        | UPD 应用内更新            | revert-to-upstream | UPD resolveTargetBuild 已拒绝上游 tag                            |
-| `src/main/updater/updater-menu-checks.ts`                                            | UPD 应用内更新            | revert-to-upstream | UPD 的 skip 状态在运行更新器的进程里不会出现                     |
-| `src/main/updater/updater-scheduling.ts`                                             | UPD 应用内更新            | revert-to-upstream | UPD 同上                                                         |
-| `src/renderer/src/assets/terminal.css`                                               | INFRA 登记/工程/文档      | revert-to-upstream | F050 的规则由 fork 注入                                          |
-| `src/renderer/src/components/browser-pane/workspace-doc/HtmlDocPreview.tsx`          | F051 文档预览免授权       | revert-to-upstream | F051 之后文件夹提示不再出现，提示里的目录标签钩子已删            |
-| `src/renderer/src/components/editor/useEditorPanelDiffContentLoader.ts`              | F047 工作区仓库（已移除） | revert-to-upstream | F047 已删除，diff 读取回到上游                                   |
-| `src/renderer/src/components/native-chat/StructuredAgentSessionPaneOverlayLayer.tsx` | INFRA 登记/工程/文档      | revert-to-upstream | F050 智能体会话盖层分支从未生效，已删除                          |
-| `src/renderer/src/components/right-sidebar/local-port-section.tsx`                   | F021/F043 端口转发        | revert-to-upstream | F021/F043 的 Forward 不再穿过分区传参                            |
-| `src/renderer/src/components/right-sidebar/source-control/panel/panel.tsx`           | F047 工作区仓库（已移除） | revert-to-upstream | F047 已删除，源代码管理回到上游单仓库                            |
-| `src/renderer/src/components/sidebar/WorktreeOpenInMenu.tsx`                         | SB 侧栏                   | revert-to-upstream | 上游 #33877 覆盖 Open in 的远端启用                              |
-| `src/renderer/src/components/terminal-pane/use-covered-terminal-focus-handoff.ts`    | F050 聊天盖层画布         | revert-to-upstream | F050 改成 src/fork/terminal/covered-terminal-canvas.tsx 的样式表 |
-| `src/renderer/src/i18n/locales/en.json`                                              | I18N 界面中文             | revert-to-upstream | fork 键在 src/fork/i18n/en.json                                  |
-| `src/renderer/src/lib/agent-feature-install-commands.ts`                             | INFRA 登记/工程/文档      | revert-to-upstream | SKL 渲染进程的 ORCA_BUILD_COMMIT 由构建配置给上游基点            |
-| `src/shared/fork-hooks/git-workspace-capability.ts`                                  | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/shared/fork-hooks/source-control-scope.ts`                                      | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/shared/fork-hooks/workspace-repository-diff.ts`                                 | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
-| `src/shared/protocol-version.ts`                                                     | F047 工作区仓库（已移除） | revert-to-upstream | F047 已删除，不再广播工作区仓库能力                              |
-| `tests/e2e/fork-f047-workspace-repos.spec.ts`                                        | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                            |
+| 文件                                                                                 | 功能                      | 决定               | 原因                                                                                 |
+| ------------------------------------------------------------------------------------ | ------------------------- | ------------------ | ------------------------------------------------------------------------------------ |
+| `config/scripts/compact-packaged-orcad-ripgrep.cjs`                                  | F036 orcad 模板           | revert-to-upstream | F036 在上游校验函数的默认参数里收窄目标                                              |
+| `config/scripts/packaged-orcad-browser.cjs`                                          | F036 orcad 模板           | revert-to-upstream | F036 同上                                                                            |
+| `config/scripts/vitest-node-runtime-files.mjs`                                       | INFRA 登记/工程/文档      | revert-to-upstream | SQLite 扫描已经找到两个 fork 测试                                                    |
+| `fork/scripts/release-personal-orca.mjs`                                             | INFRA 登记/工程/文档      | delete             | Mac 上从未使用                                                                       |
+| `src/cli/skills-source-commit.ts`                                                    | SKL 技能 pin              | delete             | SKL pin 移到 src/fork/skills-source-commit.ts                                        |
+| `src/fork/git-workspace/constants.ts`                                                | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/git-workspace/params.ts`                                                   | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/git-workspace/types.ts`                                                    | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/main/git-workspace/capability.fork.test.ts`                                | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/main/git-workspace/compare-target-store.ts`                                | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/main/git-workspace/compare-target.fork.test.ts`                            | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/main/git-workspace/compare-target.ts`                                      | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/main/git-workspace/discover.fork.test.ts`                                  | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/main/git-workspace/discover.ts`                                            | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/main/git-workspace/guard.fork.test.ts`                                     | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/main/git-workspace/guard.ts`                                               | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/main/git-workspace/methods.fork.test.ts`                                   | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/main/git-workspace/methods.ts`                                             | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/main/git-workspace/reads.ts`                                               | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/main/git-workspace/root-change-list.fork.test.ts`                          | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/main/git-workspace/root-status-entries.ts`                                 | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/main/git-workspace/route-guard.fork.test.ts`                               | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/main/orcad-serve-bind.ts`                                                  | F036 orcad 模板           | delete             | orcad-entry 恢复上游两行                                                             |
+| `src/fork/main/sandboxed-preload-runtime.fork.test.ts`                               | INFRA 登记/工程/文档      | delete             | 上游 createSandboxedScriptBundlesPlugin 单独打包沙箱 preload，主包里不再有这两个入口 |
+| `src/fork/main/sandboxed-preload-runtime.ts`                                         | INFRA 登记/工程/文档      | delete             | 上游 createSandboxedScriptBundlesPlugin 单独打包沙箱 preload，主包里不再有这两个入口 |
+| `src/fork/source-control/branch-compare-due.fork.test.tsx`                           | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/source-control/compare-picker.tsx`                                         | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/source-control/desktop-git-route.ts`                                       | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/source-control/diff-loader.fork.test.tsx`                                  | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/source-control/diff-read.tsx`                                              | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/source-control/discovered-repos.ts`                                        | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/source-control/i18n.fork.test.tsx`                                         | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/source-control/poll-base-advance.fork.test.tsx`                            | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/source-control/poll-workspace-repos.tsx`                                   | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/source-control/register.tsx`                                               | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/source-control/repo-order.ts`                                              | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/source-control/repo-section.tsx`                                           | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/source-control/rpc-client.tsx`                                             | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/source-control/scope-memory.tsx`                                           | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/source-control/scope-panel.tsx`                                            | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/source-control/scope-switch.fork.test.tsx`                                 | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/source-control/workspace-groups.fork.test.tsx`                             | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/source-control/workspace-view.tsx`                                         | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/fork/ssh/ssh-status-labels.tsx`                                                 | SSH 状态                  | delete             | 没有调用方；SSH 状态名用上游 settings.ssh.status.*                                   |
+| `src/main/browser/cookies/sources/browser-cookie-detection.ts`                       | F049 Cookie 导入          | revert-to-upstream | F049 登记时把 Ego Lite 追加进 CHROMIUM_BROWSERS                                      |
+| `src/main/browser/cookies/sources/browser-cookie-key.ts`                             | F049 Cookie 导入          | revert-to-upstream | F049 同上                                                                            |
+| `src/main/external-editor-launch.ts`                                                 | INFRA 登记/工程/文档      | revert-to-upstream | 上游 #33877 之后没有 cursor:// URL 启动                                              |
+| `src/main/host/electron-secret-store.ts`                                             | F038 密钥存储             | revert-to-upstream | F038 只在 preflight 一行选择密钥库                                                   |
+| `src/main/host/safe-storage-availability.ts`                                         | F038 密钥存储             | revert-to-upstream | F038 登记时把 guardedSafeStorage 路由到文件密钥库                                    |
+| `src/main/remote-ssh-editor-launch.ts`                                               | SSH 状态                  | revert-to-upstream | 上游 #33877 用 CLI 打开 SSH 上的 Cursor/VS Code/Zed                                  |
+| `src/main/runtime/workspaces/workspace-selectors.ts`                                 | SB 侧栏/工作区            | revert-to-upstream | 只多了一行注释                                                                       |
+| `src/main/updater-fork-background.ts`                                                | UPD 应用内更新            | delete             | UPD 接线移到 src/fork/main/updater-background-wiring.ts                              |
+| `src/main/updater/updater-build-selection.ts`                                        | UPD 应用内更新            | revert-to-upstream | UPD resolveTargetBuild 已拒绝上游 tag                                                |
+| `src/main/updater/updater-menu-checks.ts`                                            | UPD 应用内更新            | revert-to-upstream | UPD 的 skip 状态在运行更新器的进程里不会出现                                         |
+| `src/main/updater/updater-scheduling.ts`                                             | UPD 应用内更新            | revert-to-upstream | UPD 同上                                                                             |
+| `src/renderer/src/assets/terminal.css`                                               | INFRA 登记/工程/文档      | revert-to-upstream | F050 的规则由 fork 注入                                                              |
+| `src/renderer/src/components/browser-pane/workspace-doc/HtmlDocPreview.tsx`          | F051 文档预览免授权       | revert-to-upstream | F051 之后文件夹提示不再出现，提示里的目录标签钩子已删                                |
+| `src/renderer/src/components/editor/useEditorPanelDiffContentLoader.ts`              | F047 工作区仓库（已移除） | revert-to-upstream | F047 已删除，diff 读取回到上游                                                       |
+| `src/renderer/src/components/native-chat/StructuredAgentSessionPaneOverlayLayer.tsx` | INFRA 登记/工程/文档      | revert-to-upstream | F050 智能体会话盖层分支从未生效，已删除                                              |
+| `src/renderer/src/components/right-sidebar/local-port-section.tsx`                   | F021/F043 端口转发        | revert-to-upstream | F021/F043 的 Forward 不再穿过分区传参                                                |
+| `src/renderer/src/components/right-sidebar/source-control/panel/panel.tsx`           | F047 工作区仓库（已移除） | revert-to-upstream | F047 已删除，源代码管理回到上游单仓库                                                |
+| `src/renderer/src/components/sidebar/WorktreeOpenInMenu.tsx`                         | SB 侧栏                   | revert-to-upstream | 上游 #33877 覆盖 Open in 的远端启用                                                  |
+| `src/renderer/src/components/terminal-pane/use-covered-terminal-focus-handoff.ts`    | F050 聊天盖层画布         | revert-to-upstream | F050 改成 src/fork/terminal/covered-terminal-canvas.tsx 的样式表                     |
+| `src/renderer/src/i18n/locales/en.json`                                              | I18N 界面中文             | revert-to-upstream | fork 键在 src/fork/i18n/en.json                                                      |
+| `src/renderer/src/lib/agent-feature-install-commands.ts`                             | INFRA 登记/工程/文档      | revert-to-upstream | SKL 渲染进程的 ORCA_BUILD_COMMIT 由构建配置给上游基点                                |
+| `src/shared/fork-hooks/git-workspace-capability.ts`                                  | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/shared/fork-hooks/source-control-scope.ts`                                      | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/shared/fork-hooks/workspace-repository-diff.ts`                                 | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
+| `src/shared/protocol-version.ts`                                                     | F047 工作区仓库（已移除） | revert-to-upstream | F047 已删除，不再广播工作区仓库能力                                                  |
+| `tests/e2e/fork-f047-workspace-repos.spec.ts`                                        | F047 工作区仓库（已移除） | delete             | F047 工作区仓库已删除                                                                |
