@@ -14,7 +14,7 @@ import {
   withManagedHost
 } from './helpers/orcad-managed-workspace'
 import { dismissTransientAnnouncement } from './helpers/ssh-config-host-picker'
-import { quotePosixShell } from '../../src/shared/shell-argument-quoting'
+import { quotePosixShell } from '../../src/shared/shell/launch/shell-argument-quoting'
 import { toRuntimeExecutionHostId, type ExecutionHostId } from '../../src/shared/execution-host'
 import { getWorktreeHostIdentity } from '../../src/shared/worktree/host-qualified-identity'
 import { forkShot, switchUiToEnglish } from './fork-managed-host-links'

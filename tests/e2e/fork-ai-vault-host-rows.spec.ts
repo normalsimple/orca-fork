@@ -10,7 +10,7 @@ import {
   skipUnlessManagedDockerHost,
   withManagedHost
 } from './helpers/orcad-managed-workspace'
-import { quotePosixShell } from '../../src/shared/shell-argument-quoting'
+import { quotePosixShell } from '../../src/shared/shell/launch/shell-argument-quoting'
 import { forkShot, switchUiToEnglish } from './fork-managed-host-links'
 
 skipUnlessManagedDockerHost()

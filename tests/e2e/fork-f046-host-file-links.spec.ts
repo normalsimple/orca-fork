@@ -9,7 +9,7 @@ import {
   skipUnlessManagedDockerHost,
   withManagedHost
 } from './helpers/orcad-managed-workspace'
-import { quotePosixShell } from '../../src/shared/shell-argument-quoting'
+import { quotePosixShell } from '../../src/shared/shell/launch/shell-argument-quoting'
 import { createPdfFindFixture } from './helpers/pdf-find-fixture'
 import { toRuntimeExecutionHostId } from '../../src/shared/execution-host'
 import { folderWorkspaceKey } from '../../src/shared/workspace-scope'
