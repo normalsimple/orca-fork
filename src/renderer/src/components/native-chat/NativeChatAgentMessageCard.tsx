@@ -5,7 +5,6 @@ import { AgentTypeIcon } from '@/lib/agent-type-icon'
 import { Button } from '@/components/ui/button'
 import { translate } from '@/i18n/i18n'
 import { cn } from '@/lib/utils'
-import type { CommentMarkdownLinkClickHandler } from '@/components/sidebar/CommentMarkdown'
 import type { RuntimeFileOperationArgs } from '@/runtime/runtime-file-client-types'
 import type { RuntimeClientTarget } from '../../../../shared/runtime-client-target'
 import type { NativeChatMessage } from '../../../../shared/native-chat/native-chat-types'
@@ -74,8 +73,6 @@ function CompactAgentMessageCard({
   message,
   from,
   runtimeContext,
-  onLinkClick,
-  allowFileUriLinks,
   textAttachmentContent,
   onRefolded
 }: React.ComponentProps<typeof PreviewAgentMessageCard>): React.JSX.Element {
@@ -174,8 +171,6 @@ function CompactAgentMessageCard({
                 variant="document"
                 className="text-sm"
                 renderCodeBlock={NativeChatCodeBlock}
-                onLinkClick={onLinkClick}
-                allowFileUriLinks={allowFileUriLinks}
               />
             )}
           />
@@ -193,16 +188,12 @@ function PreviewAgentMessageCard({
   message,
   from,
   runtimeContext,
-  onLinkClick,
-  allowFileUriLinks,
   textAttachmentContent,
   onRefolded
 }: {
   message: NativeChatMessage
   from: AgentMessageSource
   runtimeContext?: RuntimeFileOperationArgs | null
-  onLinkClick?: CommentMarkdownLinkClickHandler
-  allowFileUriLinks: boolean
   textAttachmentContent?: string
   onRefolded: () => void
 }): React.JSX.Element {
@@ -268,7 +259,8 @@ function PreviewAgentMessageCard({
           ref={clip}
           id={clipId}
           className={cn(
-            'overflow-hidden leading-6',
+            // List numbers hang left of the text; the clip spans the gap and padding so they stay whole.
+            '-mx-3 overflow-hidden px-3 leading-6',
             overflows && !disclosure.open && 'mask-b-from-[calc(100%-1.75rem)]'
           )}
           style={disclosure.open ? undefined : { maxHeight: `${AGENT_MESSAGE_FOLDED_LINES}lh` }}
@@ -289,8 +281,6 @@ function PreviewAgentMessageCard({
                 variant="document"
                 className="text-sm"
                 renderCodeBlock={NativeChatCodeBlock}
-                onLinkClick={onLinkClick}
-                allowFileUriLinks={allowFileUriLinks}
               />
             )}
           />

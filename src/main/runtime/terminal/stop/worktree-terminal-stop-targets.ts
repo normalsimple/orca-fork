@@ -1,13 +1,16 @@
 import { setTimeout as delay } from 'node:timers/promises'
 import { OrcaRuntimeWithSleepResolvedWorktreeTerminals } from './worktree-terminal-sleep'
-import { setsEqual } from '../../runtime-worktree-binding-index'
-import type { RuntimeLeafRecord } from '../../runtime-terminal-state-records'
+import { setsEqual } from '../identity/runtime-worktree-binding-index'
+import type { RuntimeLeafRecord } from '../records/runtime-terminal-state-records'
 import { worktreeIdsEqual } from '../../../../shared/worktree/id'
-import { worktreePtyBelongsToHost, type WorktreePtyHostFence } from '../../worktree-pty-host-fence'
+import {
+  worktreePtyBelongsToHost,
+  type WorktreePtyHostFence
+} from '../../workspaces/removal/worktree-pty-host-fence'
 import { ORCA_LAYOUT_OWNER_IS_MAIN } from '../../../../shared/layout-owner-switch'
 import { mainHoldsTerminal } from '../surface/main-pane-verdict'
-import type { ResolvedWorktree } from '../../runtime-worktree-path-identity'
-import { PTY_CONTROLLER_LIST_TIMEOUT_MS } from '../../orca-runtime-postlude'
+import type { ResolvedWorktree } from '../../workspaces/catalog/runtime-worktree-path-identity'
+import { PTY_CONTROLLER_LIST_TIMEOUT_MS } from '../lifecycle/pty-controller-inventory-budget'
 import { appendMissingTargetWorktree } from '../../../../fork/main/folder-stop-target'
 
 // Overlapping inventories can invalidate post-stop checks; retry within a fresh list budget before calling confirmed exits unverifiable.

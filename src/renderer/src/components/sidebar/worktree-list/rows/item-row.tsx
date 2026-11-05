@@ -12,8 +12,6 @@ import { hasProjectHeaderChrome } from '../../../../../../shared/fork-hooks/side
 import { PINNED_GROUP_KEY } from '../../../../../../shared/sidebar-list/group-keys'
 import type { WorktreeGroupBy } from '../../../../../../shared/sidebar-list/row-types'
 import {
-  getFolderBackedRepoWorktreeCardContentIndent,
-  getFolderBackedRepoWorktreeCardSurfaceInset,
   getLineageChildrenInlineStyle,
   getWorktreeCardContentIndent,
   getWorktreeCardSurfaceInset,
@@ -29,7 +27,6 @@ import type { WorktreeRowDragState } from '../drag/row-state'
 export type WorktreeItemRowContext = {
   settings: AppState['settings']
   groupBy: WorktreeGroupBy
-  folderBackedProjectGroupIds: ReadonlySet<string>
   groupKeyByRowKey: ReadonlyMap<string, string>
   groupIndexByRowKey: ReadonlyMap<string, number>
   agentSendTargetWorktreeId: string | null
@@ -64,7 +61,7 @@ export type WorktreeItemRowContext = {
   onCardDragEnd: () => void
 }
 
-// Handle plain rows, inherited lineage offsets and folder-backed project geometry separately.
+// Handle plain rows and inherited lineage offsets separately.
 function getWorktreeItemRowGeometry(
   ctx: WorktreeItemRowContext,
   itemRow: WorktreeItemRow,
@@ -75,31 +72,13 @@ function getWorktreeItemRowGeometry(
     return { surfaceInset: LINEAGE_NESTED_ROW_SURFACE_INSET, cardContentIndent: 0 }
   }
 
-  const projectGroupId = itemRow.repo?.projectGroupId
-  const isFolderBackedRepoChild =
-    ctx.groupBy === 'repo' &&
-    Boolean(projectGroupId && ctx.folderBackedProjectGroupIds.has(projectGroupId))
-  const getCardContentIndent = (lineageDepth: number): number =>
-    isFolderBackedRepoChild
-      ? getFolderBackedRepoWorktreeCardContentIndent({
-          groupDepth: itemRow.groupDepth,
-          lineageDepth
-        })
-      : getWorktreeCardContentIndent({
-          isGrouped: ctx.groupBy !== 'none',
-          groupDepth: itemRow.groupDepth,
-          lineageDepth
-        })
-  const paddingLeft = getCardContentIndent(itemRow.depth)
-  const surfaceInset = isFolderBackedRepoChild
-    ? getFolderBackedRepoWorktreeCardSurfaceInset({
-        groupDepth: itemRow.groupDepth,
-        lineageDepth: itemRow.depth
-      })
-    : getWorktreeCardSurfaceInset({
-        isGrouped: ctx.groupBy !== 'none',
-        groupDepth: itemRow.groupDepth
-      })
+  const isGrouped = ctx.groupBy !== 'none'
+  const paddingLeft = getWorktreeCardContentIndent({
+    isGrouped,
+    groupDepth: itemRow.groupDepth,
+    lineageDepth: itemRow.depth
+  })
+  const surfaceInset = getWorktreeCardSurfaceInset({ isGrouped, groupDepth: itemRow.groupDepth })
   return {
     surfaceInset,
     cardContentIndent: Math.max(0, paddingLeft - surfaceInset)

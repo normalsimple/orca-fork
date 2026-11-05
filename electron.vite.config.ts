@@ -16,7 +16,7 @@ import { MAIN_BUILD_ENTRY_POINTS } from './config/build-plugins/main-build-entry
 import { createPlainNodeEntryGuardPlugin } from './config/build-plugins/plain-node-entry-guard'
 import { forkRendererDefines } from './src/fork/skills-source-commit'
 import { createDevServeConfig } from './config/build-plugins/dev-serve-config'
-import { resolveBuildSourceCommit } from './config/scripts/build-source-commit.mjs'
+import { resolveBuildSourceCommit } from './config/scripts/build-identity/build-source-commit.mjs'
 
 const BUNDLED_MAIN_DEPENDENCIES = new Set([
   'stream-json',
