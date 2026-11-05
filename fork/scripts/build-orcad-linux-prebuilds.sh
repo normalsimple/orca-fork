@@ -104,12 +104,12 @@ run_slot() {
   local image="$3"
   local floor_tools="$4"
   local unset_smoke_libs="$5"
-  if [[ "${FAST:-false}" == true ]] && node config/scripts/build-orcad-prebuilds.mjs --require-slots "$slot"; then
+  if [[ "${FAST:-false}" == true ]] && node config/scripts/orcad-distribution/prebuilds/build-orcad-prebuilds.mjs --require-slots "$slot"; then
     echo "已有 ${slot}，快速安装跳过。"
     return
   fi
   local runtime container_node container_cache
-  runtime="$(node config/scripts/build-orcad-prebuilds.mjs --slot="$slot" --print-runtime)"
+  runtime="$(node config/scripts/orcad-distribution/prebuilds/build-orcad-prebuilds.mjs --slot="$slot" --print-runtime)"
   container_node="$(translate_runtime_path "$runtime")"
   container_cache="$(container_cache_path)"
   # macOS 自带 bash 3.2。set -u 时不能展开空数组，可选的 docker 参数放在 $@。
@@ -152,13 +152,13 @@ if [ "$FLOOR_TOOLS" = 1 ]; then
   fi
 fi
 export PATH="$(dirname "$COMPAT_NODE"):$PATH"
-node config/scripts/build-orcad-prebuilds.mjs --slot="$ORCAD_SLOT"
-node config/scripts/build-orcad-prebuilds.mjs --require-slots "$ORCAD_SLOT"
+node config/scripts/orcad-distribution/prebuilds/build-orcad-prebuilds.mjs --slot="$ORCAD_SLOT"
+node config/scripts/orcad-distribution/prebuilds/build-orcad-prebuilds.mjs --require-slots "$ORCAD_SLOT"
 if [ "$UNSET_SMOKE_LIBS" = 1 ]; then
   # The image's devtoolset LD_LIBRARY_PATH must not stand in for a host C++ runtime.
-  env -u LD_LIBRARY_PATH node config/scripts/build-orcad-prebuilds.mjs --slot="$ORCAD_SLOT" --smoke
+  env -u LD_LIBRARY_PATH node config/scripts/orcad-distribution/prebuilds/build-orcad-prebuilds.mjs --slot="$ORCAD_SLOT" --smoke
 else
-  node config/scripts/build-orcad-prebuilds.mjs --slot="$ORCAD_SLOT" --smoke
+  node config/scripts/orcad-distribution/prebuilds/build-orcad-prebuilds.mjs --slot="$ORCAD_SLOT" --smoke
 fi
 for dir in out/orcad-prebuilds out/orcad-prebuild-work out/node-runtime-cache; do
   if [ -d "$dir" ]; then

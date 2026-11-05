@@ -14,7 +14,7 @@ The checks that gate a push and the daily merge:
 
 ```bash
 python3 fork/scripts/generate-audit.py --check
-node config/scripts/run-vitest.mjs run --config config/vitest.config.ts --maxWorkers=2 src/fork src/shared/fork-hooks
+node config/scripts/test-runtime/execution-policy/run-vitest.mjs run --config config/vitest.config.ts --maxWorkers=2 src/fork src/shared/fork-hooks
 ```
 
 `fork/push_github.sh` runs both before it pushes; the daily job's full list is in [DAILY.md](./DAILY.md). After a hook change also run `pnpm tc`, `pnpm exec oxlint <changed files>`, the upstream tests next to each upstream file the change touched, and `pnpm check:max-lines-ratchet` when the change added a `max-lines` first line and its entry in the fork block at the end of `config/max-lines-baseline.txt` (the rules are in FORK-CHANGES.md, 上游文件规则). `pnpm lint` on the fork is expected to fail only where upstream `main` itself fails. Run them with `ORCA_BACKGROUND_LAUNCH=1`.

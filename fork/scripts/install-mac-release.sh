@@ -89,7 +89,7 @@ assert_packaged_artifacts() {
     "require('./src/fork/packaging.cjs').assertLocalTemplateTargets(process.env.ORCA_TEMPLATE_MANIFEST)"
   # Same check electron-builder afterPack runs. The host slice can execute it.
   ORCA_PACKAGED_RESOURCES="$resources" node --input-type=commonjs -e '
-    const { verifySkillsCliRuntime } = require("./config/scripts/verify-skills-cli-runtime.cjs")
+    const { verifySkillsCliRuntime } = require("./config/scripts/runtime-verification/skills-cli/verify-skills-cli-runtime.cjs")
     const resources = process.env.ORCA_PACKAGED_RESOURCES
     verifySkillsCliRuntime(`${resources}/app.asar.unpacked/out`, resources)
   '
@@ -125,7 +125,7 @@ pnpm run build:release
 # registerForkMainModules, so an upstream template cannot be reused.
 # darwin-arm64 is compiled here. Linux glibc slots use the CI manylinux images.
 pnpm build:orcad-prebuilds
-SLOT="$(node config/scripts/build-orcad-prebuilds.mjs --print-slot)"
+SLOT="$(node config/scripts/orcad-distribution/prebuilds/build-orcad-prebuilds.mjs --print-slot)"
 if [[ "$SLOT" != darwin-arm64 ]]; then
   echo "本机 orcad 槽是 ${SLOT}；Linux SSH 包需要在 Apple Silicon 上编 darwin-arm64。" >&2
   exit 1
@@ -136,14 +136,14 @@ FAST="$FAST" bash fork/scripts/build-orcad-linux-prebuilds.sh
 # linux-x64-glibc217 is staged by the template script when that prebuild exists.
 # Leave it out of this list so the packager does not count the compat target twice.
 TEMPLATE_TARGETS='darwin-arm64,linux-x64-glibc,linux-arm64-glibc'
-node config/scripts/build-orcad-template.mjs --targets "$TEMPLATE_TARGETS"
+node config/scripts/orcad-distribution/template/build-orcad-template.mjs --targets "$TEMPLATE_TARGETS"
 # Fail before electron-builder if a slot (glibc 2.17 included) did not make it into the template.
 node -e "require('./src/fork/packaging.cjs').assertLocalTemplateTargets('out/orcad-template/orcad-template.json')"
 export ORCA_ORCAD_TEMPLATE_TARGETS="$TEMPLATE_TARGETS"
 export ORCA_REQUIRE_ORCAD_TEMPLATE=1
 
-node config/scripts/runtime-file-watcher-fault-harness.mjs
-ELECTRON_RUN_AS_NODE=1 pnpm exec electron config/scripts/runtime-file-watcher-fault-harness.mjs
+node config/scripts/diagnostics/runtime-watchers/runtime-file-watcher-fault-harness.mjs
+ELECTRON_RUN_AS_NODE=1 pnpm exec electron config/scripts/diagnostics/runtime-watchers/runtime-file-watcher-fault-harness.mjs
 
 # Local packager. It sets the version suffix and runs electron-builder for macOS.
 # Apple notarization and GitHub artifact upload stay off.
@@ -151,9 +151,9 @@ ELECTRON_RUN_AS_NODE=1 pnpm exec electron config/scripts/runtime-file-watcher-fa
 # and an empty target list keeps them. Naming dmg:arm64 and zip:arm64 builds one arch,
 # so afterPack never runs the x64 PTY check. That check starts the interactive shell
 # under Rosetta and timed out waiting for OK 42.
-node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON config/scripts/pinned-node-downloads.mjs darwin-arm64
+node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON config/scripts/orcad-distribution/prebuilds/pinned-node-downloads.mjs darwin-arm64
 pnpm run ensure:electron-runtime
-node config/scripts/build-mac-local.mjs dmg:arm64 zip:arm64
+node config/scripts/desktop-distribution/macos/build-mac-local.mjs dmg:arm64 zip:arm64
 
 ORCA_LOCAL_BUILD_VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$BUILT_APP/Contents/Info.plist")"
 assert_packaged_artifacts

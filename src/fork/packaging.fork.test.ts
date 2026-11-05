@@ -27,7 +27,7 @@ const packaging = require('./packaging.cjs') as {
 }
 // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: upstream's verifier exports this function.
 const { verifyPackagedOrcadTemplate } =
-  require('../../config/scripts/verify-packaged-orcad-template.cjs') as {
+  require('../../config/scripts/orcad-distribution/template/verify-packaged-orcad-template.cjs') as {
     verifyPackagedOrcadTemplate: (resourcesDir: string, targets?: string[]) => void
   }
 
@@ -70,7 +70,7 @@ describe('fork packaging', () => {
 
   it('narrows the default packaged-template check only while the env names targets', async () => {
     const { writeOrcadTemplateTestFixture } =
-      await import('../../config/scripts/orcad-template-test-fixture.mjs')
+      await import('../../config/scripts/orcad-distribution/template/orcad-template-test-fixture.mjs')
     const root = mkdtempSync(join(tmpdir(), 'fork-template-narrow-'))
     const saved = process.env.ORCA_ORCAD_TEMPLATE_TARGETS
     try {
@@ -109,14 +109,14 @@ describe('fork packaging', () => {
     expect(installer).not.toContain('--cpu=current,x64,arm64')
     expect(installer).toContain('pinned-node-downloads.mjs darwin-arm64')
     expect(installer).not.toContain('darwin-arm64 darwin-x64')
-    expect(installer).toContain('node config/scripts/build-mac-local.mjs dmg:arm64 zip:arm64')
+    expect(installer).toContain('node config/scripts/desktop-distribution/macos/build-mac-local.mjs dmg:arm64 zip:arm64')
     expect(installer).toContain('pnpm run build:release')
     expect(installer).toContain('pnpm build:orcad-prebuilds')
     expect(installer).toContain('build-orcad-prebuilds.mjs --print-slot')
     expect(installer).toContain('bash fork/scripts/build-orcad-linux-prebuilds.sh')
     expect(installer).toContain("TEMPLATE_TARGETS='darwin-arm64,linux-x64-glibc,linux-arm64-glibc'")
     expect(installer).toContain(
-      'node config/scripts/build-orcad-template.mjs --targets "$TEMPLATE_TARGETS"'
+      'node config/scripts/orcad-distribution/template/build-orcad-template.mjs --targets "$TEMPLATE_TARGETS"'
     )
     expect(installer).toContain('export ORCA_ORCAD_TEMPLATE_TARGETS="$TEMPLATE_TARGETS"')
     expect(installer).not.toMatch(/ORCA_ORCAD_TEMPLATE_TARGETS=.*glibc217/)
@@ -129,7 +129,7 @@ describe('fork packaging', () => {
     expect(installer.indexOf('export ORCA_PNPM_GLOBAL_VIRTUAL_STORE=0')).toBeLessThan(
       installer.indexOf('pnpm install --frozen-lockfile --cpu=arm64')
     )
-    const localBuild = readFileSync(resolve('config/scripts/build-mac-local.mjs'), 'utf8')
+    const localBuild = readFileSync(resolve('config/scripts/desktop-distribution/macos/build-mac-local.mjs'), 'utf8')
     expect(localBuild).toContain('...builderArgs')
     expect(localBuild).toContain('process.argv.slice(2)')
     expect(installer).toContain('orcad-template/orcad-template.json')

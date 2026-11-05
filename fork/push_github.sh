@@ -91,7 +91,7 @@ if ! python3 fork/scripts/generate-audit.py --check; then
   echo "docs/fork/AUDIT.md 已过期：运行 python3 fork/scripts/generate-audit.py 并提交，不推送" >&2
   exit 1
 fi
-if ! ORCA_BACKGROUND_LAUNCH=1 node config/scripts/run-vitest.mjs run --config config/vitest.config.ts \
+if ! ORCA_BACKGROUND_LAUNCH=1 node config/scripts/test-runtime/execution-policy/run-vitest.mjs run --config config/vitest.config.ts \
   --maxWorkers=2 src/fork src/shared/fork-hooks; then
   echo "fork 测试失败，不推送" >&2
   exit 1

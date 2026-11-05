@@ -256,11 +256,11 @@ run_check "rpc catalog" pnpm run verify:rpc-params-catalog
 run_check "skill guides" pnpm run verify:bundled-skill-guides
 run_check "skill manifest" pnpm run verify:skill-bundle-manifest
 run_check "localization catalog" pnpm run verify:localization-runtime-catalog
-run_check "fork tests" node config/scripts/run-vitest.mjs run --config config/vitest.config.ts --maxWorkers=2 src/fork src/shared/fork-hooks
+run_check "fork tests" node config/scripts/test-runtime/execution-policy/run-vitest.mjs run --config config/vitest.config.ts --maxWorkers=2 src/fork src/shared/fork-hooks
 run_check "typecheck" pnpm tc
 
 echo "daily-sync: linux orcad template"
-slot="$(node config/scripts/build-orcad-prebuilds.mjs --print-slot)"
+slot="$(node config/scripts/orcad-distribution/prebuilds/build-orcad-prebuilds.mjs --print-slot)"
 case "$slot" in
   linux-*) ;;
   *) fail_checks "orcad host slot is ${slot}; this check runs on Linux" ;;
@@ -277,7 +277,7 @@ if [[ "${ORCA_SYNC_DOCKER_SLOTS:-}" == 1 ]]; then
   run_check "orcad linux slots" bash fork/scripts/build-orcad-linux-prebuilds.sh
   template_targets="linux-x64-glibc,linux-arm64-glibc"
 fi
-run_check "orcad template" node config/scripts/build-orcad-template.mjs --targets "$template_targets"
+run_check "orcad template" node config/scripts/orcad-distribution/template/build-orcad-template.mjs --targets "$template_targets"
 node --input-type=commonjs -e '
   const { readFileSync } = require("node:fs")
   const manifest = JSON.parse(readFileSync("out/orcad-template/orcad-template.json", "utf8"))

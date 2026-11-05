@@ -17,7 +17,7 @@ export function findForkClosureLeaks(repoRoot = root) {
     return null
   }
   const { collectRuntimeClosure } = require(
-    join(repoRoot, 'config/scripts/verify-skills-cli-runtime.cjs')
+    join(repoRoot, 'config/scripts/runtime-verification/skills-cli/verify-skills-cli-runtime.cjs')
   )
   const closure = collectRuntimeClosure(outDir, repoRoot).map((file) =>
     relative(repoRoot, file).split(sep).join('/')
