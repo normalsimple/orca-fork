@@ -14,7 +14,7 @@ import {
   readPersistedState,
   testState
 } from '../../main/persistence/persistence-test-harness'
-import { listRuntimeFolderWorkspaces } from '../../main/runtime/runtime-worktree-filesystem'
+import { listRuntimeFolderWorkspaces } from '../../main/runtime/workspaces/catalog/runtime-worktree-filesystem'
 
 vi.mock('electron', () => ({
   app: { getPath: () => testState.dir },

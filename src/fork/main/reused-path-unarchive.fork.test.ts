@@ -15,7 +15,7 @@ vi.mock('../../main/git/worktrees/content-paths/worktree-shared-directories', ()
   resolveWorktreeSharedDirectories: vi.fn(async () => [])
 }))
 
-import { materializeRuntimeLocalWorktree } from '../../main/runtime/runtime-local-worktree-materialization'
+import { materializeRuntimeLocalWorktree } from '../../main/runtime/workspaces/creation/runtime-local-worktree-materialization'
 import { buildProvisionedRootMeta } from '../../main/workspaces/catalog/provisioned-root-checkout'
 import { createWorktreeCreateTimingRecorder } from '../../main/workspaces/creation/worktree-create-timing'
 import { registerReusedPathUnarchive } from '../../shared/fork-hooks/reused-path-unarchive'

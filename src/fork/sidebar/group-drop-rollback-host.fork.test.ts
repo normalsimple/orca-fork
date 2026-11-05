@@ -8,9 +8,9 @@ import type { WorktreeMeta } from '../../shared/worktree/meta-types'
 import type { Worktree } from '../../shared/worktree/types'
 import { WorktreeSet } from '../../shared/rpc-contract/worktree-params'
 import { mergeWorktreeMetaForWrite } from '../../main/persistence/loading-store/worktree-meta-write-normalization'
-import { updateRuntimeManagedWorktreeMetadata } from '../../main/runtime/runtime-managed-worktree-metadata'
+import { updateRuntimeManagedWorktreeMetadata } from '../../main/runtime/workspaces/metadata/runtime-managed-worktree-metadata'
 import type { RuntimeStore } from '../../main/runtime/runtime-store-contract'
-import type { ResolvedWorktree } from '../../main/runtime/runtime-worktree-path-identity'
+import type { ResolvedWorktree } from '../../main/runtime/workspaces/catalog/runtime-worktree-path-identity'
 
 const handlers = new Map<string, (...args: unknown[]) => unknown>()
 vi.mock('electron', () => ({

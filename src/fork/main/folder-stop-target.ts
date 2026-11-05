@@ -3,7 +3,7 @@
 import {
   includeTargetResolvedWorktree,
   type ResolvedWorktree
-} from '../../main/runtime/runtime-worktree-path-identity'
+} from '../../main/runtime/workspaces/catalog/runtime-worktree-path-identity'
 
 export function appendMissingTargetWorktree(
   worktrees: ResolvedWorktree[],

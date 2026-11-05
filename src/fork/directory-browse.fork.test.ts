@@ -6,7 +6,7 @@ import { chmod, mkdir, mkdtemp, rm, symlink } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { RuntimeServerEnvironmentCommands } from '../main/runtime/runtime-server-environment-commands'
+import { RuntimeServerEnvironmentCommands } from '../main/runtime/files/server-browse/runtime-server-environment-commands'
 import { browseSshDirectory } from '../main/ssh/ssh-remote-directory-browse'
 
 // Runs the generated remote command in a local `sh`, standing in for the SSH exec channel.

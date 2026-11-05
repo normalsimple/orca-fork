@@ -14,7 +14,7 @@ import {
   registerEgoLiteCookieBrowser
 } from './ego-lite-cookie-browser'
 
-const { runProcessSyncMock } = vi.hoisted(() => ({ runProcessSyncMock: vi.fn() }))
+const { runProcessMock } = vi.hoisted(() => ({ runProcessMock: vi.fn() }))
 
 vi.mock('electron', () => ({
   BrowserWindow: { fromWebContents: vi.fn() },
@@ -22,7 +22,7 @@ vi.mock('electron', () => ({
   session: { fromPartition: vi.fn() }
 }))
 
-vi.mock('@orca/process-host', () => ({ runProcessSync: runProcessSyncMock }))
+vi.mock('@orca/process-host', () => ({ runProcess: runProcessMock }))
 
 function slashPath(pathValue: string): string {
   return pathValue.replaceAll('\\', '/')
@@ -115,7 +115,7 @@ describe('detectInstalledBrowsers — Ego Lite', () => {
 
   beforeEach(() => {
     vi.resetModules()
-    runProcessSyncMock.mockReset()
+    runProcessMock.mockReset()
     Object.defineProperty(process, 'platform', { value: 'darwin' })
     process.env.HOME = '/Users/test'
   })
@@ -314,7 +314,7 @@ describe('detectInstalledBrowsers — Ego Lite on Windows', () => {
 
   beforeEach(() => {
     vi.resetModules()
-    runProcessSyncMock.mockReset()
+    runProcessMock.mockReset()
     Object.defineProperty(process, 'platform', { value: 'win32' })
     process.env.LOCALAPPDATA = localAppData
   })
@@ -381,7 +381,7 @@ describe('Ego Lite Windows cookie key', () => {
 
   beforeEach(() => {
     vi.resetModules()
-    runProcessSyncMock.mockReset()
+    runProcessMock.mockReset()
     Object.defineProperty(process, 'platform', { value: 'win32' })
     process.env.LOCALAPPDATA = localAppData
   })
@@ -428,7 +428,7 @@ describe('Ego Lite Windows cookie key', () => {
       }
     })
 
-    runProcessSyncMock.mockImplementation((invocation: { input?: string }) => {
+    runProcessMock.mockImplementation((invocation: { input?: string }) => {
       const key = invocation.input === egoPayload.toString('base64') ? egoKey : chromeKey
       return { code: 0, timedOut: false, stdout: `${key.toString('base64')}\n`, stderr: '' }
     })
@@ -456,9 +456,12 @@ describe('Ego Lite Windows cookie key', () => {
       keychainAccount: 'Chrome'
     }
 
-    expect(getWindowsEncryptionKey(egoBrowser)).toEqual({ key: egoKey, mode: 'aes-256-gcm' })
-    expect(getWindowsEncryptionKey(chromeBrowser)).toEqual({ key: chromeKey, mode: 'aes-256-gcm' })
-    expect(runProcessSyncMock).toHaveBeenCalledTimes(2)
+    expect(await getWindowsEncryptionKey(egoBrowser)).toEqual({ key: egoKey, mode: 'aes-256-gcm' })
+    expect(await getWindowsEncryptionKey(chromeBrowser)).toEqual({
+      key: chromeKey,
+      mode: 'aes-256-gcm'
+    })
+    expect(runProcessMock).toHaveBeenCalledTimes(2)
   })
 
   it('returns null for Ego Lite when the browser was not registered', async () => {
@@ -467,17 +470,11 @@ describe('Ego Lite Windows cookie key', () => {
     const { getWindowsEncryptionKey } =
       await import('../main/browser/cookies/sources/browser-cookie-key')
     expect(
-      getWindowsEncryptionKey({
-        family: EGO_LITE_BROWSER_FAMILY,
-        label: 'Ego Lite',
-        cookiesPath: `${egoRoot}/Default/Network/Cookies`,
-        keychainService: EGO_LITE_KEYCHAIN_SERVICE,
-        keychainAccount: EGO_LITE_KEYCHAIN_ACCOUNT,
-        profiles: [{ name: 'Default', directory: 'Default' }],
-        selectedProfile: 'Default'
+      await getWindowsEncryptionKey({
+        family: EGO_LITE_BROWSER_FAMILY
       })
     ).toBeNull()
-    expect(runProcessSyncMock).not.toHaveBeenCalled()
+    expect(runProcessMock).not.toHaveBeenCalled()
   })
 })
 
@@ -486,7 +483,7 @@ describe('Ego Lite macOS safe-storage password', () => {
 
   beforeEach(() => {
     vi.resetModules()
-    runProcessSyncMock.mockReset()
+    runProcessMock.mockReset()
     Object.defineProperty(process, 'platform', { value: 'darwin' })
   })
 
@@ -496,7 +493,7 @@ describe('Ego Lite macOS safe-storage password', () => {
   })
 
   it('asks the login keychain for ego safe storage / ego', async () => {
-    runProcessSyncMock.mockReturnValue({
+    runProcessMock.mockReturnValue({
       code: 0,
       timedOut: false,
       stdout: 'ego-password\n',
@@ -505,9 +502,9 @@ describe('Ego Lite macOS safe-storage password', () => {
 
     const { getMacEncryptionKey } =
       await import('../main/browser/cookies/sources/browser-cookie-key')
-    const key = getMacEncryptionKey(EGO_LITE_KEYCHAIN_SERVICE, EGO_LITE_KEYCHAIN_ACCOUNT)
+    const key = await getMacEncryptionKey(EGO_LITE_KEYCHAIN_SERVICE, EGO_LITE_KEYCHAIN_ACCOUNT)
 
-    expect(runProcessSyncMock).toHaveBeenCalledWith({
+    expect(runProcessMock).toHaveBeenCalledWith({
       program: 'security',
       args: ['find-generic-password', '-s', 'ego safe storage', '-a', 'ego', '-w'],
       timeoutMs: 30_000

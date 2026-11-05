@@ -367,12 +367,17 @@ describe('fork packaging', () => {
   it('bundles fork registration into the orcad template entry', () => {
     const entry = readFileSync(resolve('src/main/orcad/orcad-entry.ts'), 'utf8')
     const main = readFileSync(resolve('src/main/orcad/main.ts'), 'utf8')
-    const build = readFileSync(resolve('config/scripts/orcad-entry-build.mjs'), 'utf8')
+    const startup = readFileSync(resolve('src/main/orcad/orcad-command-startup.ts'), 'utf8')
+    const build = readFileSync(
+      resolve('config/scripts/orcad-distribution/server-bundle/orcad-entry-build.mjs'),
+      'utf8'
+    )
     const register = readFileSync(resolve('src/fork/main/register-main.ts'), 'utf8')
     // The fork registers before upstream's host adapters, which stay one untouched upstream line.
     expect(entry).toMatch(/installForkOrcadHost\(\)\n\s*installOrcadHostAdapters\(\)/)
     expect(register).toMatch(/function installForkOrcadHost[^}]*registerForkMainModules\(\)/)
-    expect(main).toContain("from './orcad-entry'")
+    expect(main).toContain("from './orcad-command-startup'")
+    expect(startup).toContain("from './orcad-entry'")
     expect(build).toContain("export const ORCAD_ENTRY_POINT = 'src/main/orcad/main.ts'")
   })
 })
