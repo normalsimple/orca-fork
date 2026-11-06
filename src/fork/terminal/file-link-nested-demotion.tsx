@@ -99,7 +99,7 @@ function shallowerCopyDemotion(
   )
 }
 
-// 没有「留在当前工作区」开关。本地路由仍走上游 #33304；这里只看外层标签。
+// 没有「留在当前工作区」开关。本地文件留在点击时的工作区，可写（上游 #37953）；这里只看外层标签。
 export function registerNestedCopyDemotion(): void {
   if (unwatch) {
     return

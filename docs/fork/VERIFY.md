@@ -63,7 +63,7 @@ An older fork orcad does not grant paths outside the workspace without `crossWor
 14. Paste the absolute path of `~/pages/report.html`, or `file:///home/<u>/pages/report.html`, into the address bar of a browser page in A: it becomes a doc preview read from the host.
 15. Click `~/notes` (a folder): the hint names a folder outside the host's workspaces and nothing on the Mac opens. Click a missing `~/nope.txt`: the hint says the host has no such file.
 16. Restart the app with the `report.html` preview open: it reads from the host again.
-17. In a local Mac workspace, local HTML follows the link-routing setting (system browser or in-app page). A file of another local workspace opens in that workspace (upstream switches). The HTML exception in item 11 is only for a paired host.
+17. In a local Mac workspace, local HTML follows the link-routing setting (system browser or in-app page). A file of another local workspace stays in the workspace it was clicked in and can be edited (upstream #37953). Only an SSH or server host moves a file to the workspace that holds it. The HTML exception in item 11 is only for a paired host.
 18. With a paired client or phone, if available: files outside every workspace open (upstream #33958).
 
 ### F047 workspace repositories (removed)
