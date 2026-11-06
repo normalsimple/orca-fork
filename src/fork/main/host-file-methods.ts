@@ -8,7 +8,7 @@ import { isAbsolute } from 'node:path'
 import { z } from 'zod'
 import type { OrcaRuntimeService } from '../../main/runtime/orca-runtime'
 import { defineMethod } from '../../main/runtime/rpc/core'
-import { remoteFileContentBudget } from '../../main/runtime/rpc/methods/files-remote-content-budget'
+import { remoteFileContentBudget } from '../../main/runtime/rpc/methods/files/files-remote-content-budget'
 import { requireLocalRuntimeFileRoute } from '../../main/runtime/files/file-target'
 import {
   assertPreviewWithinTransportBudget,
