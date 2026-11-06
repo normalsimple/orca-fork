@@ -65,7 +65,11 @@ function isBulkReadRuntimeMethod(method: string): boolean {
   if (isHostFileBulkRead(method)) {
     return true
   }
-  return method === 'files.readChunk' || method === 'files.readDocPreviewChunk'
+  return (
+    method === 'files.readChunk' ||
+    method === 'files.readDocPreviewChunk' ||
+    method === 'files.readTerminalArtifactChunk'
+  )
 }
 
 export class RuntimeRpcCallQueuePool {

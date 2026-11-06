@@ -2,10 +2,8 @@ import type { IDisposable, ILink } from '@xterm/xterm'
 import { describe, expect, it, vi } from 'vitest'
 import type { PaneManager } from '@/lib/pane-manager/pane-manager'
 import { createFilePathLinkProvider, getTerminalFileOpenHint } from './terminal-link-handlers'
-import {
-  TERMINAL_PATH_EXISTS_CACHE_MAX_ENTRIES,
-  type TerminalPathExistsCache
-} from './terminal-path-exists-cache'
+import type { TerminalPathExistsCache } from './terminal-path-exists-cache'
+import { RECENT_PATH_ANSWERS_MAX } from '../../../../shared/recent-path-answers'
 import { getConnectionId } from '@/lib/connection-context'
 import { createTerminalLinkTestDoubles } from './terminal-link-handlers-test-fixtures'
 import {
@@ -37,7 +35,7 @@ vi.mock('@/lib/language-detect', () => ({
   detectLanguage: (filePath: string) => (filePath.endsWith('.md') ? 'markdown' : 'plaintext')
 }))
 
-vi.mock('@/lib/worktree-activation', () => ({
+vi.mock('@/lib/workspace/activation/worktree-activation', () => ({
   activateAndRevealWorkspace: vi.fn(),
   activateAndRevealWorktree: vi.fn()
 }))
@@ -139,7 +137,7 @@ describe('createFilePathLinkProvider range bounds', () => {
 
   it('bounds the terminal path-exists cache while preserving recent probes', async () => {
     const pathExistsCache = makeExistsCache()
-    for (let index = 0; index < TERMINAL_PATH_EXISTS_CACHE_MAX_ENTRIES; index += 1) {
+    for (let index = 0; index < RECENT_PATH_ANSWERS_MAX; index += 1) {
       pathExistsCache.set(`active\0/repo/old-${index}.ts`, {
         exists: true,
         checkedAt: Date.now(),
@@ -169,7 +167,7 @@ describe('createFilePathLinkProvider range bounds', () => {
     })
 
     expect(links.map((link) => link.text)).toEqual(['fresh.ts'])
-    expect(pathExistsCache.size).toBe(TERMINAL_PATH_EXISTS_CACHE_MAX_ENTRIES)
+    expect(pathExistsCache.size).toBe(RECENT_PATH_ANSWERS_MAX)
     expect(pathExistsCache.has('active\0/repo/old-0.ts')).toBe(false)
     expect(pathExistsCache.get('active\0/repo/fresh.ts')?.exists).toBe(true)
   })

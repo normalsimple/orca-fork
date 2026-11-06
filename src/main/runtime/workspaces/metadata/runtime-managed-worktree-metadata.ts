@@ -24,17 +24,20 @@ import {
   echoSidebarFields,
   type ClearableSidebarField
 } from '../../../../shared/fork-hooks/sidebar-field-clear'
+import { assertParentInAnotherStore } from '../lineage/cross-store-parent-store-check'
+import type { CrossStoreParentRef } from '../../../../shared/worktree/lineage-types'
 import type { ResolvedWorktree } from '../catalog/runtime-worktree-path-identity'
 
 type Updates = Omit<Partial<WorktreeMeta>, 'pushTarget'> & {
   pushTarget?: GitPushTarget | null
-  lineage?: { parentWorktree?: string; noParent?: boolean }
+  lineage?: { parentWorktree?: string; crossStoreParent?: CrossStoreParentRef; noParent?: boolean }
   clearFields?: readonly ClearableSidebarField[]
 }
 
 type Ports = {
   resolveWorktree: (selector: string) => Promise<ResolvedWorktree>
   validateParent: (worktree: ResolvedWorktree, parent: ResolvedWorktree) => void
+  readStoreInstallationId?: () => Promise<string | undefined>
   invalidateResolved: () => void
   invalidateScan: (repoId: string) => void
   notifyChanged: (repoId: string) => void
@@ -92,6 +95,35 @@ export async function updateRuntimeManagedWorktreeMetadata(args: {
   applySidebarFieldClears(persisted, clearFields)
   if (lineage?.noParent === true) {
     args.store.removeWorktreeLineage?.(target)
+  } else if (lineage?.crossStoreParent) {
+    // Trusted like any paired mutation, unverified here: a forged ref only nests falsely and readers drop cycles.
+    await assertParentInAnotherStore(
+      lineage.crossStoreParent,
+      async () => await args.ports.readStoreInstallationId?.()
+    )
+    if (!worktree.instanceId || !args.store.setCrossStoreWorkspaceLineage) {
+      throw new RuntimeLineageError(
+        'LINEAGE_PARENT_CONTEXT_MISSING',
+        'Worktree instance identity or lineage storage was unavailable.'
+      )
+    }
+    const recorded = args.store.setCrossStoreWorkspaceLineage(
+      {
+        childWorkspaceKey: worktreeWorkspaceKey(worktree.id),
+        childInstanceId: worktree.instanceId,
+        parent: lineage.crossStoreParent,
+        origin: 'manual',
+        capture: { source: 'manual-action', confidence: 'explicit' },
+        createdAt: Date.now()
+      },
+      target.hostId
+    )
+    if (!recorded) {
+      throw new RuntimeLineageError(
+        'LINEAGE_PARENT_CONTEXT_CONFLICT',
+        'A same-id workspace on another host owns this lineage.'
+      )
+    }
   } else if (lineage?.parentWorktree) {
     const parent = await args.ports.resolveWorktree(lineage.parentWorktree)
     args.ports.validateParent(worktree, parent)

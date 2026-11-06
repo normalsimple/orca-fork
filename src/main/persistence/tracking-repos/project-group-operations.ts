@@ -12,7 +12,7 @@ import { prepareKeepFolderWorkspacesOnGroupDelete } from '../../../shared/fork-h
 export type ProjectGroupMutationOperations = {
   state: PersistedState
   scheduleSave: () => void
-  removeWorkspaceLineageForFolderParent: (folderWorkspaceId: string) => void
+  removeWorkspaceLineageForRemovedFolder: (folderWorkspaceId: string) => void
   pruneMobileClientTabSelections: (matchesWorktreeId: (worktreeId: string) => boolean) => void
 }
 
@@ -27,8 +27,8 @@ export class ProjectGroupPersistenceOperations {
     this.operations.scheduleSave()
   }
 
-  private removeWorkspaceLineageForFolderParent(folderWorkspaceId: string): void {
-    this.operations.removeWorkspaceLineageForFolderParent(folderWorkspaceId)
+  private removeWorkspaceLineageForRemovedFolder(folderWorkspaceId: string): void {
+    this.operations.removeWorkspaceLineageForRemovedFolder(folderWorkspaceId)
   }
 
   private pruneMobileClientTabSelections(matchesWorktreeId: (worktreeId: string) => boolean): void {
@@ -113,7 +113,7 @@ export class ProjectGroupPersistenceOperations {
     for (const workspace of this.state.folderWorkspaces ?? []) {
       if (deletedGroupIds.has(workspace.projectGroupId)) {
         removedFolderWorkspaceKeys.add(folderWorkspaceKey(workspace.id))
-        this.removeWorkspaceLineageForFolderParent(workspace.id)
+        this.removeWorkspaceLineageForRemovedFolder(workspace.id)
       }
     }
     // Remove all partition copies or folder layouts could resurrect on load.

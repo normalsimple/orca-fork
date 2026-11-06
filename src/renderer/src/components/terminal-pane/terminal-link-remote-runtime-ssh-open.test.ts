@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { openDetectedFilePath } from './terminal-link-handlers'
 import { getConnectionId } from '@/lib/connection-context'
 import { getWorkspaceFilePreviewPlan, openFileInBrowserTab } from '@/lib/file-preview'
-import { activateAndRevealWorkspace } from '@/lib/worktree-activation'
+import { activateAndRevealWorkspace } from '@/lib/workspace/activation/worktree-activation'
 import { downloadAndOpenRemoteTerminalFile } from './terminal-remote-file-download-open'
 import { createTerminalLinkTestDoubles } from './terminal-link-handlers-test-fixtures'
 import {
@@ -32,7 +32,7 @@ vi.mock('@/lib/language-detect', () => ({
   detectLanguage: (filePath: string) => (filePath.endsWith('.md') ? 'markdown' : 'plaintext')
 }))
 
-vi.mock('@/lib/worktree-activation', () => ({
+vi.mock('@/lib/workspace/activation/worktree-activation', () => ({
   activateAndRevealWorkspace: vi.fn(),
   activateAndRevealWorktree: vi.fn()
 }))
@@ -42,7 +42,7 @@ vi.mock('@/lib/connection-context', () => ({
 }))
 
 vi.mock('./terminal-remote-file-download-open', () => ({
-  downloadAndOpenRemoteTerminalFile: vi.fn()
+  downloadAndOpenRemoteTerminalFile: vi.fn(async () => true)
 }))
 
 vi.mock('@/lib/file-preview', () => ({
@@ -232,7 +232,8 @@ describe('handleOscLink', () => {
     expect(openFileMock).not.toHaveBeenCalled()
     expect(downloadAndOpenRemoteTerminalFile).toHaveBeenCalledWith(
       expect.objectContaining({ connectionId: 'ssh-1' }),
-      '/home/me/repo/report.html'
+      '/home/me/repo/report.html',
+      expect.objectContaining({ grant: null })
     )
   })
 

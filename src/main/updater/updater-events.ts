@@ -6,6 +6,7 @@ import {
 } from './mac-install/updater-mac-install'
 import { compareVersions } from './releases/updater-fallback'
 import { fetchChangelog } from './releases/updater-changelog'
+import { getUnsupportedSystemUpdate } from './releases/updater-system-requirement'
 import type { UpdaterHandlerContext } from './updater-handler-context'
 import { recordUpdaterLifecycle } from './updater-lifecycle-diagnostics'
 import {
@@ -187,7 +188,7 @@ function registerUpstreamAutoUpdaterHandlers({
     })()
   })
 
-  autoUpdater.on('update-not-available', () => {
+  autoUpdater.on('update-not-available', (info) => {
     if (getActiveUpdateCheckEventAttemptId() === null) {
       return
     }
@@ -221,9 +222,14 @@ function registerUpstreamAutoUpdaterHandlers({
         }
       }
     }
+    const unsupportedSystemUpdate = getUnsupportedSystemUpdate(info, app.getVersion())
     // Preserve manual-install recovery when a recheck finds no newer release.
     sendStatus(
-      retainedStatus ?? { state: 'not-available', userInitiated: wasUserInitiated || undefined }
+      retainedStatus ?? {
+        state: 'not-available',
+        userInitiated: wasUserInitiated || undefined,
+        ...(unsupportedSystemUpdate ? { unsupportedSystemUpdate } : {})
+      }
     )
     if (localBuildCheck || pinnedBuildCheck) {
       restoreReleaseUpdateSource()

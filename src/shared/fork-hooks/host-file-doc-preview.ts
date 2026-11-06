@@ -174,3 +174,51 @@ export function pageLargeHostPreview(
   const reader = largePreviewReader
   return reader ? preview.catch((refusal: unknown) => reader(file, refusal)) : null
 }
+
+/** A paired read that may name a terminal grant. Only a grant is outside every workspace. */
+type GrantedRemoteRead = {
+  target: RuntimeClientTarget & { kind: 'environment' }
+  worktree: string
+  grantId?: string
+  absolutePath?: string
+  expectedEnvironmentPairingRevision?: number
+}
+
+function grantedHostFile(remote: GrantedRemoteRead): GrantedHostFile | null {
+  if (remote.grantId === undefined || remote.absolutePath === undefined) {
+    return null
+  }
+  // The address stores an `id:` selector; the tab and the reader use the raw worktree id.
+  const worktreeId = remote.worktree.startsWith('id:') ? remote.worktree.slice(3) : remote.worktree
+  return {
+    target: remote.target,
+    worktreeId,
+    absolutePath: remote.absolutePath,
+    grantId: remote.grantId,
+    expectedEnvironmentPairingRevision: remote.expectedEnvironmentPairingRevision
+  }
+}
+
+/** Grant refusals (too large, stale, truncated). Null keeps upstream's own paging. */
+export function readLargeGrantedHostFile(
+  remote: GrantedRemoteRead,
+  refusal: unknown
+): Promise<RuntimeFilePreviewResult> | null {
+  const file = grantedHostFile(remote)
+  return file ? readLargeHostFile(file, refusal) : null
+}
+
+/**
+ * A grant's binary preview, started only when a reader is registered. Null leaves the caller's
+ * preview untouched and does not start `preview`.
+ */
+export function pageLargeGrantedHostPreview(
+  remote: GrantedRemoteRead,
+  preview: () => Promise<RuntimeFilePreviewResult>
+): Promise<RuntimeFilePreviewResult> | null {
+  const file = grantedHostFile(remote)
+  if (!file || largePreviewReader === null) {
+    return null
+  }
+  return pageLargeHostPreview(file, preview())
+}

@@ -1,4 +1,4 @@
-import { resolveTerminalFileLink } from '../../../../shared/terminal/links/terminal-links'
+import { resolveFileLinkPath } from './terminal-file-link-target'
 import { isWindowsAbsolutePathLike } from '../../../../shared/cross-platform-path'
 import type { LinkHandlerDeps } from './terminal-link-handlers'
 import { classifyTerminalOscLinkTarget } from '../../../../shared/terminal/links/terminal-osc-link-target'
@@ -11,7 +11,7 @@ import {
   type TerminalHttpLinkActionDestinations,
   type TerminalLinkRoutingPreferenceRequester
 } from './terminal-url-link-hit-testing'
-import type { HttpLinkSourceOwner } from '@/lib/http-link-routing'
+import type { HttpLinkSourceOwner } from '@/lib/browser/navigation/http-link-routing'
 import type { TerminalLinkActionContext } from './terminal-link-action-request'
 import { handleTerminalFileLink } from './terminal-file-link-actions'
 
@@ -103,7 +103,12 @@ export function handleOscLink(
           column: target.target.column
         }
       : target?.kind === 'path'
-        ? resolveTerminalFileLink(target.link, cwd, deps.terminalHomePath)
+        ? resolveFileLinkPath(target.link, {
+            ...deps,
+            cwd,
+            homePath: deps.terminalHomePath,
+            homeOnHost: true
+          })
         : null
   if (!file) {
     return false

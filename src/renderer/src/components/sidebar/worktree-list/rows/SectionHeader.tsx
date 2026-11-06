@@ -50,7 +50,8 @@ import {
 } from './repo-header-project-actions'
 import {
   handleRepoHeaderCollapseAffordancePointerDown,
-  shouldIgnoreRepoHeaderToggle
+  shouldIgnoreRepoHeaderToggle,
+  toggleSectionHeaderCollapse
 } from './header-event-guards'
 import type { WorktreeSidebarHeaderDrag } from '../drag/use-header-drag'
 import { getWorktreeOptionId } from './option-dom'
@@ -70,6 +71,7 @@ export type SectionHeaderRowContext = {
     projectGroupId: string
   }) => FolderWorkspacePathStatus | null
   toggleGroupWithScrollAnchor: (groupKey: string) => void
+  toggleAllProjects?: () => void
   projectActions: RepoHeaderProjectActions
   onRenameProjectGroup: (groupId: string, currentName: string, hostId?: ExecutionHostId) => void
   onDeleteProjectGroup: (groupId: string, groupName: string, hostId?: ExecutionHostId) => void
@@ -184,6 +186,8 @@ export function renderWorktreeSectionHeaderRow(args: {
     : null
   const collapseKey = row.collapseKey ?? row.key
   const isHeaderCollapsed = ctx.collapsedGroups.has(collapseKey)
+  const toggleHeader = (event: React.MouseEvent | React.KeyboardEvent): void =>
+    toggleSectionHeaderCollapse(event, collapseKey, ctx)
   // Why: repo/project/status/pinned share compact section chrome; flat "All" stays a simple label.
   const showHeaderCollapseAffordance =
     row.count > 0 &&
@@ -297,10 +301,9 @@ export function renderWorktreeSectionHeaderRow(args: {
                 : undefined
           }
           onClick={(event) => {
-            if (shouldIgnoreRepoHeaderToggle(event)) {
-              return
+            if (!shouldIgnoreRepoHeaderToggle(event)) {
+              toggleHeader(event)
             }
-            ctx.toggleGroupWithScrollAnchor(collapseKey)
           }}
           onKeyDown={(e) => {
             if (shouldIgnoreRepoHeaderToggle(e)) {
@@ -308,7 +311,7 @@ export function renderWorktreeSectionHeaderRow(args: {
             }
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault()
-              ctx.toggleGroupWithScrollAnchor(collapseKey)
+              toggleHeader(e)
             }
           }}
         >
@@ -362,7 +365,7 @@ export function renderWorktreeSectionHeaderRow(args: {
                 onClick={(event) => {
                   event.preventDefault()
                   event.stopPropagation()
-                  ctx.toggleGroupWithScrollAnchor(collapseKey)
+                  toggleHeader(event)
                 }}
               >
                 <ChevronDown
