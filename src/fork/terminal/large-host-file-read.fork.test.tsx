@@ -94,12 +94,15 @@ function tab(filePath: string): OpenFile {
 }
 
 function read(absolutePath: string): ReturnType<typeof readRuntimeTerminalArtifactContent> {
-  return readRuntimeTerminalArtifactContent({
-    target: { kind: 'environment', environmentId: 'env-1' },
-    worktreeId: 'wt-1',
-    absolutePath,
-    grantId: 'g-1'
-  })
+  return readRuntimeTerminalArtifactContent(
+    {
+      target: { kind: 'environment', environmentId: 'env-1' },
+      worktreeId: 'wt-1',
+      absolutePath,
+      grantId: 'g-1'
+    },
+    { pageOversizedBinary: false }
+  )
 }
 
 function methodsCalled(): string[] {
@@ -118,7 +121,7 @@ beforeEach(() => {
 })
 
 describe('before the fork registers', () => {
-  it('keeps the host refusals of a log past 512 KiB and a PDF past one preview reply', async () => {
+  it('keeps an older host refusal when a log or PDF cannot be paged', async () => {
     host.set('/home/me/paper.pdf', {
       bytes: Buffer.alloc(8),
       fileId: '1:14',
@@ -127,7 +130,9 @@ describe('before the fork registers', () => {
       preview: 'file_too_large'
     })
 
-    await expect(read(LOG)).rejects.toThrow('file_too_large')
+    await expect(read(LOG)).rejects.toThrow(
+      'Remote file is larger than the 512 KB this Orca server can send. Update the server to open it.'
+    )
     await expect(read('/home/me/paper.pdf')).rejects.toThrow('file_too_large')
     expect(methodsCalled()).not.toContain('files.hostFile.stat')
   })
@@ -141,7 +146,9 @@ describe('text a grant will not send', () => {
   it('opens a log past 512 KiB whole, as a read-only tab', async () => {
     await expect(read(LOG)).resolves.toEqual({
       content: LOG_BYTES.toString('utf8'),
-      isBinary: false
+      isBinary: false,
+      readOnly: true,
+      terminalArtifactGrantId: 'g-1'
     })
     expect(useAppStore.getState().openFiles[0]?.readOnly).toBe(true)
     expect(methodsCalled()).not.toContain('files.resolveTerminalPath')
@@ -196,7 +203,8 @@ describe('text a grant will not send', () => {
 
     await expect(read('/var/log/small.log')).resolves.toEqual({
       content: 'tail -f me\n',
-      isBinary: false
+      isBinary: false,
+      terminalArtifactGrantId: 'g-1'
     })
     await expect(read('/var/log/latin1.log')).resolves.toMatchObject({ content: 'tail -f me\n' })
     expect(methodsCalled()).not.toContain('files.resolveTerminalPath')
@@ -212,7 +220,12 @@ describe('text a grant will not send', () => {
       refusal: 'file_too_large'
     })
 
-    await expect(read('/data/model.safetensors')).resolves.toEqual({ content: '', isBinary: true })
+    await expect(read('/data/model.safetensors')).resolves.toEqual({
+      content: '',
+      isBinary: true,
+      readOnly: true,
+      terminalArtifactGrantId: 'g-1'
+    })
     expect(readChunks).toBe(1)
   })
 
@@ -223,7 +236,11 @@ describe('text a grant will not send', () => {
       mtime: 1,
       refusal: 'binary_file'
     })
-    await expect(read('/home/me/shot.png')).resolves.toEqual(PNG_PREVIEW)
+    await expect(read('/home/me/shot.png')).resolves.toEqual({
+      ...PNG_PREVIEW,
+      readOnly: true,
+      terminalArtifactGrantId: 'g-1'
+    })
 
     legacyHost = true
     await expect(read(LOG)).rejects.toThrow('file_too_large')
@@ -250,7 +267,9 @@ describe('text a grant will not send', () => {
       content: pdf.toString('base64'),
       isBinary: true,
       isImage: true,
-      mimeType: 'application/pdf'
+      mimeType: 'application/pdf',
+      readOnly: true,
+      terminalArtifactGrantId: 'g-1'
     })
     const pdfChunks = readChunks
     expect(pdfChunks).toBeGreaterThan(1)
@@ -261,7 +280,12 @@ describe('text a grant will not send', () => {
       refusal: 'binary_file',
       preview: 'binary_file'
     })
-    const binary = { content: '', isBinary: true }
+    const binary = {
+      content: '',
+      isBinary: true,
+      readOnly: true,
+      terminalArtifactGrantId: 'g-1'
+    }
     await expect(read('/data/weights.zip')).resolves.toEqual(binary)
     await expect(read('/data/small.zip')).resolves.toEqual(binary)
     expect(readChunks).toBe(pdfChunks)
