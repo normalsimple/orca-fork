@@ -1,5 +1,6 @@
 // Fork F046: links in a managed SSH host's terminal to files outside the clicked workspace open in that
 // workspace with the host's bytes (editor, Markdown with images, in-app HTML preview) and never switch away.
+// A file another workspace holds opens there through the host's in-place grant and stays writable.
 // Needs ORCA_E2E_SSH_DOCKER=1 and ORCA_E2E_ORCAD_CONVERT_TEMPLATE (a template built for the Docker host).
 import { rmSync, writeFileSync } from 'node:fs'
 import { expect, test } from './helpers/orca-app'
@@ -402,24 +403,19 @@ test('host terminal links to files outside the workspace stay in the clicked wor
         await forkShot(page, testInfo, 'f046-large-csv')
       })
 
-      await test.step("workspace B's file opens read-only in A without activating B", async () => {
+      await test.step("workspace B's file opens in A via in-place grant without activating B", async () => {
         await clickPrintedHostPath(page, testInfo, terminal, files.owned)
+        // New orcad (in-place-files.v1) grants this file in A and saves it; the fork hook is not reached.
         await expect
           .poll(() => readOpenedFile(page, files.owned), { timeout: 30_000 })
-          .toMatchObject({ worktreeId: workspaceA, readOnly: true, granted: true })
+          .toMatchObject({ worktreeId: workspaceA, readOnly: false, granted: true })
         await expectEditorText(page, `LIB_OWNED_${stamp}`)
         await expect
           .poll(() => page.evaluate(() => window.__monacoEditorE2E?.filePath))
           .toBe(files.owned)
-        await page.locator('.monaco-editor .view-lines:visible').first().click()
-        await page.keyboard.type('EDIT_ATTEMPT')
-        await expect(page.locator('.monaco-editor .view-lines:visible').first()).not.toContainText(
-          'EDIT_ATTEMPT'
-        )
-        expect(await page.evaluate(() => window.__monacoEditorE2E?.snapshot().canUndo)).toBe(false)
         await stayedInA()
         expect((await readActiveWorkspace(page)).worktreeId).not.toBe(workspaceB)
-        await forkShot(page, testInfo, 'f046-b-owned-read-only-in-A')
+        await forkShot(page, testInfo, 'f046-b-owned-in-place-grant-in-A')
       })
 
       await test.step("workspace B's HTML previews in A without activating B", async () => {
