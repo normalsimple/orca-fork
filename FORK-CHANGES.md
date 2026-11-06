@@ -24,7 +24,7 @@
 - 不移动、复制、重新缩进或重新格式化上游代码。包住一个上游表达式会让它的行重新缩进，不允许；改成加一行（展开、调用、提前返回）。
 - 钩子调用尽量少占行，放在稳定的代码旁边。只有这一行自己说明不了时才加 `// fork:` 注释。
 - 行数上限（`max-lines`，不算空行和注释：`.ts` 300 行，`.tsx` 400 行）。上游文件因为钩子行超过上限时，文件第一行加 `/* oxlint-disable max-lines -- fork: hook call only */`，并在 `config/max-lines-baseline.txt` 里加对应的 `inline <路径>` 一行：上游的 `pnpm check:max-lines-ratchet`（`pnpm lint` 的一步）只放行列在里面的豁免。不为了躲上限把上游代码搬进 fork 文件。
-- fork 的基线条目作为一块放在 `config/max-lines-baseline.txt` 末尾，前面一行注释 `# fork: hook lines in upstream files at the cap`。现在这一块是首行带这个豁免的三个文件：`src/main/orcad/orcad-entry.ts`、`src/renderer/src/components/sidebar/DeleteWorktreeDialog.tsx`、`src/renderer/src/components/sidebar/useAddRepoNestedImportFlow.ts`。不要在 fork 上随手跑 `pnpm check:max-lines-ratchet --prune`：它按顺序重写整个文件，丢掉 fork 的注释，把 fork 条目混进上游的条目。上游改了基线的最后一条时，合并会在 fork 这一块旁边冲突：保留上游的行，fork 这一块仍放在末尾。只有某个文件不再需要这行豁免时，才删掉它的 fork 条目。
+- fork 的基线条目作为一块放在 `config/max-lines-baseline.txt` 末尾，前面一行注释 `# fork: hook lines in upstream files at the cap`。现在这一块是首行带这个豁免的文件：`src/main/orcad/orcad-entry.ts`、`src/renderer/src/components/sidebar/workspace-actions/deletion/DeleteWorktreeDialog.tsx`、`src/renderer/src/components/sidebar/project-admission/nested-import/useAddRepoNestedImportFlow.ts`、`src/renderer/src/components/sidebar/workspace-actions/context-menu/WorktreeContextMenuView.tsx`、`src/renderer/src/components/sidebar/worktree-list/rows/SectionHeader.tsx`。不要在 fork 上随手跑 `pnpm check:max-lines-ratchet --prune`：它按顺序重写整个文件，丢掉 fork 的注释，把 fork 条目混进上游的条目。上游改了基线的最后一条时，合并会在 fork 这一块旁边冲突：保留上游的行，fork 这一块仍放在末尾。只有某个文件不再需要这行豁免时，才删掉它的 fork 条目。
 - `pnpm lint` 在 fork 上只应在上游 main 自己也失败的地方失败。
 - fork 测试只放在 `src/fork/**/*.fork.test.ts(x)`，不往上游测试文件里加用例或 mock。
 - 上游覆盖了某个 fork 行为时，删掉 fork 代码，用上游的，并在本文件里标成「已移除」。

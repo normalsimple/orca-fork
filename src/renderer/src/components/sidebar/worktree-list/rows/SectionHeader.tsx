@@ -1,3 +1,4 @@
+/* oxlint-disable max-lines -- fork: hook call only */
 import React from 'react'
 import { ChevronDown } from 'lucide-react'
 import { ProjectHeaderHostLabel, ProjectHeaderHostTooltip } from './ProjectHeaderHostLabel'

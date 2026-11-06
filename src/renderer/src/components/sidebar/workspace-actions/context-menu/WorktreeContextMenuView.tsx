@@ -1,3 +1,4 @@
+/* oxlint-disable max-lines -- fork: hook call only */
 import {
   DropdownMenu,
   DropdownMenuContent,
