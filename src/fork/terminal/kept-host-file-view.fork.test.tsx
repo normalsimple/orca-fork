@@ -8,7 +8,7 @@ import {
   installTerminalLinkTestEnvironment
 } from '@/components/terminal-pane/terminal-link-handlers-test-harness'
 import * as filePreview from '@/lib/file-preview'
-import { activateAndRevealWorkspace } from '@/lib/worktree-activation'
+import { activateAndRevealWorkspace } from '@/lib/workspace/activation/worktree-activation'
 import {
   createCompatibleRuntimeStatusResponseIfNeeded,
   type RuntimeEnvironmentCallRequest
@@ -28,7 +28,7 @@ vi.mock('@/store', () => ({
     getState: () => doubles.storeState
   }
 }))
-vi.mock('@/lib/worktree-activation', () => ({
+vi.mock('@/lib/workspace/activation/worktree-activation', () => ({
   activateAndRevealWorkspace: vi.fn(),
   activateAndRevealWorktree: vi.fn()
 }))

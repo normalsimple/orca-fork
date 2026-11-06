@@ -103,10 +103,17 @@ describe('before the fork registers', () => {
   it('reads a host CSV whole through its grant, and refuses one past the reply cap', async () => {
     await expect(readEditorCsvFileContent(hostCsv(SUMMARY))).resolves.toEqual({
       content: SUMMARY_TEXT,
-      isBinary: false
+      isBinary: false,
+      terminalArtifactGrantId: 'g-1'
     })
-    await expect(readEditorCsvFileContent(hostCsv(RESULTS))).rejects.toThrow('file_too_large')
-    expect(methodsCalled()).toEqual(['files.readTerminalArtifact', 'files.readTerminalArtifact'])
+    await expect(readEditorCsvFileContent(hostCsv(RESULTS))).rejects.toThrow(
+      'Remote file is larger than the 512 KB this Orca server can send. Update the server to open it.'
+    )
+    expect(methodsCalled()).toEqual([
+      'files.readTerminalArtifact',
+      'files.readTerminalArtifact',
+      'files.statTerminalArtifact'
+    ])
   })
 })
 
@@ -143,11 +150,14 @@ describe('a host CSV outside every workspace', () => {
   it('reads a smaller one whole, and one with a draft whole past the grant reply', async () => {
     await expect(readEditorCsvFileContent(hostCsv(SUMMARY))).resolves.toEqual({
       content: SUMMARY_TEXT,
-      isBinary: false
+      isBinary: false,
+      terminalArtifactGrantId: 'g-1'
     })
     await expect(readEditorCsvFileContent(hostCsv(RESULTS), false)).resolves.toEqual({
       content: RESULTS_BYTES.toString('utf8'),
-      isBinary: false
+      isBinary: false,
+      readOnly: true,
+      terminalArtifactGrantId: 'g-1'
     })
   })
 
@@ -157,7 +167,8 @@ describe('a host CSV outside every workspace', () => {
 
     await expect(readEditorCsvFileContent(restored)).resolves.toEqual({
       content: SUMMARY_TEXT,
-      isBinary: false
+      isBinary: false,
+      terminalArtifactGrantId: 'g-2'
     })
     expect(methodsCalled()).toContain('files.resolveTerminalPath')
     await expect(readEditorCsvFileContent(hostCsv(RESULTS))).rejects.toThrow('file_too_large')

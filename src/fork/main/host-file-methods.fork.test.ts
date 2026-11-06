@@ -14,7 +14,7 @@ vi.mock('electron', () => ({
 
 import { RpcDispatcher } from '../../main/runtime/rpc/dispatcher'
 import type { RpcResponse } from '../../main/runtime/rpc/core'
-import { ALL_RPC_METHODS } from '../../main/runtime/rpc/methods'
+import { ALL_RPC_METHODS } from '../../main/runtime/rpc/methods/rpc-method-registry'
 import type { OrcaRuntimeService } from '../../main/runtime/orca-runtime'
 import { HOST_FILE_METHODS } from './host-file-methods'
 

@@ -162,7 +162,11 @@ describe('a server document outside the clicked workspace', () => {
     registerHostFileDocPreviews()
     serveImageThroughGrant()
 
-    await expect(readRuntimeFilePreview(imageContext, IMAGE, imageAccess)).resolves.toEqual(preview)
+    await expect(readRuntimeFilePreview(imageContext, IMAGE, imageAccess)).resolves.toEqual({
+      ...preview,
+      readOnly: true,
+      terminalArtifactGrantId: 'g-img'
+    })
     expect(runtimeEnvironmentCall).toHaveBeenCalledWith(
       expect.objectContaining({
         method: 'files.readTerminalArtifactPreview',
@@ -214,7 +218,9 @@ describe('a server document outside the clicked workspace', () => {
       content: image.toString('base64'),
       isBinary: true,
       isImage: true,
-      mimeType: 'image/png'
+      mimeType: 'image/png',
+      readOnly: true,
+      terminalArtifactGrantId: 'g-img'
     })
   })
 })

@@ -11,7 +11,11 @@ vi.mock('../../renderer/src/components/sidebar/workspace-board/drag/workspace-ka
   resolveWorkspaceKanbanCardDropCommitTarget: () => ({ status: null, isPinDrop: false })
 }))
 vi.mock('../../renderer/src/components/sidebar/worktree-list/drag/status-target', () => ({
-  getPointerDropStatusTarget: () => ({ status: null, isPinDrop: false, lineageParentId: 'card' }),
+  getPointerDropStatusTarget: () => ({
+    status: null,
+    isPinDrop: false,
+    lineageParentIdentity: 'card'
+  }),
   shouldPreferSidebarStatusDropTarget: () => false
 }))
 
@@ -42,10 +46,12 @@ function context(): WorktreeDropCommitContext {
   }
 }
 
+const pickedCopies = [{ id: 'moved', hostId: 'local' }]
 const drag = {
   sourceGroupKey: 'hd:["local","g1"]',
   draggedIds: ['moved'],
   reorderDraggedIds: ['moved'],
+  pickedCopies,
   latestBoardDropTarget: null,
   latestStatusDropTarget: null
 } as unknown as WorktreePointerDrag
@@ -79,6 +85,6 @@ describe('cross-group drop onto the middle of a card', () => {
     registerWorkspaceGroupDrop(() => false, looseHostSectionKey)
     const ctx = context()
     drop(ctx)
-    expect(ctx.commitWorktreeLineageParentDrop).toHaveBeenCalledWith(['moved'], 'card')
+    expect(ctx.commitWorktreeLineageParentDrop).toHaveBeenCalledWith(pickedCopies, 'card')
   })
 })
