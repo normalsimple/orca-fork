@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
-// F046: a kept view stays in the clicked workspace when the editor loads it; upstream would re-own
-// any absolute server path into the workspace that holds it.
+// F046: restoring an absolute server path follows upstream even when an older build saved it read-only.
+// Tabs this layer marked read-only lose that flag when another workspace holds the path.
 import { act } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -9,7 +9,11 @@ import {
   useEditorPanelFileContentLoader,
   type EditorPanelFileContentLoader
 } from '@/components/editor/useEditorPanelFileContentLoader'
-import { registerKeptHostFileViewHooks } from './kept-host-file-view'
+import {
+  registerKeptHostFileViewHooks,
+  releaseStaleKeptHostFileReadOnly
+} from './kept-host-file-view'
+import { FLOATING_TERMINAL_WORKTREE_ID } from '../../shared/constants'
 
 const mocks = vi.hoisted(() => ({
   findWorkspaceFileRoute: vi.fn(),
@@ -125,32 +129,60 @@ describe('editor load of a server file another workspace holds', () => {
     container.remove()
   })
 
-  it('reads a kept read-only view from the clicked workspace instead of moving it', async () => {
-    const tab = serverTab({ readOnly: true, terminalArtifactGrantId: 'g-1' })
-    openFiles = [tab]
-
-    await act(async () => load!(SHARED, tab.id, CLICKED, SHARED))
-
-    expect(mocks.migrateRestoredEditorFileOwner).not.toHaveBeenCalled()
-    expect(mocks.readEditorCsvFileContent).toHaveBeenCalledWith(
-      expect.objectContaining({
-        target: { kind: 'environment', environmentId: 'env-1' },
-        filePath: SHARED,
-        relativePath: SHARED,
-        worktreeId: CLICKED,
-        terminalArtifactGrantId: 'g-1'
-      }),
-      expect.anything()
-    )
-  })
-
-  it('still re-owns a writable absolute tab into the workspace that holds it', async () => {
-    const tab = serverTab({})
+  it('re-owns a restored absolute tab another workspace holds even when it was saved read-only', async () => {
+    const tab = serverTab({ readOnly: true })
     openFiles = [tab]
 
     await act(async () => load!(SHARED, tab.id, CLICKED, SHARED))
 
     expect(mocks.migrateRestoredEditorFileOwner).toHaveBeenCalledWith(tab.id, OWNER, 'env-1')
     expect(mocks.readEditorCsvFileContent).not.toHaveBeenCalled()
+  })
+})
+
+describe('a read-only tab saved by the removed cross-workspace view', () => {
+  function tab(overrides: Partial<OpenFile>): OpenFile {
+    return serverTab({ readOnly: true, ...overrides })
+  }
+
+  function released(files: OpenFile[], holder: string | null): OpenFile[] | null {
+    return releaseStaleKeptHostFileReadOnly(files, () => holder)
+  }
+
+  it('drops the stale flag when another workspace holds the path', () => {
+    const stale = tab({})
+    const nested = tab({
+      id: 'nested',
+      filePath: SHARED,
+      relativePath: 'src/index.ts'
+    })
+
+    const next = released([stale, nested], 'wt-lib')
+
+    expect(next?.[0]).not.toHaveProperty('readOnly')
+    expect(next?.[0]).toMatchObject({ filePath: SHARED, relativePath: SHARED, worktreeId: CLICKED })
+    expect(next?.[1]).toMatchObject({ id: 'nested', readOnly: true, relativePath: 'src/index.ts' })
+  })
+
+  it('leaves a file no other workspace holds, a live tail, a grant, and a floating tab', () => {
+    const outside = tab({})
+    const tail = tab({ liveTail: true })
+    const granted = tab({ terminalArtifactGrantId: 'g-1' })
+    const floating = tab({ worktreeId: FLOATING_TERMINAL_WORKTREE_ID })
+
+    expect(released([outside], null)).toBeNull()
+    expect(released([outside], CLICKED)).toBeNull()
+    expect(released([tail, granted, floating], 'wt-lib')).toBeNull()
+  })
+
+  it('does not clear a tab again after nested demotion puts the flag back', () => {
+    const stale = tab({})
+    const once = releaseStaleKeptHostFileReadOnly([stale], () => 'wt-lib')
+    const demoted = { ...stale, readOnly: true as const }
+
+    expect(
+      releaseStaleKeptHostFileReadOnly([demoted], () => 'wt-lib', new Set([stale.id]))
+    ).toBeNull()
+    expect(once?.[0]).not.toHaveProperty('readOnly')
   })
 })

@@ -1,5 +1,5 @@
-// F046: a terminal or chat link to a server file another workspace holds, or no workspace holds,
-// opens in the clicked workspace: source read-only through a host grant, HTML in the doc preview.
+// F046: HTML another workspace holds previews in the clicked workspace.
+// A non-HTML file follows upstream: small text stays writable here, anything the grant can't serve opens there.
 import { describe, expect, it, vi } from 'vitest'
 import { openDetectedFilePath } from '@/components/terminal-pane/terminal-file-open-routing'
 import { createTerminalLinkTestDoubles } from '@/components/terminal-pane/terminal-link-handlers-test-fixtures'
@@ -13,7 +13,10 @@ import {
   createCompatibleRuntimeStatusResponseIfNeeded,
   type RuntimeEnvironmentCallRequest
 } from '@/runtime/runtime-compatibility-test-fixture'
-import { TERMINAL_PATH_ABSOLUTE_FILES_RUNTIME_CAPABILITY } from '../../shared/runtime-file-contracts'
+import {
+  TERMINAL_ARTIFACT_IN_PLACE_MAX_BYTES,
+  TERMINAL_PATH_ABSOLUTE_FILES_RUNTIME_CAPABILITY
+} from '../../shared/runtime-file-contracts'
 import { registerHostFileDocPreviews } from './host-file-doc-preview'
 import { registerKeptHostFileViewHooks } from './kept-host-file-view'
 
@@ -50,7 +53,11 @@ const SHARED = '/srv/wt/lib/main/src/index.ts'
 type ResolveParams = { pathText: string; crossWorkspace?: boolean }
 
 /** The host answers both lookups: the owning workspace first, then the grant for this one. */
-function hostHolds(owner: { worktree: string; relativePath: string }, absolutePath: string): void {
+function hostHolds(
+  owner: { worktree: string; relativePath: string },
+  absolutePath: string,
+  grant?: { byteLength: number; binary?: true }
+): void {
   runtimeEnvironmentCallMock.mockImplementation(
     (args: { method: string; params: ResolveParams }) => {
       if (args.method !== 'files.resolveTerminalPath') {
@@ -64,7 +71,13 @@ function hostHolds(owner: { worktree: string; relativePath: string }, absolutePa
             absolutePath,
             exists: true,
             isDirectory: false,
-            openTarget: { kind: 'absolute-file', provider: 'local', absolutePath, grantId: 'g-1' }
+            openTarget: {
+              kind: 'absolute-file',
+              provider: 'local',
+              absolutePath,
+              grantId: 'g-1',
+              ...grant
+            }
           }
       return Promise.resolve({ id: 'rpc', ok: true, result, _meta: { runtimeId: 'remote' } })
     }
@@ -80,16 +93,14 @@ function previewPlanned() {
 }
 
 describe('a server file another workspace holds', () => {
-  it('opens read-only in the clicked workspace through a grant, without switching', async () => {
-    hostHolds({ worktree: 'wt-lib', relativePath: 'src/index.ts' }, SHARED)
+  it('opens small text writable in the clicked workspace, without a fork read-only grant', async () => {
+    hostHolds({ worktree: 'wt-lib', relativePath: 'src/index.ts' }, SHARED, { byteLength: 100 })
 
     openDetectedFilePath(SHARED, 12, null, clicked)
     await flushDoubleRaf()
 
     expect(runtimeEnvironmentCallMock.mock.calls.map((call) => call[0].params)).toEqual([
       { worktree: 'id:wt-feat', pathText: SHARED, crossWorkspace: true },
-      // 上游先在当前工作区探一次授权；探不到能直接打开的授权时，fork 再要只读授权。
-      { worktree: 'id:wt-feat', pathText: SHARED },
       { worktree: 'id:wt-feat', pathText: SHARED }
     ])
     expect(activateAndRevealWorkspace).toHaveBeenCalledWith('wt-feat', {
@@ -103,11 +114,30 @@ describe('a server file another workspace holds', () => {
         relativePath: SHARED,
         worktreeId: 'wt-feat',
         runtimeEnvironmentId: 'env-1',
-        terminalArtifactGrantId: 'g-1',
-        readOnly: true
+        terminalArtifactGrantId: 'g-1'
       }),
       { forceContentReload: true }
     )
+    expect(openFileMock.mock.calls[0]![0]).not.toHaveProperty('readOnly')
+  })
+
+  it('opens a file the grant cannot serve in the holding workspace', async () => {
+    hostHolds({ worktree: 'wt-lib', relativePath: 'src/index.ts' }, SHARED, {
+      byteLength: TERMINAL_ARTIFACT_IN_PLACE_MAX_BYTES + 1
+    })
+
+    openDetectedFilePath(SHARED, null, null, clicked)
+    await flushDoubleRaf()
+
+    expect(activateAndRevealWorkspace).toHaveBeenCalledWith('wt-lib', {
+      providesInitialSurface: true,
+      executionHostId: 'runtime:env-1'
+    })
+    expect(openFileMock).toHaveBeenCalledWith(
+      expect.objectContaining({ relativePath: 'src/index.ts', worktreeId: 'wt-lib' }),
+      { forceContentReload: true }
+    )
+    expect(openFileMock.mock.calls[0]![0]).not.toHaveProperty('readOnly')
   })
 
   it('renders its HTML in the clicked workspace doc preview', async () => {

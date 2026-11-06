@@ -1,4 +1,3 @@
-/* oxlint-disable max-lines -- fork: hook call only */
 import { useCallback } from 'react'
 import { translate } from '@/i18n/i18n'
 import { readEditorPanelFileContent } from './editor-panel-file-reads'
@@ -28,7 +27,6 @@ import {
 import { findRestoredEditorWorkspaceRuntimeOwner } from './restored-editor-workspace-runtime-owner'
 import { editorTabFileAccess, isClientLocalReadOnlyTab } from '@/lib/local-file-access'
 import { placeAbsoluteTab } from './absolute-tab-placement'
-import { isKeptHostFileView } from '../../../../shared/fork-hooks/kept-host-file-view'
 import type { RuntimeFileReadArgs } from '@/runtime/runtime-file-client-types'
 import { stampCleanTabDiskBaseline } from './external-changes/editor-clean-tab-disk-baseline'
 import {
@@ -180,7 +178,7 @@ export function useEditorPanelFileContentLoader({
               readTarget,
               runtimeEnvironmentId
             })
-            if (placement.kind === 'move' && !isKeptHostFileView(restoredOpenFile)) {
+            if (placement.kind === 'move') {
               await reownRestoredFile(placement.route, runtimeEnvironmentId ?? null)
               return
             }

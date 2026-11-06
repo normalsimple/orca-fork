@@ -1,5 +1,5 @@
-// fork: F046. A paired host's file that another workspace holds opens read-only in the clicked
-// workspace through a host grant, instead of switching. Unregistered, links keep upstream.
+// fork: F046. HTML another workspace holds stays in the clicked workspace as a host grant,
+// so the doc preview does not activate the owner. Other files are upstream's. Unregistered, so is HTML.
 import type { RuntimeClientTarget } from '../runtime-client-target'
 import type { RuntimeTerminalPathResolution } from '../runtime-file-contracts'
 
@@ -17,36 +17,24 @@ export type KeptHostFileSource = {
   worktreeId: string | null | undefined
 }
 
-export type KeptHostFileTab = {
-  filePath: string
-  relativePath: string
-  readOnly?: boolean
-  runtimeEnvironmentId?: string | null
+type KeepHtmlInClickedWorkspace = (
+  source: KeptHostFileSource,
+  resolved: RuntimeTerminalPathResolution
+) => Promise<KeptHostFile | null>
+
+let keepHtml: KeepHtmlInClickedWorkspace | null = null
+
+export function registerKeptHostFileViews(next: KeepHtmlInClickedWorkspace): void {
+  keepHtml = next
 }
 
-type KeptHostFileViews = {
-  keep: (
-    source: KeptHostFileSource,
-    resolved: RuntimeTerminalPathResolution
-  ) => Promise<KeptHostFile | null>
-  isKeptView: (file: KeptHostFileTab) => boolean
-}
-
-let views: KeptHostFileViews | null = null
-
-export function registerKeptHostFileViews(next: KeptHostFileViews): void {
-  views = next
-}
-
-/** Another workspace holds the path: a grant keeps it in the clicked one. Null unregistered. */
+/**
+ * HTML another workspace holds: a grant keeps the preview in the clicked one.
+ * Null when unregistered, so the caller does not await.
+ */
 export function keepHostFileInClickedWorkspace(
   source: KeptHostFileSource,
   resolved: RuntimeTerminalPathResolution
 ): Promise<KeptHostFile | null> | null {
-  return views ? views.keep(source, resolved) : null
-}
-
-/** A kept view must not be re-owned into the workspace that holds its path. */
-export function isKeptHostFileView(file: KeptHostFileTab | undefined): boolean {
-  return Boolean(views && file && views.isKeptView(file))
+  return keepHtml ? keepHtml(source, resolved) : null
 }

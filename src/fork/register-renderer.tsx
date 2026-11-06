@@ -48,7 +48,10 @@ import { registerNestedCopyDemotion } from './terminal/file-link-nested-demotion
 import { registerHostFileDocPreviews } from './terminal/host-file-doc-preview'
 import { registerLargeHostFileReads } from './terminal/large-host-file-read'
 import { registerHostCsvPreviews } from './terminal/host-file-csv-preview'
-import { registerKeptHostFileViewHooks } from './terminal/kept-host-file-view'
+import {
+  registerKeptHostFileViewHooks,
+  registerStaleKeptHostFileReadOnlyRelease
+} from './terminal/kept-host-file-view'
 import { registerForkModules } from './register'
 
 /** Renderer hooks. Kept out of the node program so it can read the app store. */
@@ -91,6 +94,7 @@ export function registerForkRendererModules(): void {
   registerLargeHostFileReads()
   registerHostCsvPreviews()
   registerKeptHostFileViewHooks()
+  registerStaleKeptHostFileReadOnlyRelease()
   registerPostImportHook((details) =>
     import('./import/apply-post-import').then((module) => module.applyForkPostImport(details))
   )

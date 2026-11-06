@@ -213,7 +213,11 @@ export async function resolveHostWorkspaceFile(
   if (worktreePath === null) {
     throw new HostFileRefusal(`The host answered an unexpected path for ${absolutePath}`)
   }
-  const keeping = keepHostFileInClickedWorkspace(context, resolved)
+  // fork: F046. HTML another workspace holds previews here. Other files keep the result above.
+  const keeping =
+    isHtmlFilePath(resolved.absolutePath) && !source.existenceOnly && !source.openWithSystemDefault
+      ? keepHostFileInClickedWorkspace(context, resolved)
+      : null
   const kept = keeping && (await keeping)
   if (kept) {
     return kept

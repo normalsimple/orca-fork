@@ -8,6 +8,5 @@ inline src/main/ssh/connection/ssh-connection.ts
 inline src/renderer/src/components/terminal-pane/remote-runtime-pty-transport.ts
 # fork: hook lines in upstream files at the cap
 inline src/main/orcad/orcad-entry.ts
-inline src/renderer/src/components/editor/useEditorPanelFileContentLoader.ts
 inline src/renderer/src/components/sidebar/workspace-actions/deletion/DeleteWorktreeDialog.tsx
 inline src/renderer/src/components/sidebar/project-admission/nested-import/useAddRepoNestedImportFlow.ts
