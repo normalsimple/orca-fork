@@ -48,6 +48,7 @@ function startDrag(list: HostSectionRow[], id: string): WorktreeSidebarDragSessi
     draggingWorktreeId: key,
     sourceGroupKey,
     draggedIds: [id],
+    pickedCopies: [{ id, hostId: HOST }],
     draggedCopies: [],
     reorderDraggedIds: [id],
     reorderDraggedKeys: [key],

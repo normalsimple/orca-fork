@@ -2,7 +2,7 @@
 
 由 `python3 fork/scripts/generate-audit.py` 生成（`--check` 只比对）。主表是和上游基点（`src/fork/skills-source-commit.ts` 记录的提交）不同的每个文件，一个不多一个不少；末尾另列已恢复成上游或已删除的文件，它们必须和基点相同。`src/fork/audit-table.fork.test.ts` 检查表和仓库一致。
 
-共 459 行：delete 46，keep 388，revert-to-upstream 25。上游文件（不含 fork 目录）里的 fork 改动 822 行，涉及 150 个文件。
+共 460 行：delete 46，keep 389，revert-to-upstream 25。上游文件（不含 fork 目录）里的 fork 改动 826 行，涉及 151 个文件。
 
 | 文件                                                                                                | 功能                        | 决定 | 原因                                                                                                                                                      |
 | --------------------------------------------------------------------------------------------------- | --------------------------- | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -227,6 +227,7 @@
 | `src/fork/upstream-release-reads.fork.test.ts`                                                      | UPD 应用内更新              | keep | fork 自有文件（测试）                                                                                                                                     |
 | `src/fork/upstream-release-sources.fork.test.ts`                                                    | UPD 应用内更新              | keep | fork 自有文件（测试）                                                                                                                                     |
 | `src/main/acp/acp-launch-specs.ts`                                                                  | F052 无 IPv6 的 Antigravity | keep | 上游文件，fork 改动 3 行。F052：Linux 会话启动（含登录）在 --uid= 后展开 antigravityAcpLinuxArgs()；未登记时仍只有 --uid=                                 |
+| `src/main/acp/acp-structured-restored-model.test.ts`                                                | INFRA 登记/工程/文档        | keep | 上游文件，fork 改动 4 行                                                                                                                                  |
 | `src/main/agent-hooks/restored-status-dead-terminal-sweep.ts`                                       | INFRA 登记/工程/文档        | keep | 上游文件，fork 改动 4 行                                                                                                                                  |
 | `src/main/ai-vault-search/session-search-message-rows.ts`                                           | AIV 历史会话                | keep | 上游文件，fork 改动 3 行                                                                                                                                  |
 | `src/main/ai-vault-search/session-search-schema.ts`                                                 | AIV 历史会话                | keep | 上游文件，fork 改动 3 行                                                                                                                                  |
