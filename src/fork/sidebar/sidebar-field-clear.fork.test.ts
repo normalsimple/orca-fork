@@ -29,7 +29,7 @@ import {
 } from '../../main/persistence/persistence-test-harness'
 import { hostWorktreeTarget } from '../../shared/worktree/host-qualified-identity'
 
-vi.mock('../../main/ssh/ssh-config-parser', () => ({
+vi.mock('../../main/ssh/config/ssh-config-parser', () => ({
   loadUserSshConfig: vi.fn(),
   sshConfigHostsToTargets: vi.fn()
 }))
@@ -172,6 +172,7 @@ async function runtimeSet(
     store,
     ports: {
       resolveWorktree: vi.fn(async () => worktree),
+      resolveFolderParent: vi.fn(async () => ({ folderWorkspaceId: 'unused' })),
       validateParent: vi.fn(),
       invalidateResolved: vi.fn(),
       invalidateScan: vi.fn(),

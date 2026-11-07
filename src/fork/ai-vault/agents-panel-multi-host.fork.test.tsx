@@ -9,7 +9,7 @@ import type { default as AiVaultPanelComponent } from '../../renderer/src/compon
 import {
   connectedRuntimeStatus,
   publicRuntimeEnvironment
-} from '../../renderer/src/runtime/paired-runtime-environment-test-fixture'
+} from '../../renderer/src/runtime/rpc/testing/paired-runtime-environment-test-fixture'
 import type { AiVaultSession } from '../../shared/ai-vault/contracts/ai-vault-types'
 import {
   getLocalExecutionHostLabel,

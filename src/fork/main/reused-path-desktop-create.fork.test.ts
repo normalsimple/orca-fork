@@ -23,9 +23,6 @@ vi.mock('../../main/text-generation/commit-message-agent-environment', () => ({
 vi.mock('electron', async () =>
   (await import('../../main/ipc/worktrees-test-module-mocks')).electronModuleMock()
 )
-vi.mock('../../main/git/worktree', async () =>
-  (await import('../../main/ipc/worktrees-test-module-mocks')).gitWorktreeModuleMock()
-)
 vi.mock('../../main/git/worktrees/catalog/worktree-scan-cache', async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),
   listWorktrees: (await import('../../main/ipc/worktrees-test-module-mocks')).listWorktreesMock,
@@ -122,7 +119,7 @@ vi.mock('../../main/workspaces/cleanup/workspace-cleanup-removal-snapshot-prune'
     await import('../../main/ipc/worktrees-test-module-mocks')
   ).workspaceCleanupRemovalSnapshotPruneModuleMock()
 )
-vi.mock('../../main/runtime/worktree-teardown', async () =>
+vi.mock('../../main/runtime/workspaces/removal/worktree-teardown', async () =>
   (await import('../../main/ipc/worktrees-test-module-mocks')).worktreeTeardownModuleMock()
 )
 vi.mock('../../main/ipc/pty/provider/registry', async () =>

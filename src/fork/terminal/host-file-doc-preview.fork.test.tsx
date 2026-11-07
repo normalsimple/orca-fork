@@ -4,12 +4,12 @@
 import { describe, expect, it, vi } from 'vitest'
 import { getWorkspaceFilePreviewPlan } from '@/lib/file-preview'
 import { buildDocPreviewGrantRequest } from '@/lib/doc-preview-grants'
-import { readRuntimeFilePreview } from '@/runtime/runtime-file-read-client'
+import { readRuntimeFilePreview } from '@/runtime/files/reads/runtime-file-read-client'
 import {
   fsReadFile,
   installRuntimeFileClientEnvironment,
   runtimeEnvironmentCall
-} from '@/runtime/runtime-file-client-test-harness'
+} from '@/runtime/files/runtime-file-client-test-harness'
 import { registerHostFileDocPreviews } from './host-file-doc-preview'
 import { registerLargeHostFileReads } from './large-host-file-read'
 
@@ -17,7 +17,7 @@ vi.mock('@/store', () => ({ useAppStore: { getState: () => state } }))
 vi.mock('@/lib/connection-owner-resolution', () => ({
   getConnectionIdForFileFromState: () => null
 }))
-vi.mock('@/lib/worktree-runtime-owner', () => ({
+vi.mock('@/lib/workspace/ownership/worktree-runtime-owner', () => ({
   runtimeEnvironmentIdOrLocalUnlessTwin: () => 'env-1'
 }))
 

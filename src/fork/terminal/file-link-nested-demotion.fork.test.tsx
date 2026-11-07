@@ -45,7 +45,7 @@ vi.mock('@/store', () => ({
   }
 }))
 
-vi.mock('@/components/settings/SearchableSetting', () => ({
+vi.mock('@/components/settings/section-layout/SearchableSetting', () => ({
   SearchableSetting: () => null
 }))
 

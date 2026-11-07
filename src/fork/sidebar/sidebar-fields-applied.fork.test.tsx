@@ -10,9 +10,12 @@ import {
 
 const mocks = vi.hoisted(() => ({ callRuntimeRpc: vi.fn() }))
 
-vi.mock('../../renderer/src/runtime/runtime-rpc-client', () => ({
+vi.mock('../../renderer/src/runtime/rpc/calls/runtime-rpc-call', () => ({
+  callRuntimeRpc: mocks.callRuntimeRpc
+}))
+
+vi.mock('../../renderer/src/runtime/rpc/compatibility/runtime-capability-proof', () => ({
   assertRuntimeEnvironmentCapability: vi.fn(async () => undefined),
-  callRuntimeRpc: mocks.callRuntimeRpc,
   runtimeEnvironmentSupportsCapability: vi.fn(async () => true)
 }))
 

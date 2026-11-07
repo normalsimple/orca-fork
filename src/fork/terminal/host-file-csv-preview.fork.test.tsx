@@ -4,12 +4,12 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { readEditorCsvFileContent } from '@/components/editor/csv/csv-file-content'
 import { CSV_PAGED_PREVIEW_BYTES } from '@/components/editor/csv/csv-file-limits'
-import { readRuntimeFileRange, statRuntimeReadTarget } from '@/runtime/runtime-file-range-client'
-import type { RuntimeFileReadArgs } from '@/runtime/runtime-file-client-types'
+import { readRuntimeFileRange, statRuntimeReadTarget } from '@/runtime/files/reads/runtime-file-range-client'
+import type { RuntimeFileReadArgs } from '@/runtime/files/runtime-file-client-types'
 import {
   installRuntimeFileClientEnvironment,
   runtimeEnvironmentCall
-} from '@/runtime/runtime-file-client-test-harness'
+} from '@/runtime/files/runtime-file-client-test-harness'
 import { registerHostCsvPreviews } from './host-file-csv-preview'
 import { registerLargeHostFileReads } from './large-host-file-read'
 

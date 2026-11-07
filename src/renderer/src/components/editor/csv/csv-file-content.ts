@@ -1,9 +1,9 @@
-import type { RuntimeFileReadArgs } from '@/runtime/runtime-file-client-types'
-import { readRuntimeFileContent } from '@/runtime/runtime-file-read-client'
+import type { RuntimeFileReadArgs } from '@/runtime/files/runtime-file-client-types'
+import { readRuntimeFileContent } from '@/runtime/files/reads/runtime-file-read-client'
 import {
   statRuntimeReadTarget,
   type RuntimeFileSnapshot
-} from '@/runtime/runtime-file-range-client'
+} from '@/runtime/files/reads/runtime-file-range-client'
 import type { FileContent } from '../editor-panel-content-types'
 import { readHostCsv } from '../../../../../shared/fork-hooks/host-file-ranges'
 

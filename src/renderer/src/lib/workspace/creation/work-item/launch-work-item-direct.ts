@@ -1,3 +1,4 @@
+import { pickApprovedSetupHashes } from '../../../../../../shared/worktree/approved-setup-hashes'
 import {
   prepareDirectWorkItemSetup,
   type DirectWorkItemLaunchResult
@@ -61,16 +62,16 @@ export async function launchWorkItemDirect(
     const { repo } = context
     const promptDelivery = args.promptDelivery ?? 'draft'
     const { itemType, itemNumber } = getDirectWorkItemIdentity(item)
-    const finalSetupDecision = await prepareDirectWorkItemSetup(
+    const confirmedSetup = await prepareDirectWorkItemSetup(
       repo,
       context.executionHostId,
       args.signal,
       args.onSetupRequired
     )
-    if (finalSetupDecision === 'review-request') {
+    if (confirmedSetup === 'review-request') {
       return false
     }
-    if (finalSetupDecision === 'cancelled') {
+    if (confirmedSetup === 'cancelled') {
       return 'cancelled'
     }
 
@@ -168,7 +169,7 @@ export async function launchWorkItemDirect(
       repoId,
       workspaceName,
       resolvedBaseBranch,
-      finalSetupDecision,
+      confirmedSetup.setupDecision,
       undefined,
       telemetrySource,
       workspaceIntentName?.displayName ?? item.title,
@@ -190,7 +191,10 @@ export async function launchWorkItemDirect(
       undefined,
       undefined,
       resolvedCompareBaseRef,
-      { executionHostId: context.executionHostId }
+      {
+        executionHostId: context.executionHostId,
+        ...pickApprovedSetupHashes(confirmedSetup)
+      }
     )
     const worktreeId = result.worktree.id
     const worktreePath = result.worktree.path

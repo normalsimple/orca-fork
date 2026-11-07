@@ -6,7 +6,7 @@ import type { AppState } from '../../renderer/src/store/types'
 import type { Worktree } from '../../shared/worktree/types'
 import type { WorktreeMeta } from '../../shared/worktree/meta-types'
 import type { ExecutionHostId } from '../../shared/execution-host'
-import { makeWorktree } from '../../renderer/src/store/slices/worktrees-slice-test-fixtures'
+import { makeWorktree } from '../../renderer/src/store/slices/worktrees/worktree.test-fixture'
 import {
   createTestStore,
   mockApi,
@@ -14,7 +14,7 @@ import {
   resetWorktreeSliceModuleMemory,
   runtimeEnvironmentCall,
   worktreeListMock
-} from '../../renderer/src/store/slices/worktrees-slice-test-harness'
+} from '../../renderer/src/store/slices/worktrees/worktrees-slice-test-harness'
 import {
   decodeSidebarFieldClears,
   parseClearableSidebarFields

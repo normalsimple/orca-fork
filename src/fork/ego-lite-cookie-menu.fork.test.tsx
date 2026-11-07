@@ -23,7 +23,7 @@ vi.mock('@/store', () => ({
   useAppStore: appStoreStub()
 }))
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }))
-vi.mock('@/lib/browser-cookie-import-toast', () => ({
+vi.mock('@/lib/browser/cookies/browser-cookie-import-toast', () => ({
   emitBrowserCookieImportToast: vi.fn()
 }))
 

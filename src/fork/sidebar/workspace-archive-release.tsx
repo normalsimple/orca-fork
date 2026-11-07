@@ -1,8 +1,8 @@
 // 软删除留下两样东西：元数据里的 isArchived 和本机隐藏记录（durable-workspace-archive）。
 // 同一路径再导入、或者工作区被真正删掉时，在这里把它们清掉。
 import { useAppStore } from '../../renderer/src/store'
-import { getWorktreeOnHostFromState } from '../../renderer/src/store/selectors'
-import { findRepoForHost } from '../../renderer/src/store/slices/repo-host-identity'
+import { getWorktreeOnHostFromState } from '../../renderer/src/store/workspaces/selection/worktree-on-host-selector'
+import { findRepoForHost } from '../../renderer/src/store/repos/repo-host-identity'
 import { getRepoExecutionHostId, type ExecutionHostId } from '../../shared/execution-host'
 import { getRepoIdFromWorktreeId } from '../../shared/worktree/id'
 import {

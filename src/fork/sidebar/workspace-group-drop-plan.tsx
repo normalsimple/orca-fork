@@ -5,7 +5,7 @@ import type { ProjectGroup } from '../../shared/project-group-types'
 import type { Repo } from '../../shared/repo-types'
 import type { Worktree } from '../../shared/worktree/types'
 import { folderWorkspaceKey } from '../../shared/workspace-scope'
-import { findRepoForHost } from '../../renderer/src/store/slices/repo-host-identity'
+import { findRepoForHost } from '../../renderer/src/store/repos/repo-host-identity'
 import { folderWorkspaceHostId, projectGroupHostId } from './membership'
 import {
   EMPTY_PROJECT_GROUP_PREFIX,

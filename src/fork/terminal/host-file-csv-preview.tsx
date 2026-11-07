@@ -3,7 +3,7 @@
 // through files.hostFile.*. A smaller one, and any on a host without those, reads whole as before,
 // through a grant (renewed for a restored tab). .tsx because it imports renderer aliases.
 import { decodeBase64Bytes } from '@/lib/base64-bytes'
-import { isHostFileOutsideWorkspaces } from '@/runtime/runtime-terminal-artifact-read'
+import { isHostFileOutsideWorkspaces } from '@/runtime/files/grants/runtime-terminal-artifact-read'
 import { CSV_PAGED_PREVIEW_BYTES } from '@/components/editor/csv/csv-file-limits'
 import {
   registerHostFileRanges,

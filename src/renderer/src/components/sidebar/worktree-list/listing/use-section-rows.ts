@@ -4,7 +4,7 @@ import { shallow } from 'zustand/shallow'
 import { persistedUIValuesEqual } from '../../../../../../shared/persisted-ui-equality'
 import { useShallow } from 'zustand/react/shallow'
 import { useAppStore } from '@/store/index'
-import { selectSidebarLineageParentIdentities } from '@/store/cross-store-lineage-parents'
+import { selectSidebarLineageParentIdentities } from '@/store/slices/worktrees/metadata/cross-store-lineage-parents'
 import type { AppState } from '@/store/types'
 import type { Repo } from '../../../../../../shared/repo-types'
 import {
@@ -40,7 +40,7 @@ import {
 import { selectPendingWorktreeCreationKeys } from './pending-worktree-creation-keys'
 import { sidebarModeRetainsHostHeaders } from '../../../../../../shared/fork-hooks/sidebar-group-mode'
 import { useSidebarGroupModeLabelsVersion } from '../../../../../../fork/sidebar/mode-labels'
-import { selectWorktreesByRepo } from '@/store/workspace-record-selectors'
+import { selectWorktreesByRepo } from '@/store/workspaces/catalog/workspace-record-fields'
 
 function createSidebarHostOptionsSelector() {
   let inputs: readonly unknown[] = []

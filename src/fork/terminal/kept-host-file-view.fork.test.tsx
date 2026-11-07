@@ -1,18 +1,18 @@
 // F046: HTML another workspace holds previews in the clicked workspace.
 // A non-HTML file follows upstream: small text stays writable here, anything the grant can't serve opens there.
 import { describe, expect, it, vi } from 'vitest'
-import { openDetectedFilePath } from '@/components/terminal-pane/terminal-file-open-routing'
-import { createTerminalLinkTestDoubles } from '@/components/terminal-pane/terminal-link-handlers-test-fixtures'
+import { openDetectedFilePath } from '@/components/terminal-pane/links/files/terminal-file-open-routing'
+import { createTerminalLinkTestDoubles } from '@/components/terminal-pane/links/terminal-link-handlers-test-fixtures'
 import {
   flushDoubleRaf,
   installTerminalLinkTestEnvironment
-} from '@/components/terminal-pane/terminal-link-handlers-test-harness'
+} from '@/components/terminal-pane/links/terminal-link-handlers-test-harness'
 import * as filePreview from '@/lib/file-preview'
 import { activateAndRevealWorkspace } from '@/lib/workspace/activation/worktree-activation'
 import {
   createCompatibleRuntimeStatusResponseIfNeeded,
   type RuntimeEnvironmentCallRequest
-} from '@/runtime/runtime-compatibility-test-fixture'
+} from '@/runtime/rpc/testing/runtime-compatibility-test-fixture'
 import {
   TERMINAL_ARTIFACT_IN_PLACE_MAX_BYTES,
   TERMINAL_PATH_ABSOLUTE_FILES_RUNTIME_CAPABILITY
@@ -35,7 +35,7 @@ vi.mock('@/lib/workspace/activation/worktree-activation', () => ({
 vi.mock('@/lib/connection-context', () => ({
   getConnectionId: vi.fn(() => null)
 }))
-vi.mock('@/components/terminal-pane/terminal-remote-file-download-open', () => ({
+vi.mock('@/components/terminal-pane/links/files/terminal-remote-file-download-open', () => ({
   downloadAndOpenRemoteTerminalFile: vi.fn()
 }))
 

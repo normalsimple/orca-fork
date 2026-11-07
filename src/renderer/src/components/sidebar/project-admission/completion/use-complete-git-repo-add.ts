@@ -10,7 +10,7 @@ import { compareWorktreeDisplayName } from '@/lib/worktree-display-name-order'
 import { finishProjectAddWithDefaultCheckout } from './project-added-default-checkout'
 import type { ExecutionHostId } from '../../../../../../shared/execution-host'
 import { withForkPostImportHandoff } from '../../../../../../shared/fork-hooks/post-import'
-import { selectWorktreesByRepo } from '@/store/workspace-record-selectors'
+import { selectWorktreesByRepo } from '@/store/workspaces/catalog/workspace-record-fields'
 
 export type GitRepoAddOutcome = { importedProjectGroupId?: string }
 

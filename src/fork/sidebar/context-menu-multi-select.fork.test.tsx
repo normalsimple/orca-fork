@@ -48,7 +48,7 @@ vi.mock('@/store', () => ({
   })
 }))
 
-vi.mock('@/store/selectors', () => ({
+vi.mock('@/store/workspaces/selection/worktree-on-host-selector', () => ({
   useAllWorktrees: () => [],
   useRepoById: (repoId?: string) =>
     repoId ? { id: repoId, name: repoId, displayName: repoId, projectGroupId: null } : undefined,

@@ -3,13 +3,13 @@
 // image or PDF past the grant preview's reply is paged the same way; any other binary shows as one.
 import { beforeEach, describe, expect, it } from 'vitest'
 import { useAppStore } from '@/store'
-import type { OpenFile } from '@/store/slices/editor'
-import { readRuntimeTerminalArtifactContent } from '@/runtime/runtime-terminal-artifact-read'
-import { REMOTE_FILE_CHANGED_DURING_READ_MESSAGE } from '@/runtime/runtime-paged-file-read'
+import type { OpenFile } from '@/store/slices/editor/types/open-file'
+import { readRuntimeTerminalArtifactContent } from '@/runtime/files/grants/runtime-terminal-artifact-read'
+import { REMOTE_FILE_CHANGED_DURING_READ_MESSAGE } from '@/runtime/files/reads/runtime-paged-file-read'
 import {
   installRuntimeFileClientEnvironment,
   runtimeEnvironmentCall
-} from '@/runtime/runtime-file-client-test-harness'
+} from '@/runtime/files/runtime-file-client-test-harness'
 import { RASTER_IMAGE_PREVIEW_TOO_LARGE_ERROR } from '../../shared/raster-image-preview-limits'
 import { registerLargeHostFileReads } from './large-host-file-read'
 

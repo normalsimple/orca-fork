@@ -3,12 +3,12 @@
 // .tsx 才能引用渲染进程别名；node 工程只包含 src/fork/**/*.ts。
 import { useAppStore } from '@/store'
 import type { AppState } from '@/store/types'
-import type { OpenFile } from '@/store/slices/editor'
+import type { OpenFile } from '@/store/slices/editor/types/open-file'
 import {
   acquireTerminalArtifactGrant,
   pinTerminalArtifactGrantTarget
-} from '@/runtime/runtime-terminal-artifact-grant'
-import { isHtmlFilePath } from '@/components/terminal-pane/local-html-file-destinations'
+} from '@/runtime/files/grants/runtime-terminal-artifact-grant'
+import { isHtmlFilePath } from '@/components/terminal-pane/links/files/local-html-file-destinations'
 import { findWorkspaceFileRoute } from '@/lib/runtime-workspace-file-route'
 import { getOpenFileExecutionHostId } from '@/lib/unified-tab-host-ownership'
 import { isFloatingWorkspaceId } from '../../shared/floating-workspace-worktree'

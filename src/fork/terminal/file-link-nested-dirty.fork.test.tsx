@@ -3,7 +3,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAppStore } from '@/store'
 import { needsSavePromptOnClose } from '@/store/slices/editor/buffers/editor-buffer-close-rule'
 import type { OpenFile } from '@/store/slices/editor/types/open-file'
-import { makeWorktree, TEST_REPO } from '@/store/slices/worktrees-slice-test-fixtures'
+import { TEST_REPO } from '@/store/repos/repo.test-fixture'
+import { makeWorktree } from '@/store/slices/worktrees/worktree.test-fixture'
 import {
   registerNestedCopyDemotion,
   resetNestedCopyDemotionForTests

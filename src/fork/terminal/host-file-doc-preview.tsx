@@ -2,7 +2,7 @@
 // .tsx because it imports renderer aliases; the node project only includes src/fork/**/*.ts.
 import { dirname } from '@/lib/path'
 import { findWorkspaceFileRoute } from '@/lib/runtime-workspace-file-route'
-import { readHostFilePreview } from '@/runtime/runtime-terminal-artifact-read'
+import { readHostFilePreview } from '@/runtime/files/grants/runtime-terminal-artifact-read'
 import { toRuntimeWorktreeSelector } from '@/runtime/runtime-worktree-selector'
 import { useAppStore } from '@/store'
 import { toRuntimeExecutionHostId } from '../../shared/execution-host'

@@ -2,7 +2,7 @@
 import type { Worktree } from '../../shared/worktree/types'
 import { registerWorkspaceChoiceFormatter } from '../../shared/fork-hooks/sidebar-chrome'
 import { useAppStore } from '../../renderer/src/store'
-import { findRepoForHost } from '../../renderer/src/store/slices/repo-host-identity'
+import { findRepoForHost } from '../../renderer/src/store/repos/repo-host-identity'
 import { branchName } from '../../renderer/src/lib/git-utils'
 import { getWorktreeExecutionHostId } from '../../shared/execution-host'
 import { directoryLabelForRepo, directoryLabelsForHost } from './directory-label'

@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { AppState } from '../../renderer/src/store/types'
-import { makeWorktree } from '../../renderer/src/store/slices/worktrees-slice-test-fixtures'
+import { makeWorktree } from '../../renderer/src/store/slices/worktrees/worktree.test-fixture'
 import {
   createTestStore,
   resetRemoteRuntimeMocks,
   resetWorktreeSliceModuleMemory,
   runtimeEnvironmentCall
-} from '../../renderer/src/store/slices/worktrees-slice-test-harness'
+} from '../../renderer/src/store/slices/worktrees/worktrees-slice-test-harness'
 import { SIDEBAR_FIELDS_NOT_APPLIED_CODE } from './sidebar-fields-applied'
 
 vi.mock('sonner', () => ({

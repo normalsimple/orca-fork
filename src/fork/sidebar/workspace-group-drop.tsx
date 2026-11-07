@@ -4,7 +4,7 @@ import { getWorktreeExecutionHostId, normalizeExecutionHostId } from '../../shar
 import type { ExecutionHostId } from '../../shared/execution-host'
 import { folderWorkspaceToWorktree } from '../../shared/folder-workspaces/folder-workspace-worktree'
 import { getWorktreeHostIdentity } from '../../shared/worktree/host-qualified-identity'
-import { findRepoForHost } from '../../renderer/src/store/slices/repo-host-identity'
+import { findRepoForHost } from '../../renderer/src/store/repos/repo-host-identity'
 import {
   registerWorkspaceGroupDrop,
   type WorkspaceGroupDropArgs

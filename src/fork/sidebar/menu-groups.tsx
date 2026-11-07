@@ -16,8 +16,8 @@ import {
   type WorktreeMenuGroupsArgs
 } from '../../shared/fork-hooks/worktree-menu-groups'
 import { useAppStore } from '../../renderer/src/store'
-import { isProjectGroupJoinableFromCatalog } from '../../renderer/src/store/slices/project-group-owner-routing'
-import { ipcOrRuntimeTargetForHostId } from '../../renderer/src/runtime/runtime-client-target'
+import { isProjectGroupJoinableFromCatalog } from '../../renderer/src/store/project-groups/project-group-owner-routing'
+import { ipcOrRuntimeTargetForHostId } from '../../renderer/src/runtime/rpc/targets/runtime-client-target'
 import { projectGroupHostId, resolveSidebarGroupId } from './membership'
 import {
   HOST_DIRECTORY_GROUP_BY,

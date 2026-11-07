@@ -6,17 +6,17 @@
 // aliases.
 import { useAppStore } from '@/store'
 import { decodeBase64Bytes } from '@/lib/base64-bytes'
-import { callRuntimeRpc } from '@/runtime/runtime-rpc-client'
-import { RuntimeRpcCallError } from '@/runtime/runtime-rpc-result'
+import { callRuntimeRpc } from '@/runtime/rpc/calls/runtime-rpc-call'
+import { RuntimeRpcCallError } from '@/runtime/rpc/calls/runtime-rpc-result'
 import { toRuntimeWorktreeSelector } from '@/runtime/runtime-worktree-selector'
-import type { RuntimeFileSnapshot } from '@/runtime/runtime-file-range-client'
+import type { RuntimeFileSnapshot } from '@/runtime/files/reads/runtime-file-range-client'
 import {
   pagedFilePreviewResult,
   pagedTextFileResult,
   previewableBinaryMimeType,
   readFileInChunks,
   type ChunkedFileReader
-} from '@/runtime/runtime-paged-file-read'
+} from '@/runtime/files/reads/runtime-paged-file-read'
 import { BINARY_PROBE_BYTES } from '../../shared/binary-buffer'
 import { rasterImageExceedsPreviewLimits } from '../../shared/raster-image-prefix-limits'
 import { RASTER_IMAGE_PREVIEW_TOO_LARGE_ERROR } from '../../shared/raster-image-preview-limits'

@@ -1,7 +1,7 @@
 // 更深工作区打开同一路径后，把外层可写标签降为只读。只读标记随会话保存，重启后仍是只读。
 import { useAppStore } from '@/store'
 import type { AppState } from '@/store/types'
-import type { OpenFile } from '@/store/slices/editor'
+import type { OpenFile } from '@/store/slices/editor/types/open-file'
 import { findWorkspaceFileRoute } from '@/lib/runtime-workspace-file-route'
 import { getOpenFileExecutionHostId } from '@/lib/unified-tab-host-ownership'
 import {

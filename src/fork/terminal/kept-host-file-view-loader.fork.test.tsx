@@ -4,7 +4,7 @@
 import { act } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { OpenFile } from '@/store/slices/editor'
+import type { OpenFile } from '@/store/slices/editor/types/open-file'
 import {
   useEditorPanelFileContentLoader,
   type EditorPanelFileContentLoader
@@ -27,7 +27,7 @@ vi.mock('@/lib/connection-context', () => ({
   getConnectionIdFromState: vi.fn(() => null),
   isWorktreeConnectionResolved: vi.fn(() => true)
 }))
-vi.mock('@/runtime/runtime-terminal-artifact-grant', async (importOriginal) => {
+vi.mock('@/runtime/files/grants/runtime-terminal-artifact-grant', async (importOriginal) => {
   const actual = await importOriginal<Record<string, unknown>>()
   return { ...actual, hostOpensGrantedFilesInPlace: vi.fn(async () => false) }
 })

@@ -1,7 +1,7 @@
 // Reads the open composer and remembers the host and sidebar group for the create.
 import { useAppStore } from '@/store'
-import { getWorktreeOnHostFromState } from '@/store/selectors'
-import { findRepoForHost } from '@/store/slices/repo-host-identity'
+import { getWorktreeOnHostFromState } from '@/store/workspaces/selection/worktree-on-host-selector'
+import { findRepoForHost } from '@/store/repos/repo-host-identity'
 import { getWorktreeExecutionHostId, type ExecutionHostId } from '../../shared/execution-host'
 import {
   composerSeedForOpen,

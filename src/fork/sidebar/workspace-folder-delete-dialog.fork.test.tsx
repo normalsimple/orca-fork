@@ -81,7 +81,7 @@ vi.mock('@/store', () => ({
   )
 }))
 
-vi.mock('@/store/selectors', () => ({
+vi.mock('@/store/workspaces/selection/worktree-on-host-selector', () => ({
   useAllWorktrees: () => mocks.state.allWorktrees(),
   getWorktreeMapFromState: () =>
     new Map(mocks.state.allWorktrees().map((worktree) => [worktree.id, worktree])),
