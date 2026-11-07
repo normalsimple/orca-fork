@@ -188,6 +188,7 @@ function resetState(): void {
   mocks.state.activeModal = 'delete-worktree'
   mocks.state.modalData = {}
   mocks.state.allWorktrees.mockReturnValue([])
+  mocks.state.worktreesByRepo = {}
   mocks.state.repos = [gitRepo()]
   mocks.state.worktreeLineageById = {}
   mocks.state.gitStatusByWorktree = {}
@@ -205,6 +206,13 @@ function resetState(): void {
 
 function showWorktrees(worktrees: Worktree[], modalData: Record<string, unknown> = {}): void {
   mocks.state.allWorktrees.mockReturnValue(worktrees)
+  // 侧栏目录改从 worktreesByRepo 建索引，不再读 allWorktrees()。每次换一份新对象，避免索引缓存住旧快照。
+  mocks.state.worktreesByRepo = {}
+  for (const worktree of worktrees) {
+    const rows = mocks.state.worktreesByRepo[worktree.repoId] ?? []
+    rows.push(worktree)
+    mocks.state.worktreesByRepo[worktree.repoId] = rows
+  }
   mocks.state.gitStatusByWorktree = Object.fromEntries(
     worktrees.map((worktree) => [worktree.id, []])
   )

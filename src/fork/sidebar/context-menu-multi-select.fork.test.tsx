@@ -21,9 +21,20 @@ const state = {
   workspaceStatuses: [],
   openModal: vi.fn(),
   projectGroups: [],
-  // 上游 WSL 启动项按 repos / folderWorkspaces 找主机；测试里没有仓库。
-  repos: [],
+  // 分组项只在菜单拿到仓库时出现。目录按 id 查这张表。
+  repos: [
+    {
+      id: 'repo',
+      path: '/path',
+      displayName: 'repo',
+      badgeColor: 'gray',
+      addedAt: 0,
+      projectGroupId: null
+    }
+  ],
   folderWorkspaces: [],
+  // 打开菜单时按仓库索引工作区。没有这张表会在 Object.values 处抛错。
+  worktreesByRepo: {},
   createProjectGroup: vi.fn(),
   moveProjectToGroup: vi.fn(),
   deleteStateByWorktreeId: {},
