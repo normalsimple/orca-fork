@@ -147,12 +147,12 @@ REASONS = {
     'src/main/runtime/rpc/rpc-params-type-parity.ts': '类型对齐检查跳过 ForkRpcMethodName（schema 在 src/fork）',
     'src/main/ipc/doc-preview-grant-ipc.ts': 'F051：铸 grant 后一行 openDocPreviewAccess，整个请求根放行，不弹文件夹提示',
     'src/main/antigravity/antigravity-acp-runtime-probe.ts': 'F052：Linux 安装校验在 --uid= 后展开 antigravityAcpLinuxArgs()；未登记时仍只有 --uid=',
-    'src/main/acp/acp-launch-specs.ts': 'F052：Linux 会话启动（含登录）在 --uid= 后展开 antigravityAcpLinuxArgs()；未登记时仍只有 --uid=',
+    'src/main/antigravity/antigravity-acp-launch-spec.ts': 'F052：Linux 会话启动（含登录）在 --uid= 后展开 antigravityAcpLinuxArgs()；未登记时仍只有 --uid=',
     'src/shared/runtime-rpc-call-queue.ts': 'F046：分段读 files.hostDocPreview.readChunk、files.hostFile.readChunk 和上游 files.readDocPreviewChunk 一样走 bulk 通道',
-    'src/renderer/src/runtime/runtime-remote-file-content.ts': 'F046：授权读给不了的大文本交给 readLargeGrantedHostFile 分段读；二进制预览交给 pageLargeGrantedHostPreview（图片、PDF 分段读）',
+    'src/renderer/src/runtime/files/reads/runtime-remote-file-content.ts': 'F046：授权读给不了的大文本交给 readLargeGrantedHostFile 分段读；二进制预览交给 pageLargeGrantedHostPreview（图片、PDF 分段读）',
     'src/renderer/src/components/editor/csv/csv-file-content.ts': 'F046：开头先问 readHostCsv，工作区外的主机 CSV 过了分页阈值用上游的分页预览，否则整份读',
-    'src/renderer/src/runtime/runtime-file-range-client.ts': 'F046：分页 CSV 预览的 stat 和按段读各在开头一行，工作区外的主机文件按绝对路径读（files.hostFile.*）',
-    'src/renderer/src/components/terminal-pane/terminal-host-workspace-file.ts': 'F046：只有别的工作区的 HTML 才留在点击时的工作区做文档预览；其余文件走上游',
+    'src/renderer/src/runtime/files/reads/runtime-file-range-client.ts': 'F046：分页 CSV 预览的 stat 和按段读各在开头一行，工作区外的主机文件按绝对路径读（files.hostFile.*）',
+    'src/renderer/src/components/terminal-pane/host-files/terminal-host-workspace-file.ts': 'F046：只有别的工作区的 HTML 才留在点击时的工作区做文档预览；其余文件走上游',
 }
 
 # Files a rework put back to upstream or deleted. Each must not differ from the base.
