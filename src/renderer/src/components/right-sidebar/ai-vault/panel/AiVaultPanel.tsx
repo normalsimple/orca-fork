@@ -1,3 +1,4 @@
+/* oxlint-disable max-lines -- fork: hook call only */
 import { useCallback, useMemo, useRef } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { toast } from 'sonner'
