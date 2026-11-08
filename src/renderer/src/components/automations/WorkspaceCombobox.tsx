@@ -12,7 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { cn } from '@/lib/utils'
 import type { Worktree } from '../../../../shared/worktree/types'
 import { formatRegisteredWorkspaceChoice } from '../../../../shared/fork-hooks/sidebar-chrome'
-import { translate } from '@/i18n/i18n'
+import { useTranslate } from '@/i18n/use-translate'
 
 export function WorkspaceCombobox({
   worktrees,
@@ -25,6 +25,7 @@ export function WorkspaceCombobox({
   triggerClassName?: string
   onValueChange: (workspaceId: string) => void
 }): React.JSX.Element {
+  const t = useTranslate()
   const [open, setOpen] = React.useState(false)
   const inputRef = React.useRef<HTMLInputElement | null>(null)
   const focusFrameRef = React.useRef<number | null>(null)
@@ -77,10 +78,7 @@ export function WorkspaceCombobox({
         >
           <span className={cn('truncate', !selected && 'text-muted-foreground')}>
             {selected?.displayName ??
-              translate(
-                'auto.components.automations.WorkspaceCombobox.66a0cd9628',
-                'Select workspace'
-              )}
+              t('auto.components.automations.WorkspaceCombobox.66a0cd9628', 'Select workspace')}
           </span>
           <ChevronsUpDown className="size-4 opacity-50" />
         </Button>
@@ -96,14 +94,14 @@ export function WorkspaceCombobox({
         <Command>
           <CommandInput
             ref={setInputNode}
-            placeholder={translate(
+            placeholder={t(
               'auto.components.automations.WorkspaceCombobox.8e9c8cc6b5',
               'Search workspaces...'
             )}
           />
           <CommandList className="max-h-72">
             <CommandEmpty>
-              {translate(
+              {t(
                 'auto.components.automations.WorkspaceCombobox.ee5b280eba',
                 'No workspaces found.'
               )}

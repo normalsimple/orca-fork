@@ -3,6 +3,7 @@ import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { toastSshConnectFailure } from '@/ssh/ssh-connect-failure-toast'
 import { translate } from '@/i18n/i18n'
+import { useTranslate } from '@/i18n/use-translate'
 import { useMountedRef } from '@/hooks/useMountedRef'
 import { useAppStore } from '../../store'
 import { STATUS_LABELS, statusColor } from '../settings/ssh/targets/SshTargetCard'
@@ -44,6 +45,7 @@ export function SshTargetStatusRow({
   label: string
   status: SshConnectionStatus
 }): React.JSX.Element {
+  const t = useTranslate()
   const [busy, setBusy] = useState(false)
   const mountedRef = useMountedRef()
   const recordFeatureInteraction = useAppStore((s) => s.recordFeatureInteraction)
@@ -86,7 +88,7 @@ export function SshTargetStatusRow({
         <div className="truncate text-[12px] font-medium">{label}</div>
         <div className="flex min-w-0 items-center gap-1.5 text-[10px] text-muted-foreground">
           <span className="shrink-0 whitespace-nowrap">
-            {translate('auto.components.status.bar.SshTargetStatusRow.sshHost', 'SSH Host')}
+            {t('auto.components.status.bar.SshTargetStatusRow.sshHost', 'SSH Host')}
           </span>
           <span aria-hidden="true">·</span>
           <span className="shrink-0 whitespace-nowrap">{STATUS_LABELS[status]}</span>
@@ -100,7 +102,7 @@ export function SshTargetStatusRow({
           onClick={() => void handleConnect()}
           className="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium text-foreground hover:bg-accent/70"
         >
-          {sshConnectVerb(status)}
+          {sshConnectVerb(status, t)}
         </button>
       ) : status === 'connected' ? (
         <button
@@ -108,7 +110,7 @@ export function SshTargetStatusRow({
           onClick={() => void handleDisconnect()}
           className="shrink-0 rounded px-1.5 py-0.5 text-[10px] text-muted-foreground hover:bg-accent/70 hover:text-foreground"
         >
-          {translate('auto.components.status.bar.SshStatusSegment.59b553e2aa', 'Disconnect')}
+          {t('auto.components.status.bar.SshStatusSegment.59b553e2aa', 'Disconnect')}
         </button>
       ) : null}
     </div>

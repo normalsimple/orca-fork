@@ -13,7 +13,7 @@ import type {
   DeleteWorktreeChangeCheckState,
   DeleteWorktreeDirtyChangePreview
 } from './delete-worktree-dirty-change-counts'
-import { translate } from '@/i18n/i18n'
+import { useTranslate } from '@/i18n/use-translate'
 import { keptLineageText } from '../../../../../../shared/fork-hooks/workspace-folder-delete'
 
 type DeleteWorktreeLineageNoticeProps = {
@@ -35,8 +35,9 @@ export function DeleteWorktreeLineageNotice({
   changeCheckStatesByWorktreeId,
   folderKeptNotice
 }: DeleteWorktreeLineageNoticeProps): JSX.Element | null {
-  const title = keptLineageText(translate, folderKeptNotice?.title)
-  const body = keptLineageText(translate, folderKeptNotice?.body)
+  const t = useTranslate()
+  const title = keptLineageText(t, folderKeptNotice?.title)
+  const body = keptLineageText(t, folderKeptNotice?.body)
   const projects = useAppStore((s) => s.projects)
   const projectHostSetups = useAppStore((s) => s.projectHostSetups)
   const projectIndex = useMemo(
@@ -111,7 +112,7 @@ export function DeleteWorktreeLineageNotice({
             ))}
             {descendants.length > 4 ? (
               <div className="text-muted-foreground">
-                {translate(
+                {t(
                   'auto.components.sidebar.DeleteWorktreeLineageNotice.moreChildren',
                   '+{{count}} more',
                   { count: descendants.length - 4, defaultValue_one: '+{{count}} more' }

@@ -11,7 +11,8 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Trans } from 'react-i18next'
-import { i18n, translate } from '@/i18n/i18n'
+import { i18n } from '@/i18n/i18n'
+import { useTranslate } from '@/i18n/use-translate'
 import { renderDeleteProjectGroupOption } from '../../../../../../shared/fork-hooks/project-group-delete'
 import type { WorktreePurgeTarget } from '@/store/slices/worktrees/teardown/worktree-purge-target'
 import { RemovalUnsavedFilesNotice } from '../../workspace-actions/deletion/RemovalUnsavedFilesNotice'
@@ -42,12 +43,13 @@ export function ProjectGroupDeleteDialog({
   onConfirm,
   unsavedTargets = NO_UNSAVED_TARGETS
 }: ProjectGroupDeleteDialogProps): React.JSX.Element {
+  const t = useTranslate()
   const [deleting, setDeleting] = useState(false)
   const [wasOpen, setWasOpen] = useState(open)
   const mountedRef = useRef(true)
   const confirmButtonRef = useRef<HTMLButtonElement>(null)
   const removeProjectsId = useId()
-  const removeContainedProjectCopy = translate(
+  const removeContainedProjectCopy = t(
     'auto.components.sidebar.ProjectGroupDeleteDialog.removeContainedProjects',
     'Remove {{count}} contained projects',
     { count: projectCount, defaultValue_one: 'Remove {{count}} contained project' }
@@ -110,7 +112,7 @@ export function ProjectGroupDeleteDialog({
       >
         <DialogHeader>
           <DialogTitle className="text-sm">
-            {translate(
+            {t(
               'auto.components.sidebar.ProjectGroupDeleteDialog.591f330288',
               'Delete Project Group'
             )}
@@ -118,7 +120,7 @@ export function ProjectGroupDeleteDialog({
           <DialogDescription className="text-xs">
             <Trans
               i18n={i18n}
-              defaults={translate(
+              defaults={t(
                 'auto.components.sidebar.ProjectGroupDeleteDialog.deleteGroupDescription',
                 'Delete <name>{{name}}</name>.'
               )}
@@ -132,14 +134,14 @@ export function ProjectGroupDeleteDialog({
             {projectNames.length > 0 && (
               <div className="rounded-md border border-border/70 bg-muted/35 px-3 py-2">
                 <div className="mb-1 text-[11px] font-medium uppercase tracking-[0.05em] text-muted-foreground">
-                  {translate(
+                  {t(
                     'auto.components.sidebar.ProjectGroupDeleteDialog.0e0e6764af',
                     'Contained projects'
                   )}
                 </div>
                 <ul
                   className="min-w-0 space-y-0.5 text-foreground"
-                  aria-label={translate(
+                  aria-label={t(
                     'auto.components.sidebar.ProjectGroupDeleteDialog.0e0e6764af',
                     'Contained projects'
                   )}
@@ -151,7 +153,7 @@ export function ProjectGroupDeleteDialog({
                   ))}
                   {projectNames.length > 4 ? (
                     <li className="text-muted-foreground">
-                      {translate(
+                      {t(
                         'auto.components.sidebar.ProjectGroupDeleteDialog.moreProjects',
                         '+{{count}} more',
                         { count: projectNames.length - 4, defaultValue_one: '+{{count}} more' }
@@ -181,7 +183,7 @@ export function ProjectGroupDeleteDialog({
                   id={`${removeProjectsId}-description`}
                   className="mt-0.5 block text-muted-foreground"
                 >
-                  {translate(
+                  {t(
                     'auto.components.sidebar.ProjectGroupDeleteDialog.55f75628c0',
                     'Project folders on disk are not deleted.'
                   )}
@@ -201,7 +203,7 @@ export function ProjectGroupDeleteDialog({
             disabled={deleting}
             onClick={() => onOpenChange(false)}
           >
-            {translate('auto.components.sidebar.ProjectGroupDeleteDialog.ca65b78f78', 'Cancel')}
+            {t('auto.components.sidebar.ProjectGroupDeleteDialog.ca65b78f78', 'Cancel')}
           </Button>
           <Button
             ref={confirmButtonRef}
@@ -213,14 +215,8 @@ export function ProjectGroupDeleteDialog({
             onClick={handleConfirm}
           >
             {deleting
-              ? translate(
-                  'auto.components.sidebar.ProjectGroupDeleteDialog.2c14ce677a',
-                  'Deleting...'
-                )
-              : translate(
-                  'auto.components.sidebar.ProjectGroupDeleteDialog.fec7e9c8ae',
-                  'Delete Group'
-                )}
+              ? t('auto.components.sidebar.ProjectGroupDeleteDialog.2c14ce677a', 'Deleting...')
+              : t('auto.components.sidebar.ProjectGroupDeleteDialog.fec7e9c8ae', 'Delete Group')}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -3,8 +3,8 @@ import { resolveRpcWorkspaceCreatorProvenance } from '../../workspace-creator-co
 import { decodeSidebarFieldClears } from '../../../../../shared/fork-hooks/sidebar-field-clear'
 import {
   FolderWorkspaceCreate,
+  FolderWorkspaceDelete,
   FolderWorkspacePathStatus,
-  FolderWorkspaceSelector,
   FolderWorkspaceUpdate
 } from '../../../../../shared/rpc-contract/folder-workspace-params'
 
@@ -35,15 +35,19 @@ export const FOLDER_WORKSPACE_METHODS = [
     handler: async (params, { runtime }) => ({
       folderWorkspace: await runtime.updateFolderWorkspace(
         params.folderWorkspaceId,
-        decodeSidebarFieldClears(params.updates, params.clearFields)
+        decodeSidebarFieldClears(params.updates, params.clearFields),
+        { requireUniqueId: params.requireUniqueId }
       )
     })
   }),
   defineMethod({
     name: 'folderWorkspace.delete',
     permission: 'workspace',
-    params: FolderWorkspaceSelector,
-    handler: async (params, { runtime }) => runtime.deleteFolderWorkspace(params.folderWorkspaceId)
+    params: FolderWorkspaceDelete,
+    handler: async (params, { runtime }) =>
+      runtime.deleteFolderWorkspace(params.folderWorkspaceId, {
+        requireUniqueId: params.requireUniqueId
+      })
   }),
   defineMethod({
     name: 'folderWorkspace.getPathStatus',
