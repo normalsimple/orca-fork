@@ -92,7 +92,9 @@ describe('group drop rollback on the host', () => {
       store: store as unknown as RuntimeStore,
       ports: {
         resolveWorktree: vi.fn(async () => resolved),
-        resolveFolderParent: vi.fn(async () => ({ folderWorkspaceId: 'unused' })),
+        resolveParent: vi.fn(async () => {
+          throw new Error('unused')
+        }),
         validateParent: vi.fn(),
         invalidateResolved: vi.fn(),
         invalidateScan: vi.fn(),

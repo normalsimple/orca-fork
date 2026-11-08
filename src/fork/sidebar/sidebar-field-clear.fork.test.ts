@@ -172,7 +172,9 @@ async function runtimeSet(
     store,
     ports: {
       resolveWorktree: vi.fn(async () => worktree),
-      resolveFolderParent: vi.fn(async () => ({ folderWorkspaceId: 'unused' })),
+      resolveParent: vi.fn(async () => {
+        throw new Error('unused')
+      }),
       validateParent: vi.fn(),
       invalidateResolved: vi.fn(),
       invalidateScan: vi.fn(),
