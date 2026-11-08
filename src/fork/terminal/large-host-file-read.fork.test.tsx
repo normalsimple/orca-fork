@@ -10,7 +10,7 @@ import {
   installRuntimeFileClientEnvironment,
   runtimeEnvironmentCall
 } from '@/runtime/files/runtime-file-client-test-harness'
-import { RASTER_IMAGE_PREVIEW_TOO_LARGE_ERROR } from '../../shared/raster-image-preview-limits'
+import { RASTER_IMAGE_PREVIEW_TOO_LARGE_ERROR } from '../../shared/file-preview/raster-image-preview-limits'
 import { registerLargeHostFileReads } from './large-host-file-read'
 
 installRuntimeFileClientEnvironment()

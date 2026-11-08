@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import type { AcpLaunchSpec } from '../../main/acp/acp-launch-specs'
+import type { AcpLaunchSpec } from '../../main/acp/launch/acp-launch-contract'
 import { ANTIGRAVITY_LAUNCH_SPEC } from '../../main/antigravity/antigravity-acp-launch-spec'
 import { probeAntigravityAcpServer } from '../../main/antigravity/antigravity-acp-runtime-probe'
 import {

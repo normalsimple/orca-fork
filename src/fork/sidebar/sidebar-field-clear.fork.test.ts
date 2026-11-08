@@ -17,7 +17,7 @@ import { mergeRuntimeFolderWorkspace } from '../../main/runtime/workspaces/catal
 import { folderWorkspaceToWorktree } from '../../shared/folder-workspaces/folder-workspace-worktree'
 import type { Repo } from '../../shared/repo-types'
 import type { FolderWorkspace } from '../../shared/folder-workspaces/folder-workspace-types'
-import type { RuntimeStore } from '../../main/runtime/runtime-store-contract'
+import type { RuntimeStore } from '../../main/runtime/construction/runtime-store-contract'
 import type { ResolvedWorktree } from '../../main/runtime/workspaces/catalog/runtime-worktree-path-identity'
 import type { Worktree } from '../../shared/worktree/types'
 import type { WorktreeMeta } from '../../shared/worktree/meta-types'

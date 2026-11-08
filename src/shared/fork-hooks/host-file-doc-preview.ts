@@ -1,10 +1,10 @@
 // fork: F046. A paired host's files outside the clicked workspace: HTML renders in the doc preview,
 // read by absolute path on the host, and the editor reads files past a terminal grant's one reply
 // in ranges. Unregistered, previews and reads stay upstream.
-import type { DocPreviewFileFailureReason } from '../doc-preview-scheme'
-import type { LocalFileAccess } from '../local-file-access'
+import type { DocPreviewFileFailureReason } from '../document-preview/doc-preview-scheme'
+import type { LocalFileAccess } from '../file-access/local-file-access'
 import type { RuntimeClientTarget } from '../runtime-client-target'
-import type { RuntimeFilePreviewResult } from '../runtime-file-contracts'
+import type { RuntimeFilePreviewResult } from '../file-content/runtime-file-read'
 
 /** Host RPC: one file of such a preview, with upstream's files.readDocPreview limits and checks. */
 export const HOST_DOC_PREVIEW_READ_METHOD = 'files.hostDocPreview.read'

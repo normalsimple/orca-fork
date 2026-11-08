@@ -16,7 +16,7 @@ import {
 import {
   TERMINAL_ARTIFACT_IN_PLACE_MAX_BYTES,
   TERMINAL_PATH_ABSOLUTE_FILES_RUNTIME_CAPABILITY
-} from '../../shared/runtime-file-contracts'
+} from '../../shared/terminal/runtime-terminal-file-path'
 import { registerHostFileDocPreviews } from './host-file-doc-preview'
 import { registerKeptHostFileViewHooks } from './kept-host-file-view'
 

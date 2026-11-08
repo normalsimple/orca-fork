@@ -3,7 +3,7 @@
 import { dirname } from '@/lib/path'
 import { findWorkspaceFileRoute } from '@/lib/runtime-workspace-file-route'
 import { readHostFilePreview } from '@/runtime/files/grants/runtime-terminal-artifact-read'
-import { toRuntimeWorktreeSelector } from '@/runtime/runtime-worktree-selector'
+import { toRuntimeWorktreeSelector } from '@/runtime/rpc/targets/runtime-worktree-selector'
 import { useAppStore } from '@/store'
 import { toRuntimeExecutionHostId } from '../../shared/execution-host'
 import { isWindowsAbsolutePathLike, normalizeRelativePath } from '../../shared/cross-platform-path'

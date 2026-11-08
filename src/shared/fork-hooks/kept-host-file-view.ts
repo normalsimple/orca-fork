@@ -1,7 +1,7 @@
 // fork: F046. HTML another workspace holds stays in the clicked workspace as a host grant,
 // so the doc preview does not activate the owner. Other files are upstream's. Unregistered, so is HTML.
 import type { RuntimeClientTarget } from '../runtime-client-target'
-import type { RuntimeTerminalPathResolution } from '../runtime-file-contracts'
+import type { RuntimeTerminalPathResolution } from '../terminal/runtime-terminal-file-path'
 
 /** Same shape as the renderer's granted host file, so callers treat it like any other grant. */
 export type KeptHostFile = {

@@ -8,7 +8,7 @@ import { useAppStore } from '@/store'
 import { decodeBase64Bytes } from '@/lib/base64-bytes'
 import { callRuntimeRpc } from '@/runtime/rpc/calls/runtime-rpc-call'
 import { RuntimeRpcCallError } from '@/runtime/rpc/calls/runtime-rpc-result'
-import { toRuntimeWorktreeSelector } from '@/runtime/runtime-worktree-selector'
+import { toRuntimeWorktreeSelector } from '@/runtime/rpc/targets/runtime-worktree-selector'
 import type { RuntimeFileSnapshot } from '@/runtime/files/reads/runtime-file-range-client'
 import {
   pagedFilePreviewResult,
@@ -17,13 +17,13 @@ import {
   readFileInChunks,
   type ChunkedFileReader
 } from '@/runtime/files/reads/runtime-paged-file-read'
-import { BINARY_PROBE_BYTES } from '../../shared/binary-buffer'
-import { rasterImageExceedsPreviewLimits } from '../../shared/raster-image-prefix-limits'
-import { RASTER_IMAGE_PREVIEW_TOO_LARGE_ERROR } from '../../shared/raster-image-preview-limits'
+import { BINARY_PROBE_BYTES } from '../../shared/file-preview/binary-buffer'
+import { rasterImageExceedsPreviewLimits } from '../../shared/file-preview/raster-image-prefix-limits'
+import { RASTER_IMAGE_PREVIEW_TOO_LARGE_ERROR } from '../../shared/file-preview/raster-image-preview-limits'
 import type {
   RuntimeFilePreviewResult,
   RuntimeFileReadChunkResult
-} from '../../shared/runtime-types'
+} from '../../shared/file-content/runtime-file-read'
 import {
   HOST_FILE_READ_CHUNK_METHOD,
   HOST_FILE_STAT_METHOD,

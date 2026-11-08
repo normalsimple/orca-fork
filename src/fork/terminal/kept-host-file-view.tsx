@@ -12,7 +12,7 @@ import { isHtmlFilePath } from '@/components/terminal-pane/links/files/local-htm
 import { findWorkspaceFileRoute } from '@/lib/runtime-workspace-file-route'
 import { getOpenFileExecutionHostId } from '@/lib/unified-tab-host-ownership'
 import { isFloatingWorkspaceId } from '../../shared/floating-workspace-worktree'
-import type { RuntimeTerminalPathResolution } from '../../shared/runtime-file-contracts'
+import type { RuntimeTerminalPathResolution } from '../../shared/terminal/runtime-terminal-file-path'
 import {
   registerKeptHostFileViews,
   type KeptHostFile,

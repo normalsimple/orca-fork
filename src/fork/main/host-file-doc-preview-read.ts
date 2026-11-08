@@ -3,12 +3,12 @@
 // them all). The host reads each file by absolute path (files.hostDocPreview.*, ranged past one
 // reply); a host without those methods serves it through terminal grants.
 import { posix, win32 } from 'node:path'
-import { isBinaryBuffer } from '../../shared/binary-buffer'
+import { isBinaryBuffer } from '../../shared/file-preview/binary-buffer'
 import { isWindowsAbsolutePathLike } from '../../shared/cross-platform-path'
 import {
   DOC_PREVIEW_FILE_CHANGED_MESSAGE,
   type DocPreviewFileChunk
-} from '../../shared/doc-preview-file-access'
+} from '../../shared/document-preview/doc-preview-file-access'
 import {
   HOST_DOC_PREVIEW_READ_CHUNK_METHOD,
   HOST_DOC_PREVIEW_READ_METHOD,

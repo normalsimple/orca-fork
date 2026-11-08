@@ -17,7 +17,7 @@ import {
   mintDocPreviewGrant,
   revokeAllDocPreviewGrants
 } from '../../main/browser/document-preview/doc-preview-grant-registry'
-import { DOC_PREVIEW_FILE_CHANGED_MESSAGE } from '../../shared/doc-preview-file-access'
+import { DOC_PREVIEW_FILE_CHANGED_MESSAGE } from '../../shared/document-preview/doc-preview-file-access'
 import {
   openDocPreviewAccess,
   registerDocPreviewOpenAccess

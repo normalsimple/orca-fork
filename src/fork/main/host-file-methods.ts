@@ -20,7 +20,7 @@ import { readLocalFileRange } from '../../main/ipc/filesystem/local-file-range-r
 import {
   readAuthorizedDocPreviewFile,
   readAuthorizedDocPreviewFileChunk
-} from '../../shared/doc-preview-file-access'
+} from '../../shared/document-preview/doc-preview-file-access'
 import { WorktreeSelector } from '../../shared/rpc-contract/files-target-params'
 import {
   HOST_DOC_PREVIEW_READ_CHUNK_METHOD,
