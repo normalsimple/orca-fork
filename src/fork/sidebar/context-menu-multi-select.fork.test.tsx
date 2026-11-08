@@ -160,9 +160,28 @@ function openMenu(target: Worktree, selection: readonly Worktree[]): void {
 }
 
 function menuLabels(): string[] {
-  return Array.from(document.querySelectorAll<HTMLElement>('[role="menuitem"]')).map(
-    (element) => element.textContent ?? ''
+  return Array.from(
+    document.querySelectorAll<HTMLElement>('[role="menuitem"], [role="menuitemradio"]')
+  ).map((element) => element.textContent ?? '')
+}
+
+// 分组项在「Project Group」子菜单里，点开后才进文档。
+function openProjectGroupSubmenu(): void {
+  const trigger = Array.from(document.querySelectorAll<HTMLElement>('[role="menuitem"]')).find(
+    (element) => (element.textContent ?? '').includes('Project Group')
   )
+  if (!trigger) {
+    throw new Error(`project group submenu missing: ${menuLabels().join(' | ')}`)
+  }
+  act(() => {
+    trigger.dispatchEvent(
+      new PointerEvent('pointermove', { bubbles: true, pointerType: 'mouse' })
+    )
+    trigger.dispatchEvent(
+      new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse' })
+    )
+    trigger.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+  })
 }
 
 describe('workspace context menu with several workspaces selected', () => {
@@ -180,13 +199,15 @@ describe('workspace context menu with several workspaces selected', () => {
 
   it('offers them for the clicked row alone when it is outside the selection', () => {
     openMenu(c, [a, b])
+    openProjectGroupSubmenu()
     const labels = menuLabels()
-    expect(labels.some((label) => label.includes('Remove from group'))).toBe(true)
+    expect(labels.join('\n')).toContain('Remove from group')
     expect(labels).toContain('Fork row action')
   })
 
   it('offers them for a single selected row', () => {
     openMenu(a, [a])
+    openProjectGroupSubmenu()
     expect(menuLabels().some((label) => label.includes('Remove from group'))).toBe(true)
     expect(menuLabels()).toContain('Fork row action')
   })

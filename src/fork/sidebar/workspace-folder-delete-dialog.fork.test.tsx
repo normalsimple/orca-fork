@@ -12,13 +12,13 @@ import { i18n } from '@/i18n/i18n'
 import { installForkLocaleOverlays } from '../i18n/locale-overlay'
 import { registerForkWorkspaceFolderDelete } from './workspace-folder-delete'
 
-const HARD_ONE = 'from git and delete its workspace folder.'
+const HARD_ONE = 'Deletes the worktree and its branch (kept if unmerged).'
 const HARD_MANY = 'from git and delete their workspace folders.'
 const SOFT_ONE = 'The workspace folder on disk will not be deleted.'
 const SOFT_MANY = 'Workspace folders on disk will not be deleted.'
 const PERMANENT_LOSS =
   'Any uncommitted or untracked changes in Git workspaces will be permanently deleted.'
-const FOLDER_COPY = 'from Orca. The project folder on disk will not be deleted.'
+const FOLDER_COPY = 'The folder on disk is kept.'
 
 const mocks = vi.hoisted(() => {
   const state = {
@@ -31,6 +31,7 @@ const mocks = vi.hoisted(() => {
     repos: [] as Repo[],
     worktreeLineageById: {} as Record<string, WorktreeLineage>,
     updateSettings: vi.fn(),
+    updateSettingsOrThrow: vi.fn(async () => undefined),
     openSettingsTarget: vi.fn(),
     openSettingsPage: vi.fn(),
     settings: null,
@@ -305,7 +306,7 @@ describe('workspace folder delete dialog', () => {
 
     expect(screen.getByRole('checkbox', { name: 'Also delete folder' })).toBeChecked()
     expect(text()).toContain(HARD_ONE)
-    expect(text()).toContain(PERMANENT_LOSS)
+    expect(text()).toContain('1 uncommitted change will be lost')
     expect(text()).not.toContain(SOFT_ONE)
   })
 
@@ -489,21 +490,27 @@ describe('workspace folder delete dialog', () => {
     expect(text()).toContain('will be discarded')
   })
 
-  it("hard-deletes this confirmation when the folder checkbox and don't ask again are both on", () => {
+  it('hard-deletes this confirmation when the folder checkbox and always-delete are both on', async () => {
     const workspace = makeWorktree('admin', '/srv/wt/project/admin')
     showWorktrees([workspace])
     render(<DeleteWorktreeDialog />)
     fireEvent.click(screen.getByRole('checkbox', { name: 'Also delete folder' }))
-    fireEvent.click(screen.getByRole('checkbox', { name: "Don't ask again" }))
-
-    clickDelete('Delete Workspace')
-
-    expect(runWorktreeDeletesInParallel).toHaveBeenCalledWith([workspace], {
-      force: true,
-      onForceDeleted: expect.any(Function),
-      confirmedDiscards: expect.any(Map)
+    fireEvent.pointerDown(screen.getByRole('button', { name: 'More delete options' }), {
+      button: 0,
+      pointerType: 'mouse'
     })
-    expect(mocks.state.updateSettings).toHaveBeenCalledWith({ skipDeleteWorktreeConfirm: true })
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Always delete' }))
+
+    await vi.waitFor(() => {
+      expect(runWorktreeDeletesInParallel).toHaveBeenCalledWith([workspace], {
+        force: true,
+        onForceDeleted: expect.any(Function),
+        confirmedDiscards: expect.any(Map)
+      })
+    })
+    expect(mocks.state.updateSettingsOrThrow).toHaveBeenCalledWith({
+      skipDeleteWorktreeConfirm: true
+    })
     expect(mocks.state.updateWorktreeMeta).not.toHaveBeenCalled()
   })
 
