@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, rm, symlink } from 'node:fs/promises'
+import { mkdir, mkdtemp, realpath, rm, symlink } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
@@ -10,7 +10,8 @@ const node = process.execPath
 const roots: string[] = []
 
 async function makeRoot(): Promise<string> {
-  const dir = await mkdtemp(join(tmpdir(), 'fork-exec-'))
+  // Darwin 上 /tmp、/var/folders 会指到 /private/...，子进程的 cwd 是 realpath。
+  const dir = await realpath(await mkdtemp(join(tmpdir(), 'fork-exec-')))
   roots.push(dir)
   return dir
 }
@@ -92,7 +93,7 @@ describe('runWorkspaceExec', () => {
       timeoutMs: 5_000,
       maxOutputBytes: 4096
     })
-    expect(inside.stdout).toBe(sub)
+    expect(inside.stdout).toBe(await realpath(sub))
     const dot = await runWorkspaceExec({
       root: dir,
       cwd: '.',
@@ -100,7 +101,7 @@ describe('runWorkspaceExec', () => {
       timeoutMs: 5_000,
       maxOutputBytes: 4096
     })
-    expect(dot.stdout).toBe(dir)
+    expect(dot.stdout).toBe(await realpath(dir))
     await expect(
       runWorkspaceExec({
         root: dir,
