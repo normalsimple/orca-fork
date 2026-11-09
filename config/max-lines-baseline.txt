@@ -14,3 +14,5 @@ inline src/renderer/src/components/sidebar/project-admission/nested-import/useAd
 inline src/renderer/src/components/sidebar/worktree-list/rows/SectionHeader.tsx
 inline src/renderer/src/components/terminal-pane/pty-connection/connect-pane-pty.ts
 inline src/shared/sidebar-list/sidebar-row-plan.ts
+inline src/renderer/src/components/sidebar/worktree-list/listing/use-section-rows.ts
+inline src/main/startup/main-process-ready-foundation.ts

@@ -1,3 +1,4 @@
+/* oxlint-disable max-lines -- fork: hook call only */
 import { app, session } from 'electron'
 import { applyBackgroundActivationPolicy } from '../window/foreground-activation-policy'
 import { applyElectronProxySettings } from '../network/proxy-settings'

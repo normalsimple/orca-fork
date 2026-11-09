@@ -1,3 +1,4 @@
+/* oxlint-disable max-lines -- fork: hook call only */
 import { selectWslHostsServing } from '../../use-wsl-hosts-enabled'
 import { useCallback, useMemo, useState, useSyncExternalStore } from 'react'
 import { shallow } from 'zustand/shallow'
