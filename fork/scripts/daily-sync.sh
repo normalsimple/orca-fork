@@ -227,6 +227,19 @@ EOF
 )"
   PUSH_ATTEMPT=1
 fi
+# 基线跟上游稳定版走。比 package.json 低、浅克隆或没有 tag 都失败，不写成降级。
+if ! node fork/scripts/upstream-aligned-version.mjs --write; then
+  fail_checks "upstream version"
+fi
+if ! git diff --quiet -- package.json; then
+  git add -- package.json
+  HUSKY=0 git commit -m "$(cat <<'EOF'
+fix(fork): align the app version with the upstream release
+
+EOF
+)"
+  PUSH_ATTEMPT=1
+fi
 if [[ -n "$(git status --porcelain)" ]]; then
   fail_checks "pin script left extra changes"
 fi

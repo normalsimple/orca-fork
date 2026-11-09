@@ -3,7 +3,8 @@
 # After acceptance: ./fork/scripts/install-mac-release.sh --cleanup-verified-backups <accepted-version>
 # Thin wrapper around the macOS release job. Build commands match
 # .github/workflows/release-mac-build.yml. Signing identity, the local version
-# suffix, and backup/install/rollback are the only overrides. Skipped CI steps
+# suffix (the X.Y.Z base is checked inside build-mac-local.mjs), and
+# backup/install/rollback are the only overrides. Skipped CI steps
 # are listed in docs/fork/SYNC.md.
 # --fast skips the two dependency installs. The build commands stay the same.
 set -euo pipefail

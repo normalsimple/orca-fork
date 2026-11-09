@@ -544,8 +544,22 @@ upload_many() {
 }
 
 create_release() {
-  local outfile notes
-  notes="Fork build ${VERSION} (${SHA_ARG})"
+  local outfile notes pin pin_file
+  pin_file="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/src/fork/skills-source-commit.ts"
+  pin="$(
+    python3 - "$pin_file" <<'PY'
+import re, sys
+text = open(sys.argv[1], encoding="utf-8").read()
+match = re.search(r"FORK_SKILLS_SOURCE_COMMIT = '([0-9a-f]{40})'", text)
+print(match.group(1) if match else "", end="")
+PY
+  )" || pin=""
+  if [[ ! "$pin" =~ ^[0-9a-f]{40}$ ]]; then
+    ERROR="upstream pin is missing"
+    finish 1
+  fi
+  notes="Fork build ${VERSION} (${SHA_ARG})
+Upstream ${pin}"
   printf 'publish-mac-release: create draft %s\n' "$TAG" >&2
   outfile="$(mktemp "${TMPDIR:-/tmp}/orca-gh-out.XXXXXX")"
   if ! run_gh "$outfile" release create "$TAG" --repo "$GH_REPO" --draft --prerelease --target "$SHA_ARG" --title "$TAG" --notes "$notes"; then

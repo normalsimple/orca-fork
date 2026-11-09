@@ -11,6 +11,15 @@ describe('fork daily sync split', () => {
     expect(script).not.toContain('git rebase')
     expect(script).toContain('git branch -f fork/base-upstream')
     expect(script).toContain('sync-skills-source-commit.mjs')
+    expect(script.indexOf('sync-skills-source-commit.mjs')).toBeLessThan(
+      script.indexOf('upstream-aligned-version.mjs')
+    )
+    expect(script.indexOf('upstream-aligned-version.mjs')).toBeLessThan(
+      script.indexOf('pin script left extra changes')
+    )
+    expect(readFileSync(resolve('fork/scripts/upstream-aligned-version.mjs'), 'utf8')).toContain(
+      'https://github.com/stablyai/orca.git'
+    )
     expect(script).toContain('check-no-internal-refs.sh')
     const refs = readFileSync(resolve('fork/scripts/verify/check-no-internal-refs.sh'), 'utf8')
     expect(refs).toContain('command -v rg')

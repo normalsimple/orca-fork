@@ -29,6 +29,14 @@ export function getLocalBuildIdentity() {
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === resolve(import.meta.filename)) {
+  // fork: package.json X.Y.Z must be the upstream stable release this pin contains.
+  execFileSync(
+    process.execPath,
+    [resolve('fork/scripts/upstream-aligned-version.mjs'), '--check'],
+    {
+      stdio: 'inherit'
+    }
+  )
   const identity = getLocalBuildIdentity()
   console.log(`[build:mac] local update version ${identity.version}`)
   // fork: extra arguments are electron-builder targets after --mac.

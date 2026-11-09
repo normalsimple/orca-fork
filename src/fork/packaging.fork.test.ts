@@ -109,7 +109,9 @@ describe('fork packaging', () => {
     expect(installer).not.toContain('--cpu=current,x64,arm64')
     expect(installer).toContain('pinned-node-downloads.mjs darwin-arm64')
     expect(installer).not.toContain('darwin-arm64 darwin-x64')
-    expect(installer).toContain('node config/scripts/desktop-distribution/macos/build-mac-local.mjs dmg:arm64 zip:arm64')
+    expect(installer).toContain(
+      'node config/scripts/desktop-distribution/macos/build-mac-local.mjs dmg:arm64 zip:arm64'
+    )
     expect(installer).toContain('pnpm run build:release')
     expect(installer).toContain('pnpm build:orcad-prebuilds')
     expect(installer).toContain('build-orcad-prebuilds.mjs --print-slot')
@@ -129,7 +131,14 @@ describe('fork packaging', () => {
     expect(installer.indexOf('export ORCA_PNPM_GLOBAL_VIRTUAL_STORE=0')).toBeLessThan(
       installer.indexOf('pnpm install --frozen-lockfile --cpu=arm64')
     )
-    const localBuild = readFileSync(resolve('config/scripts/desktop-distribution/macos/build-mac-local.mjs'), 'utf8')
+    const localBuild = readFileSync(
+      resolve('config/scripts/desktop-distribution/macos/build-mac-local.mjs'),
+      'utf8'
+    )
+    expect(localBuild.indexOf('upstream-aligned-version.mjs')).toBeLessThan(
+      localBuild.indexOf('electron-builder')
+    )
+    expect(localBuild).toContain("'--check'")
     expect(localBuild).toContain('...builderArgs')
     expect(localBuild).toContain('process.argv.slice(2)')
     expect(installer).toContain('orcad-template/orcad-template.json')
