@@ -27,7 +27,9 @@ export class PluginHostCallError extends Error {
   constructor(
     readonly code: PluginErrorCode,
     message: string,
-    readonly retryAfterMs?: number
+    readonly retryAfterMs?: number,
+    /** fork: 稳定原因，例如 server-method-missing。上游调用不传。 */
+    readonly reason?: string
   ) {
     super(message)
   }

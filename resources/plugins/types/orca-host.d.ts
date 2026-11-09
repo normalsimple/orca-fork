@@ -24,11 +24,12 @@ declare module 'orca/host' {
   export type HostApiVersion = { readonly major: number; readonly minor: number }
   /** Open set: treat a code you do not know as `action_failed`. */
   export type HostErrorCode = "invalid_request" | "invalid_params" | "unknown_method" | "capability_denied" | "consent_required" | "not_permitted" | "rate_limited" | "unavailable" | "action_failed" | "cancelled" | "timeout" | "conflict" | "too_large"
-  /** What a failed call rejects with; `retryAfterMs` is set for `rate_limited`. */
+  /** What a failed call rejects with; `retryAfterMs` is set for `rate_limited`. `reason`, when set, is a stable machine code (`server-method-missing`: the paired server has no fork RPC). */
   export type HostCallError = Error & {
     code: HostErrorCode
     retryable: boolean
     retryAfterMs?: number
+    reason?: string
   }
   export type HostCallOptions = { signal?: AbortSignal }
   export type HostSurface = 'worker' | 'panel' | 'editor'

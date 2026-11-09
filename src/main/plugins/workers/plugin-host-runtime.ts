@@ -47,6 +47,7 @@ export type PluginHostCallError = Error & {
   code: PluginErrorCode
   retryable: boolean
   retryAfterMs?: number
+  reason?: string
 }
 
 export type PluginWorkerRuntimeOptions = {
@@ -69,7 +70,8 @@ function hostCallError(error: PluginResponse['error']): PluginHostCallError {
   return Object.assign(new Error(error?.message ?? 'host call failed'), {
     code: normalizePluginErrorCode(error?.code),
     retryable: error?.retryable === true,
-    ...(error?.retryAfterMs === undefined ? {} : { retryAfterMs: error.retryAfterMs })
+    ...(error?.retryAfterMs === undefined ? {} : { retryAfterMs: error.retryAfterMs }),
+    ...(error?.reason === undefined ? {} : { reason: error.reason })
   })
 }
 

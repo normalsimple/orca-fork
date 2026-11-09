@@ -11,6 +11,7 @@ import {
   pluginHostMethodsFor
 } from '../workers/plugin-host-api'
 import { zodTypeText, type SchemaTypeTextOptions } from '../workers/plugin-schema-type-text'
+import { isForkPluginHostMethod } from '../../../fork/plugins/host-api-spec'
 
 /** Checked-in output of `pnpm generate:plugin-author-typings`; `orca plugin types` copies it. */
 export const PLUGIN_HOST_TYPINGS_FILE = 'resources/plugins/types/orca-host.d.ts'
@@ -43,8 +44,9 @@ export function renderPluginHostMethodMembers(
     compact?: boolean
   } = {}
 ): string {
-  const names =
+  const names = (
     options.surface === undefined ? PLUGIN_HOST_METHOD_NAMES : pluginHostMethodsFor(options.surface)
+  ).filter((name) => !isForkPluginHostMethod(name))
   return names
     .map((name) => {
       const spec = PLUGIN_HOST_API[name]
@@ -122,11 +124,12 @@ declare module 'orca/host' {
   export type HostApiVersion = { readonly major: number; readonly minor: number }
   /** Open set: treat a code you do not know as \`action_failed\`. */
   export type HostErrorCode = ${union(PLUGIN_ERROR_CODES)}
-  /** What a failed call rejects with; \`retryAfterMs\` is set for \`rate_limited\`. */
+  /** What a failed call rejects with; \`retryAfterMs\` is set for \`rate_limited\`. \`reason\`, when set, is a stable machine code (\`server-method-missing\`: the paired server has no fork RPC). */
   export type HostCallError = Error & {
     code: HostErrorCode
     retryable: boolean
     retryAfterMs?: number
+    reason?: string
   }
   export type HostCallOptions = { signal?: AbortSignal }
   export type HostSurface = 'worker' | 'panel' | 'editor'

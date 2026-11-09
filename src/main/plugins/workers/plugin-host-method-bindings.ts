@@ -29,6 +29,7 @@ import {
 } from './plugin-host-workspace-method-bindings'
 import type { PluginAppearanceService } from '../appearance/plugin-appearance-service'
 import { PluginHostCallError } from './plugin-host-call-scope'
+import { FORK_PLUGIN_HOST_HANDLERS } from '../../../fork/main/plugin-host-methods'
 
 export type { PluginHostCallScope } from './plugin-host-call-scope'
 
@@ -229,7 +230,9 @@ const HANDLERS: Record<PluginHostMethodName, BoundPluginHostMethod> = {
   }),
   ...PLUGIN_PANEL_BRIDGE_HANDLERS,
   ...PLUGIN_STATUS_BAR_HANDLERS,
-  ...PLUGIN_WORKSPACE_ACTION_HANDLERS
+  ...PLUGIN_WORKSPACE_ACTION_HANDLERS,
+  // fork: specs and handlers are the same objects, so the identity check below still holds.
+  ...FORK_PLUGIN_HOST_HANDLERS
 }
 
 function requireDesktop(services: PluginHostServices): PluginDesktopFrameServices {

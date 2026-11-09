@@ -10,6 +10,8 @@ import { registerHostFileDocPreviewRead } from '../../shared/fork-hooks/host-fil
 import { readGrantedHostDocPreview } from './host-file-doc-preview-read'
 import { registerDocPreviewOpenAccess } from '../../shared/fork-hooks/doc-preview-access'
 import { openWholeRequestBase } from './doc-preview-open-access'
+import { registerForkPluginHostBridge } from './plugin-host-methods'
+import { desktopForkPluginHostBridge } from './plugin-host-desktop'
 
 /** Desktop main process entry (src/main/index.ts), before preflight. Not called from orcad. */
 export function registerForkDesktopMain(): void {
@@ -26,4 +28,6 @@ function registerForkElectronModules(): void {
   registerHostFileDocPreviewRead(readGrantedHostDocPreview)
   // F051：文档预览读它整个请求根，不弹「允许文件夹」。
   registerDocPreviewOpenAccess(openWholeRequestBase)
+  // F053：插件 fork.host.* 复用已配对的 Orca 服务器。
+  registerForkPluginHostBridge(desktopForkPluginHostBridge())
 }

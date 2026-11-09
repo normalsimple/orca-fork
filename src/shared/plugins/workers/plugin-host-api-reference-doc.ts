@@ -6,6 +6,7 @@ import { PLUGIN_HOOK_NAMES } from '../contributions/plugin-hook-contribution'
 import { PLUGIN_HOOK_DEFAULT_DEADLINE_MS, PLUGIN_HOOK_SPECS } from '../events/plugin-hook-payloads'
 import { PLUGIN_HOST_API_MAJOR } from './plugin-host-api-major'
 import { PLUGIN_HOST_API, PLUGIN_HOST_API_MINOR, PLUGIN_HOST_METHOD_NAMES } from './plugin-host-api'
+import { isForkPluginHostMethod } from '../../../fork/plugins/host-api-spec'
 import { REFERENCE_TYPE_TEXT, zodTypeText } from './plugin-schema-type-text'
 
 function signature(params: z.ZodType, result: z.ZodType): string {
@@ -39,7 +40,9 @@ const version = (minor: number): string => `${PLUGIN_HOST_API_MAJOR}.${minor}`
 
 /** Author reference for the host API, rendered from the typed spec table. */
 export function renderPluginHostApiReference(): string {
-  const specs = PLUGIN_HOST_METHOD_NAMES.map((name) => ({ name, ...PLUGIN_HOST_API[name] }))
+  const specs = PLUGIN_HOST_METHOD_NAMES.filter((name) => !isForkPluginHostMethod(name)).map(
+    (name) => ({ name, ...PLUGIN_HOST_API[name] })
+  )
   const lines = [
     '# Orca plugin host API reference',
     '',

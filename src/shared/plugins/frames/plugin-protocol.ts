@@ -43,29 +43,37 @@ export type PluginError = {
   message: string
   retryable: boolean
   retryAfterMs?: number
+  /** fork: 稳定原因。`server-method-missing` 表示配对服务器没有 fork RPC。 */
+  reason?: string
 }
 
 export function normalizePluginErrorCode(code: unknown): PluginErrorCode {
   return PLUGIN_ERROR_CODES.find((known) => known === code) ?? 'action_failed'
 }
 
-export function pluginError(code: unknown, message: string, retryAfterMs?: number): PluginError {
+export function pluginError(
+  code: unknown,
+  message: string,
+  retryAfterMs?: number,
+  reason?: string
+): PluginError {
   const known = normalizePluginErrorCode(code)
   return {
     code: known,
     message: message.slice(0, 8192),
     retryable: RETRYABLE_ERROR_CODES.has(known),
-    ...(retryAfterMs === undefined ? {} : { retryAfterMs })
+    ...(retryAfterMs === undefined ? {} : { retryAfterMs }),
+    ...(reason === undefined ? {} : { reason })
   }
 }
 
 /** Main ↔ client wire shape of one host call (`plugins:panelAction` / `plugins.panelAction`). */
 export type PluginHostCallOutcome =
   | { ok: true; value: unknown }
-  | { ok: false; code: PluginErrorCode; error: string; retryAfterMs?: number }
+  | { ok: false; code: PluginErrorCode; error: string; retryAfterMs?: number; reason?: string }
 
 export function outcomeError(outcome: Extract<PluginHostCallOutcome, { ok: false }>): PluginError {
-  return pluginError(outcome.code, outcome.error, outcome.retryAfterMs)
+  return pluginError(outcome.code, outcome.error, outcome.retryAfterMs, outcome.reason)
 }
 
 const idSchema = z.number().int().nonnegative()
@@ -75,7 +83,8 @@ export const pluginErrorSchema = z.object({
   code: z.string().max(64),
   message: z.string().max(8192),
   retryable: z.boolean(),
-  retryAfterMs: z.number().int().nonnegative().optional()
+  retryAfterMs: z.number().int().nonnegative().optional(),
+  reason: z.string().max(64).optional()
 })
 
 export const pluginEnvelopeSchema = z.discriminatedUnion('kind', [

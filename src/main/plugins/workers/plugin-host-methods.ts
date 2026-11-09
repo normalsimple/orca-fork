@@ -8,6 +8,7 @@ import type {
   PluginSurface
 } from '../../../shared/plugins/frames/plugin-protocol'
 import type { PluginAuditLog } from '../plugin-audit-log'
+import { summarizeForkPluginHostCall } from '../../../fork/main/plugin-host-methods'
 import {
   PluginHostCallError,
   UNSCOPED_PLUGIN_HOST_CALL,
@@ -112,12 +113,13 @@ export async function executePluginHostCall(
   } catch (error) {
     await auditMutation('error').catch(() => undefined)
     if (error instanceof PluginHostCallError) {
-      const { code, message, retryAfterMs } = error
+      const { code, message, retryAfterMs, reason } = error
       return {
         ok: false,
         code,
         error: message,
-        ...(retryAfterMs === undefined ? {} : { retryAfterMs })
+        ...(retryAfterMs === undefined ? {} : { retryAfterMs }),
+        ...(reason === undefined ? {} : { reason })
       }
     }
     return {
@@ -146,6 +148,7 @@ function summarizeParams(method: string, params: unknown): string {
     case 'settings.set':
       return `key=${String(record.key)}`
     default:
-      return ''
+      // fork: fork.host.exec 记主机和工作区，其它方法仍是空摘要。
+      return summarizeForkPluginHostCall(method, record)
   }
 }

@@ -12,7 +12,7 @@
 - 登记入口：上游在三个地方各调用一次 fork 入口。`src/main/index.ts` 在 preflight 之前调用 `registerForkDesktopMain()`（`src/fork/main/register-electron.ts`），preflight 要用登记的密钥库；它依次登记 `registerForkModules()`（`src/fork/register.ts`）、只在 Electron 主进程的部分，以及 `registerForkMainModules()`（`src/fork/main/register-main.ts`）。`src/renderer/src/main.tsx` 在模块开头调用 `registerForkRenderer()`（`src/fork/register-renderer.tsx`），先 `registerForkModules()` 登记分组模式，再 `registerForkRendererModules()` 登记界面插槽。`src/main/orcad/orcad-entry.ts` 的 `startOrcad` 在上游 `installOrcadHostAdapters()` 之前调用 `installForkOrcadHost()`（`register-main.ts`），它只调用 `registerForkMainModules()`；orcad 不加载 `register.ts` 和 `register-electron.ts`，所以不引入 Electron。
   - `register.ts`（主进程和界面都调用，不静态引入 electron、node:fs 或界面组件）：fork 构建标记、host-directory 分组模式和删除项目组的「仅取消分组」选项、保留旧主机漏发的 `sidebarGroupId`、Ego Lite 的设置行名字和导入提示。
   - `register-main.ts`（桌面主进程和 orcad）：fork 构建标记、Ego Lite（名字、导入提示和追加进上游 `CHROMIUM_BROWSERS` 的浏览器定义）、历史会话扫描进程的堆内存和扫描策略、启动时不等浏览器分区代理、运行时导入的 git 根、删除项目组时保留文件夹工作区、在软删除过的路径上新建时清掉归档、Linux 上 Antigravity ACP 跳过内核 IPv6 检查。
-  - `register-electron.ts`（只在 Electron 主进程）：macOS 文件密钥库、权限助手参数、F046 工作区外文档预览的读取、F051 文档预览免授权。
+  - `register-electron.ts`（只在 Electron 主进程）：macOS 文件密钥库、权限助手参数、F046 工作区外文档预览的读取、F051 文档预览免授权、F053 插件 `fork.*` 主机桥。
   - `register-renderer.tsx`（仅界面）：fork 语言包、侧栏行计划和各个插槽、跨组拖放、删除工作区和软删除归档、创建弹窗的种子、导入后的回调、SSH 重连重绘、聊天盖层的画布样式、F046 工作区外的主机文件和大文件分段读、端口 Forward、历史会话的列表呈现和默认主机。
 - 目录约定：只在主进程运行的 fork 代码放 `src/fork/main/`；引用渲染进程的 fork 代码用 `.tsx`；`*.fork.test.ts` 是 node 测试，渲染进程测试用 `.fork.test.tsx`。tsconfig 只按这三条通配：node 工程收 `src/fork/**/*.ts`，web 工程收 `src/fork/**/*.ts` 和 `*.tsx`，排除 `src/fork/main/**` 和 `src/fork/**/*.fork.test.ts`。fork 文件引用了所在工程不包含的文件时 tsc 自己报 TS6307；`src/fork/tsconfig-boundaries.mjs` 只在 fork 测试（`src/fork/tsconfig-boundaries.fork.test.ts`）里跑，不挂在 `pnpm tc` 前面。用到真实 SQLite 的 fork 测试由上游的 `findSqliteRuntimeTests()` 按 import 找到，`config/scripts/vitest-node-runtime-files.mjs` 与上游一致。
 
@@ -288,3 +288,21 @@ Antigravity ACP 仍钉在 1.4.1。这一版的 `agy_acp_server.par` 在 google3 
 Linux 上每次启动都在已有的 `--uid=` 后面加上 `--enforce_kernel_ipv6_support=false`。安装校验（`probeAntigravityAcpServer`）和正式会话（`ANTIGRAVITY_LAUNCH_SPEC.args`，登录也走这里）都展开同一个钩子。macOS 和 Windows 不追加。未登记时 Linux 仍只有 `--uid=`。
 
 钩子 `src/shared/fork-hooks/antigravity-acp-args.ts`。参数在 `src/fork/main/antigravity-acp-ipv6.ts`，由 `register-main.ts` 登记，桌面和 orcad 都有：SSH 远端的安装和会话在那台主机的 orcad 上启动。1.4.2 到 1.4.5 会在会话开始时往工作区写 `skills/system/run-workflow/SKILL.md`，不升 pin。测试不跑官方二进制，用假服务器核对 argv。
+
+## F053 插件复用已配对的 Orca 服务器
+
+插件可以用 `fork.hosts.list`、`fork.workspaces.list` 和 `fork.host.exec` 在本机和已配对的 Orca 服务器上列工作区、按 argv 执行程序，不用自己写 SSH 配置再起系统 ssh。`host.has('fork.host.exec')` 为真才走这条；没有这些方法的 Orca 上插件仍走自己的 ssh。不新增 manifest capability：`workspace:read` 列主机和工作区，`terminal:send` 执行。`fork.host.exec` 是 mutation，审计日志记 `plugin:<id>`，摘要只有 host、workspace 和 argv0。
+
+主机 id 仍是 `local`、`ssh:<target>`、`runtime:<envId>`。`fork.hosts.list` 两行都返回，用 `aliasHostIds` 互指；runtime 行带 `envId`（`orca agent launch --environment` 用的那个）和已知的 `configHost`（OpenSSH Host 别名）。托管服务器上只有连上的 runtime 行 `exec: true`。旧服务器回 `method_not_found` 之后，这台的 `exec` 变成 false。裸 `ssh:` 不能执行，错误码 `not_permitted`，`reason` 是 `ssh-not-served`。
+
+工作区只挂在真正提供服务的主机上：配对机器的工作区在 `runtime:<envId>` 下，不在 ssh 别名下再列一份。某一台连不上就放进 `unreachable`，其它主机的结果照旧返回。id 只在一台主机内唯一，插件用 hostId + id 当键。
+
+`fork.host.exec` 不用 shell。`cwd` 省略、空或 `.` 是工作区根；必须是相对路径，解析软链之后仍在工作区里。脚本自己 `cd` 到 `fork.workspaces.list` 给出的绝对路径是允许的，约束只作用在 `cwd` 参数上。子进程环境只有 `HOME`、`USER`、`LANG` 和 `PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin`。`HOME` 来自这台机器的用户目录，空则是 `/`。调用方只能覆盖同名键，空的 `HOME` 覆盖被丢掉。不继承 Orca 或插件进程的其它环境变量。`LANG` 用本进程的 `LANG`，没有则是 `C.UTF-8`。stdin 是 UTF-8 字符串，最多 8 MiB，原样写入，不加 NUL 帧。`maxOutputBytes` 默认 1 MiB，上限 16 MiB，stdout 和 stderr 共用这一个字节预算，不流式。超了就 `truncated: true`、留下前缀、`exitCode: null`、`signal: 'SIGKILL'`。`timeoutMs` 默认 30 秒，范围 1 秒到 110 秒，到点 `SIGKILL` 进程组，`timedOut: true`、`exitCode: null`、`signal: 'SIGKILL'`。找不到程序不抛错：`exitCode` 127、`timedOut` false，stderr 里有 `ENOENT`。
+
+抛错只有这些：参数不合法 `invalid_params`；裸 ssh 或这台进程不服务该工作区 `not_permitted`；主机连不上 `unavailable` 且 `reason` 为 `host-unreachable`；旧服务器没有 `fork.workspace.exec` 也是 `unavailable`，`reason` 为 `server-method-missing`。`since` 用 4，因为 appearance 已经把 host API minor 占到 4，minor 不再升高。插件 `engines.orca` 不用高于 `1.4.250`。
+
+本机执行走桌面运行时的 `fork.workspace.exec`。`runtime:` 用 `callRuntimeEnvironment`，传输超时是调用方的 `timeoutMs` 再加 1.5 秒，避免 15 秒默认超时把结果截掉；多出来的 1.5 秒只为了让服务器在杀进程之后把结果送回来。服务器上的方法在 `FORK_RPC_METHODS` 里，桌面、orcad 和 `orca serve` 都有。配对服务器要更新到带这个方法的 orcad，执行才会成功；列工作区用的是原有的 `worktree.list` / `repo.list` / `folderWorkspace.list`，旧服务器也能列。
+
+生成的插件参考、技能和 `orca/host` 方法表滤掉 `fork.*`，不跟上游生成物冲突。`HostCallError` 多一个可选 `reason`。错误能穿过 worker 的 envelope。
+
+实现：`src/fork/plugins/host-api-spec.ts`、`src/fork/main/plugin-host-catalog.ts`、`src/fork/main/plugin-host-workspaces.ts`、`src/fork/main/plugin-host-methods.ts`、`src/fork/main/plugin-host-desktop.ts`、`src/fork/main/workspace-exec.ts`、`src/fork/main/workspace-exec-method.ts`。桌面由 `register-electron.ts` 登记 bridge。测试是 `src/fork/main/workspace-exec.fork.test.ts` 和 `src/fork/main/plugin-host-methods.fork.test.ts`。

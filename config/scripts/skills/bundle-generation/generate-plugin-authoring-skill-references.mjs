@@ -208,8 +208,13 @@ function hookLines({ hooks, hookContribution, typeText }) {
 
 function renderHostApi(sources, { frame, worker }) {
   const { hostApi, hostDoc, capabilities } = sources
-  const names = hostApi.PLUGIN_HOST_METHOD_NAMES
-  const methodsFor = (surface) => hostApi.pluginHostMethodsFor(surface).map(code).join(', ')
+  const names = hostApi.PLUGIN_HOST_METHOD_NAMES.filter((name) => !String(name).startsWith('fork.'))
+  const methodsFor = (surface) =>
+    hostApi
+      .pluginHostMethodsFor(surface)
+      .filter((name) => !String(name).startsWith('fork.'))
+      .map(code)
+      .join(', ')
   const methods = names.map((name) => {
     const spec = hostApi.PLUGIN_HOST_API[name]
     const facts = [
