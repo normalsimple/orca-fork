@@ -62,7 +62,7 @@ vi.mock('../../renderer/src/lib/worktree-sleep-intent', () => ({
   clearWorktreeSleepIntent: vi.fn()
 }))
 
-vi.mock('../../renderer/src/lib/worktree-operation-route', () => ({
+vi.mock('../../renderer/src/lib/workspace/ownership/worktree-operation-route', () => ({
   getWorktreeOperationOwnerHostIds: () => harness.state.ownerHostIds
 }))
 

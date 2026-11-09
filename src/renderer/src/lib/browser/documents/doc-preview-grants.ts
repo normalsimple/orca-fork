@@ -4,7 +4,7 @@ import { getConnectionIdForFileFromState } from '@/lib/workspace/ownership/conne
 import { runtimeEnvironmentIdOrLocalUnlessTwin } from '@/lib/workspace/ownership/worktree-runtime-owner'
 import { toRuntimeWorktreeSelector } from '@/runtime/rpc/targets/runtime-worktree-selector'
 import { chatScratchFileAddress } from '@/runtime/files/addressing/runtime-chat-scratch-file-address'
-import { hostFileDocLocation } from '../../../shared/fork-hooks/host-file-doc-preview'
+import { hostFileDocLocation } from '../../../../../shared/fork-hooks/host-file-doc-preview'
 import type { AppState } from '@/store/types'
 
 /** `location` is what the grant was minted for, so its readers and its share key stay on that host. */

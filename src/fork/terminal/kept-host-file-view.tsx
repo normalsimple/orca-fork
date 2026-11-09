@@ -10,7 +10,7 @@ import {
 } from '@/runtime/files/grants/runtime-terminal-artifact-grant'
 import { isHtmlFilePath } from '@/components/terminal-pane/links/files/local-html-file-destinations'
 import { findWorkspaceFileRoute } from '@/lib/runtime-workspace-file-route'
-import { getOpenFileExecutionHostId } from '@/lib/unified-tab-host-ownership'
+import { getOpenFileExecutionHostId } from '@/lib/workspace/ownership/unified-tab-host-ownership'
 import { isFloatingWorkspaceId } from '../../shared/floating-workspace-worktree'
 import type { RuntimeTerminalPathResolution } from '../../shared/terminal/runtime-terminal-file-path'
 import {

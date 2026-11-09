@@ -47,6 +47,8 @@ const state = {
   // 菜单打开时直接读这两张表。缺了会在判断能否休眠时抛错。
   unifiedTabsByWorktree: {},
   agentStatusByPaneKey: {},
+  // 虚拟机菜单读取正在唤醒的工作区。缺了会在打开菜单时抛错。
+  wakingEphemeralVmWorkspaceIds: {},
   keybindings: {},
   settings: { activeRuntimeEnvironmentId: null, openInApplications: [] },
   openSettingsPage: vi.fn(),

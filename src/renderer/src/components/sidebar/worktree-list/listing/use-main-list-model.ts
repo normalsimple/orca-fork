@@ -78,7 +78,11 @@ export function useMainSidebarListModel(args: SidebarListModelArgs): SidebarList
   const feed = useDesktopSidebarFeed()
   const pending = useSyncExternalStore(subscribeSidebarPendingLayer, readSidebarPendingLayer)
   const endedCreationIds = useSyncExternalStore(subscribeEndedCreations, readEndedCreations)
-  const hiddenVmCheckouts = useSyncExternalStore(subscribeHiddenVmCheckouts, readHiddenVmCheckouts)
+  const hiddenVmCheckouts = useSyncExternalStore(
+    subscribeHiddenVmCheckouts,
+    readHiddenVmCheckouts,
+    readHiddenVmCheckouts
+  )
   const pendingCreationKeys = useAppStore(
     useShallow((s) => selectPendingWorktreeCreationKeys(s.pendingWorktreeCreations))
   )

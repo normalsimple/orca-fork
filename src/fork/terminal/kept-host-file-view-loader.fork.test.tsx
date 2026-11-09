@@ -22,7 +22,7 @@ const mocks = vi.hoisted(() => ({
   getState: vi.fn()
 }))
 
-vi.mock('@/lib/connection-context', () => ({
+vi.mock('@/lib/workspace/ownership/connection-context', () => ({
   getConnectionIdForFile: vi.fn(() => null),
   getConnectionIdFromState: vi.fn(() => null),
   isWorktreeConnectionResolved: vi.fn(() => true)

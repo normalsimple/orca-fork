@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { RuntimeServerEnvironmentCommands } from '../main/runtime/files/server-browse/runtime-server-environment-commands'
-import { browseSshDirectory } from '../main/ssh/ssh-remote-directory-browse'
+import { browseSshDirectory } from '../main/ssh/filesystem/ssh-remote-directory-browse'
 
 // Runs the generated remote command in a local `sh`, standing in for the SSH exec channel.
 function shellBackedManager(): Parameters<typeof browseSshDirectory>[0] {

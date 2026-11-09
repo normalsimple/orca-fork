@@ -1,7 +1,7 @@
 // fork: Ego Lite（Citro Labs）走上游同一条 Chromium cookie 导入。
 // 配置目录和钥匙串来自已核对的安装，不猜 Linux（官方还在路线图上）。
 
-import { BROWSER_FAMILY_LABELS } from '../shared/constants'
+import { BROWSER_FAMILY_LABELS } from '../shared/browser/browser-family-labels'
 import { registerForkCookieImportSources } from '../shared/fork-hooks/chromium-cookie-browsers'
 
 /** 持久化在会话来源里的 family。 */

@@ -2,7 +2,7 @@
 
 由 `python3 fork/scripts/generate-audit.py` 生成（`--check` 只比对）。主表是和上游基点（`src/fork/skills-source-commit.ts` 记录的提交）不同的每个文件，一个不多一个不少；末尾另列已恢复成上游或已删除的文件，它们必须和基点相同。`src/fork/audit-table.fork.test.ts` 检查表和仓库一致。
 
-共 482 行：delete 46，keep 411，revert-to-upstream 25。上游文件（不含 fork 目录）里的 fork 改动 910 行，涉及 161 个文件。
+共 484 行：delete 46，keep 413，revert-to-upstream 25。上游文件（不含 fork 目录）里的 fork 改动 928 行，涉及 163 个文件。
 
 | 文件                                                                                                 | 功能                        | 决定 | 原因                                                                                                                                                      |
 | ---------------------------------------------------------------------------------------------------- | --------------------------- | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -323,7 +323,9 @@
 | `src/renderer/src/components/sidebar/worktree-list/drag/use-document-drop.ts`                        | SB 侧栏                     | keep | 上游文件，fork 改动 8 行                                                                                                                                  |
 | `src/renderer/src/components/sidebar/worktree-list/drag/worktree-drag-units.ts`                      | SB 侧栏                     | keep | 上游文件，fork 改动 5 行                                                                                                                                  |
 | `src/renderer/src/components/sidebar/worktree-list/listing/new-external-worktrees-inbox-actions.ts`  | F003/F025 批量导入          | keep | 上游文件，fork 改动 5 行                                                                                                                                  |
-| `src/renderer/src/components/sidebar/worktree-list/listing/use-section-rows.ts`                      | SB 侧栏                     | keep | 上游文件，fork 改动 14 行                                                                                                                                 |
+| `src/renderer/src/components/sidebar/worktree-list/listing/use-main-list-model.ts`                   | SB 侧栏                     | keep | 上游文件，fork 改动 6 行                                                                                                                                  |
+| `src/renderer/src/components/sidebar/worktree-list/listing/use-section-rows.ts`                      | SB 侧栏                     | keep | 上游文件，fork 改动 20 行                                                                                                                                 |
+| `src/renderer/src/components/sidebar/worktree-list/listing/use-visible-worktrees.ts`                 | SB 侧栏                     | keep | 上游文件，fork 改动 6 行                                                                                                                                  |
 | `src/renderer/src/components/sidebar/worktree-list/rows/HostSectionHeader.tsx`                       | SB 侧栏                     | keep | 上游文件，fork 改动 2 行                                                                                                                                  |
 | `src/renderer/src/components/sidebar/worktree-list/rows/HostSectionHeaderMenu.tsx`                   | SB 侧栏                     | keep | 上游文件，fork 改动 2 行                                                                                                                                  |
 | `src/renderer/src/components/sidebar/worktree-list/rows/ProjectGroupDeleteDialog.tsx`                | SB 侧栏/项目组              | keep | 上游文件，fork 改动 2 行                                                                                                                                  |

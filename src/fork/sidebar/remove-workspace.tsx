@@ -2,7 +2,7 @@
 import { toast } from 'sonner'
 import { forkTranslate } from '../i18n/fork-translate'
 import { getWorktreeExecutionHostId } from '../../shared/execution-host'
-import { getWorktreeOperationOwnerHostIds } from '../../renderer/src/lib/worktree-operation-route'
+import { getWorktreeOperationOwnerHostIds } from '../../renderer/src/lib/workspace/ownership/worktree-operation-route'
 import { findRepoForHost } from '../../renderer/src/store/repos/repo-host-identity'
 import {
   clearWorktreeSleepIntent,

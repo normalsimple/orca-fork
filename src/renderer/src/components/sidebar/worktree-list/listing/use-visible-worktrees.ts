@@ -123,7 +123,11 @@ export function useVisibleSidebarWorktrees(args: {
     worktreeIdsWithStructuredChat
   })
 
-  const hiddenVmCheckouts = useSyncExternalStore(subscribeHiddenVmCheckouts, readHiddenVmCheckouts)
+  const hiddenVmCheckouts = useSyncExternalStore(
+    subscribeHiddenVmCheckouts,
+    readHiddenVmCheckouts,
+    readHiddenVmCheckouts
+  )
   const recomputedVisibleWorktrees = useMemo(() => {
     const visible = computeVisibleWorktrees(worktreesByRepo, sortedIds, {
       filterRepoIds,

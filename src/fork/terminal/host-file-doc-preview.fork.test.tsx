@@ -2,8 +2,8 @@
 // grant is rooted at the host's filesystem root, so the page resolves paths as from file://; inside
 // another workspace at that workspace. Images it names are read from the host through grants.
 import { describe, expect, it, vi } from 'vitest'
-import { getWorkspaceFilePreviewPlan } from '@/lib/file-preview'
-import { buildDocPreviewGrantRequest } from '@/lib/doc-preview-grants'
+import { getWorkspaceFilePreviewPlan } from '@/lib/browser/documents/file-preview'
+import { buildDocPreviewGrantRequest } from '@/lib/browser/documents/doc-preview-grants'
 import { readRuntimeFilePreview } from '@/runtime/files/reads/runtime-file-read-client'
 import {
   fsReadFile,
@@ -14,7 +14,7 @@ import { registerHostFileDocPreviews } from './host-file-doc-preview'
 import { registerLargeHostFileReads } from './large-host-file-read'
 
 vi.mock('@/store', () => ({ useAppStore: { getState: () => state } }))
-vi.mock('@/lib/connection-owner-resolution', () => ({
+vi.mock('@/lib/workspace/ownership/connection-owner-resolution', () => ({
   getConnectionIdForFileFromState: () => null
 }))
 vi.mock('@/lib/workspace/ownership/worktree-runtime-owner', () => ({

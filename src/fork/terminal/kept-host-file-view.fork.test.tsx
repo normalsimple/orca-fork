@@ -7,7 +7,7 @@ import {
   flushDoubleRaf,
   installTerminalLinkTestEnvironment
 } from '@/components/terminal-pane/links/terminal-link-handlers-test-harness'
-import * as filePreview from '@/lib/file-preview'
+import * as filePreview from '@/lib/browser/documents/file-preview'
 import { activateAndRevealWorkspace } from '@/lib/workspace/activation/worktree-activation'
 import {
   createCompatibleRuntimeStatusResponseIfNeeded,
@@ -32,7 +32,7 @@ vi.mock('@/lib/workspace/activation/worktree-activation', () => ({
   activateAndRevealWorkspace: vi.fn(),
   activateAndRevealWorktree: vi.fn()
 }))
-vi.mock('@/lib/connection-context', () => ({
+vi.mock('@/lib/workspace/ownership/connection-context', () => ({
   getConnectionId: vi.fn(() => null)
 }))
 vi.mock('@/components/terminal-pane/links/files/terminal-remote-file-download-open', () => ({

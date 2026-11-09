@@ -299,7 +299,7 @@ Linux 上每次启动都在已有的 `--uid=` 后面加上 `--enforce_kernel_ipv
 
 `fork.host.exec` 不用 shell。`cwd` 省略、空或 `.` 是工作区根；必须是相对路径，解析软链之后仍在工作区里。脚本自己 `cd` 到 `fork.workspaces.list` 给出的绝对路径是允许的，约束只作用在 `cwd` 参数上。子进程环境只有 `HOME`、`USER`、`LANG` 和 `PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin`。`HOME` 来自这台机器的用户目录，空则是 `/`。调用方只能覆盖同名键，空的 `HOME` 覆盖被丢掉。不继承 Orca 或插件进程的其它环境变量。`LANG` 用本进程的 `LANG`，没有则是 `C.UTF-8`。stdin 是 UTF-8 字符串，最多 8 MiB，原样写入，不加 NUL 帧。`maxOutputBytes` 默认 1 MiB，上限 16 MiB，stdout 和 stderr 共用这一个字节预算，不流式。超了就 `truncated: true`、留下前缀、`exitCode: null`、`signal: 'SIGKILL'`。`timeoutMs` 默认 30 秒，范围 1 秒到 110 秒，到点 `SIGKILL` 进程组，`timedOut: true`、`exitCode: null`、`signal: 'SIGKILL'`。找不到程序不抛错：`exitCode` 127、`timedOut` false，stderr 里有 `ENOENT`。
 
-抛错只有这些：参数不合法 `invalid_params`；裸 ssh 或这台进程不服务该工作区 `not_permitted`；主机连不上 `unavailable` 且 `reason` 为 `host-unreachable`；旧服务器没有 `fork.workspace.exec` 也是 `unavailable`，`reason` 为 `server-method-missing`。`since` 用 4，因为 appearance 已经把 host API minor 占到 4，minor 不再升高。插件 `engines.orca` 不用高于 `1.4.250`。
+抛错只有这些：参数不合法 `invalid_params`；裸 ssh 或这台进程不服务该工作区 `not_permitted`；主机连不上 `unavailable` 且 `reason` 为 `host-unreachable`；旧服务器没有 `fork.workspace.exec` 也是 `unavailable`，`reason` 为 `server-method-missing`。fork 方法的 `since` 仍是 4。上游 minor 已经到 5，fork 不再往上加。插件 `engines.orca` 不用高于 `1.4.250`。
 
 本机执行走桌面运行时的 `fork.workspace.exec`。`runtime:` 用 `callRuntimeEnvironment`，传输超时是调用方的 `timeoutMs` 再加 1.5 秒，避免 15 秒默认超时把结果截掉；多出来的 1.5 秒只为了让服务器在杀进程之后把结果送回来。服务器上的方法在 `FORK_RPC_METHODS` 里，桌面、orcad 和 `orca serve` 都有。配对服务器要更新到带这个方法的 orcad，执行才会成功；列工作区用的是原有的 `worktree.list` / `repo.list` / `folderWorkspace.list`，旧服务器也能列。
 

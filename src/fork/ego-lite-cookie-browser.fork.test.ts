@@ -1,7 +1,7 @@
 import { pbkdf2Sync } from 'node:crypto'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { CHROMIUM_BROWSERS } from '../main/browser/cookies/sources/browser-cookie-source-profiles'
-import { BROWSER_FAMILY_LABELS } from '../shared/constants'
+import { BROWSER_FAMILY_LABELS } from '../shared/browser/browser-family-labels'
 import { getBrowserCookieImportSourceLabels } from '../shared/browser-cookie-import-sources'
 import { registerForkCookieImportSources } from '../shared/fork-hooks/chromium-cookie-browsers'
 import { appendChromiumCookieBrowser } from './main/ego-lite-cookie-detection'
@@ -135,7 +135,7 @@ describe('detectInstalledBrowsers — Ego Lite', () => {
     const { registerEgoLiteCookieDetection: register } =
       await import('./main/ego-lite-cookie-detection')
     register()
-    return import('../main/browser/cookies/browser-cookie-import')
+    return import('../main/browser/cookies/sources/browser-cookie-detection')
   }
 
   it('does not list Ego Lite until the fork browser is registered', async () => {
@@ -144,7 +144,7 @@ describe('detectInstalledBrowsers — Ego Lite', () => {
     })
 
     const { detectInstalledBrowsers } =
-      await import('../main/browser/cookies/browser-cookie-import')
+      await import('../main/browser/cookies/sources/browser-cookie-detection')
     expect(
       detectInstalledBrowsers().find((browser) => browser.family === EGO_LITE_BROWSER_FAMILY)
     ).toBeUndefined()
@@ -349,7 +349,7 @@ describe('detectInstalledBrowsers — Ego Lite on Windows', () => {
       await import('./main/ego-lite-cookie-detection')
     register()
     const { detectInstalledBrowsers } =
-      await import('../main/browser/cookies/browser-cookie-import')
+      await import('../main/browser/cookies/sources/browser-cookie-detection')
     const ego = detectInstalledBrowsers().find(
       (browser) => browser.family === EGO_LITE_BROWSER_FAMILY
     )
@@ -364,7 +364,7 @@ describe('detectInstalledBrowsers — Ego Lite on Windows', () => {
       await import('./main/ego-lite-cookie-detection')
     register()
     const { detectInstalledBrowsers } =
-      await import('../main/browser/cookies/browser-cookie-import')
+      await import('../main/browser/cookies/sources/browser-cookie-detection')
 
     expect(
       detectInstalledBrowsers().find((browser) => browser.family === EGO_LITE_BROWSER_FAMILY)

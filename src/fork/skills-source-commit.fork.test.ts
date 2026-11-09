@@ -116,7 +116,7 @@ describe('fork skill source commit', () => {
     )
     expect(readers).toEqual([
       'src/renderer/src/env.d.ts',
-      'src/renderer/src/lib/agent-feature-install-commands.ts'
+      'src/renderer/src/lib/skills/installation/agent-feature-install-commands.ts'
     ])
   })
 

@@ -104,7 +104,11 @@ export function useSidebarSectionRows(args: SectionRowsArgs) {
     [repos]
   )
   const allRepoIds = useMemo(() => repos.map((r) => r.id), [repos])
-  const hiddenVmCheckouts = useSyncExternalStore(subscribeHiddenVmCheckouts, readHiddenVmCheckouts)
+  const hiddenVmCheckouts = useSyncExternalStore(
+    subscribeHiddenVmCheckouts,
+    readHiddenVmCheckouts,
+    readHiddenVmCheckouts
+  )
   const placeholderRepoIds = useMemo(
     () =>
       getEmptyProjectPlaceholderRepoIds({

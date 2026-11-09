@@ -13,7 +13,7 @@ import {
 import { makeTerminalTab } from '../../main/persistence/persistence-session-fixtures'
 import { manifest } from '../../main/persistence/migrating-orcad-catalog/persistence-orcad-migration-catalog-fixture'
 import { collectOrcadMigrationSourceCatalog } from '../../main/persistence/migrating-orcad-catalog/orcad-source-catalog'
-import { resolveAgentWorkspaceExecutionHostId } from '../../main/agent-hooks/restored-status-dead-terminal-sweep'
+import { resolveAgentWorkspaceExecutionHostId } from '../../main/agent-hooks/observations/restored-status-dead-terminal-sweep'
 import { getDefaultPersistedState, getDefaultWorkspaceSession } from '../../shared/constants'
 import type { FolderWorkspace } from '../../shared/folder-workspaces/folder-workspace-types'
 import type { PersistedState } from '../../shared/persisted-state-types'

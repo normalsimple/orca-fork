@@ -499,7 +499,7 @@ describe('workspace folder delete dialog', () => {
       button: 0,
       pointerType: 'mouse'
     })
-    fireEvent.click(screen.getByRole('menuitem', { name: 'Always delete' }))
+    fireEvent.click(screen.getByRole('menuitem', { name: /^Always delete/ }))
 
     await vi.waitFor(() => {
       expect(runWorktreeDeletesInParallel).toHaveBeenCalledWith([workspace], {
