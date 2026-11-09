@@ -224,12 +224,68 @@ describe('upstream aligned base version', () => {
       assert.equal(JSON.parse(readFileSync(packagePath, 'utf8')).version, '1.4.12')
 
       writeFileSync(packagePath, source)
-      assert.throws(() => applyBaseVersion(dir, 'check', options), /not the upstream release/)
+      assert.throws(() => applyBaseVersion(dir, 'check', options), /not an upstream stable tag/)
       assert.equal(readFileSync(packagePath, 'utf8'), source)
+      writeFileSync(
+        packagePath,
+        '{\n  "name": "orca",\n  "version": "1.4.10-local.1.abc",\n  "description": "keep"\n}\n'
+      )
+      assert.throws(() => applyBaseVersion(dir, 'check', options), /X\.Y\.Z/)
       assert.throws(
         () => applyBaseVersion(dir, 'check', { ...options, readPin: () => 'b'.repeat(40) }),
         /skills pin/
       )
+    } finally {
+      rmSync(dir, { recursive: true, force: true })
+    }
+  })
+
+  it('warns when a higher contained tag exists and fails when package.json overstates the pin', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'orca-ver-check-'))
+    const pin = 'a'.repeat(40)
+    const packagePath = join(dir, 'package.json')
+    const contained = 'e'.repeat(40)
+    const beyond = 'f'.repeat(40)
+    const git = (args) => {
+      if (args[0] === 'rev-parse' && args[1] === '--is-shallow-repository') {
+        return 'false'
+      }
+      throw new Error(`unexpected git ${args.join(' ')}`)
+    }
+    const base = {
+      git,
+      fetchMain() {},
+      pin,
+      readPin: () => pin,
+      remote: 'https://example.invalid/orca.git',
+      tags: [
+        { name: 'v1.4.12', sha: beyond },
+        { name: 'v1.4.10', sha: 'b'.repeat(40) },
+        { name: 'v1.4.9', sha: 'c'.repeat(40) }
+      ],
+      mainlineOf: (tag) => (tag.name === 'v1.4.12' ? beyond : contained),
+      isAncestor: (mainline) => mainline === contained
+    }
+    writeFileSync(
+      packagePath,
+      '{\n  "name": "orca",\n  "version": "1.4.9",\n  "description": "keep"\n}\n'
+    )
+    try {
+      const warned = applyBaseVersion(dir, 'check', base)
+      assert.equal(warned.version, '1.4.10')
+      assert.equal(warned.plan, 'update')
+      assert.match(warned.warning, /1\.4\.10/)
+      assert.match(warned.warning, /--write/)
+      assert.equal(JSON.parse(readFileSync(packagePath, 'utf8')).version, '1.4.9')
+
+      writeFileSync(
+        packagePath,
+        '{\n  "name": "orca",\n  "version": "1.4.12",\n  "description": "keep"\n}\n'
+      )
+      assert.throws(() => applyBaseVersion(dir, 'check', base), /overstates the upstream release/)
+      assert.equal(JSON.parse(readFileSync(packagePath, 'utf8')).version, '1.4.12')
+      assert.throws(() => applyBaseVersion(dir, 'write', base), /backwards from 1.4.12 to 1.4.10/)
+      assert.equal(JSON.parse(readFileSync(packagePath, 'utf8')).version, '1.4.12')
     } finally {
       rmSync(dir, { recursive: true, force: true })
     }

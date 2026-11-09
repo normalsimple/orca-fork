@@ -84,6 +84,37 @@ export function chooseAlignedRelease(tags, pin, mainlineOf, isAncestor) {
   throw new Error(`no stable upstream tag is contained in ${pin}`)
 }
 
+function stableTagNamed(tags, version) {
+  for (const tag of tags) {
+    const parsed = parseStableTag(tag.name)
+    if (parsed?.version === version) {
+      return { ...tag, ...parsed }
+    }
+  }
+  return null
+}
+
+// --check 只拒绝「把对齐说得比 pin 更新」。更高的、已经含在 pin 里的 tag 只警告：
+// 打包出去的版本仍然是真的（至少包含 package.json 这个基线），不必等下一次同步。
+export function assessCheckedBase(current, aligned, tags, pin, mainlineOf, isAncestor) {
+  const parsed = parseStableTag(`v${current}`)
+  if (!parsed) {
+    throw new Error(`base version must be X.Y.Z, got ${current}`)
+  }
+  const tag = stableTagNamed(tags, current)
+  if (!tag) {
+    throw new Error(`package.json ${current} is not an upstream stable tag`)
+  }
+  const mainline = mainlineOf(tag)
+  if (!mainline || !isAncestor(mainline, pin)) {
+    throw new Error(`package.json ${current} overstates the upstream release contained in ${pin}`)
+  }
+  if (planBaseUpdate(current, aligned.version) === 'update') {
+    return `upstream ${aligned.version} (${aligned.tag}) is contained in ${pin} and is newer than package.json ${current}; run node fork/scripts/upstream-aligned-version.mjs --write on the next sync`
+  }
+  return null
+}
+
 export function planBaseUpdate(current, aligned) {
   const currentTag = parseStableTag(`v${current}`)
   const alignedTag = parseStableTag(`v${aligned}`)
@@ -196,31 +227,29 @@ export function applyBaseVersion(repo, mode, options = {}) {
   const tags =
     options.tags ??
     stableTagsFromLsRemote(git(['ls-remote', '--tags', remote], { timeout: 180_000 }))
-  const aligned = chooseAlignedRelease(
-    tags,
-    pin,
+  const mainlineOf =
     options.mainlineOf ??
-      ((tag) => {
-        const ref = materializeTag(git, remote, tag)
-        return git(['merge-base', ref, 'upstream/main'], { allowStatus: [1] })
-      }),
+    ((tag) => {
+      const ref = materializeTag(git, remote, tag)
+      return git(['merge-base', ref, 'upstream/main'], { allowStatus: [1] })
+    })
+  const isAncestor =
     options.isAncestor ??
-      ((ancestor, descendant) =>
-        git(['merge-base', '--is-ancestor', ancestor, descendant], { allowStatus: [1] }) !== null)
-  )
+    ((ancestor, descendant) =>
+      git(['merge-base', '--is-ancestor', ancestor, descendant], { allowStatus: [1] }) !== null)
+  const aligned = chooseAlignedRelease(tags, pin, mainlineOf, isAncestor)
   const packagePath = join(repo, 'package.json')
   const source = readFileSync(packagePath, 'utf8')
   const current = JSON.parse(source).version
-  const plan = planBaseUpdate(current, aligned.version)
-  if (mode === 'check' && plan !== 'unchanged') {
-    throw new Error(
-      `package.json ${current} is not the upstream release contained in ${pin} (${aligned.version}, ${aligned.tag})`
-    )
+  if (mode === 'check') {
+    const warning = assessCheckedBase(current, aligned, tags, pin, mainlineOf, isAncestor)
+    return { ...aligned, current, plan: warning ? 'update' : 'unchanged', warning }
   }
+  const plan = planBaseUpdate(current, aligned.version)
   if (mode === 'write' && plan === 'update') {
     writeFileSync(packagePath, replacePackageVersion(source, current, aligned.version))
   }
-  return { ...aligned, current, plan }
+  return { ...aligned, current, plan, warning: null }
 }
 
 function main() {
@@ -232,12 +261,19 @@ function main() {
   }
   try {
     const result = applyBaseVersion(root, mode)
+    if (result.warning) {
+      console.error(result.warning)
+    }
     if (mode === 'print') {
       console.log(
         `${result.version} tag ${result.tag} pin ${result.pin} mainline ${result.mainline} package ${result.current} (${result.plan})`
       )
-    } else if (result.plan === 'update') {
+    } else if (mode === 'write' && result.plan === 'update') {
       console.log(`base version ${result.current} -> ${result.version} (${result.tag})`)
+    } else if (result.warning) {
+      console.log(
+        `base version ${result.current} is an upstream release contained in ${result.pin}`
+      )
     } else {
       console.log(`base version unchanged ${result.version} (${result.tag}, pin ${result.pin})`)
     }

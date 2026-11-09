@@ -20,6 +20,12 @@ describe('fork daily sync split', () => {
     expect(readFileSync(resolve('fork/scripts/upstream-aligned-version.mjs'), 'utf8')).toContain(
       'https://github.com/stablyai/orca.git'
     )
+    for (const path of ['docs/fork/SYNC.md', 'docs/fork/DAILY.md', 'FORK-CHANGES.md']) {
+      expect(readFileSync(resolve(path), 'utf8')).toContain(
+        'node fork/scripts/upstream-aligned-version.mjs --write'
+      )
+    }
+    expect(readFileSync(resolve('docs/fork/SYNC.md'), 'utf8')).toContain('git ls-remote')
     expect(script).toContain('check-no-internal-refs.sh')
     const refs = readFileSync(resolve('fork/scripts/verify/check-no-internal-refs.sh'), 'utf8')
     expect(refs).toContain('command -v rg')
