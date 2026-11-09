@@ -36,9 +36,8 @@ describe('scan policy', () => {
 
   it('indexes a whole tool result in chunks and bumps the schema', async () => {
     const text = `${'alpha '.repeat(4000)}tail`
-    expect(
-      [...searchMessageRows([{ role: 'tool', text, timestamp: null }])][0]?.text.length
-    ).toBeLessThanOrEqual(3072)
+    // 未登记时跟上游：工具输出不进索引。
+    expect([...searchMessageRows([{ role: 'tool', text, timestamp: null }])]).toEqual([])
 
     applyAiVaultForkServicePolicy(aiVaultForkServicePolicy())
     const rows = [...searchMessageRows([{ role: 'tool', text, timestamp: null }])]
@@ -59,10 +58,9 @@ describe('scan policy', () => {
     }
   })
 
-  it('returns the capped tool row when the fork policy is off', () => {
+  it('drops tool output when the fork chunk policy is off', () => {
     registerAiVaultToolIndexPolicy('capped')
     const rows = [...searchMessageRows([{ role: 'tool', text: 'x'.repeat(9000), timestamp: null }])]
-    expect(rows).toHaveLength(1)
-    expect(rows[0]?.text.length).toBeLessThanOrEqual(3072)
+    expect(rows).toEqual([])
   })
 })
