@@ -25,6 +25,10 @@ export type RuntimeClientEvent =
   | { type: 'workspaceViewChanged' }
   // Index, HEAD or refs moved in a watched local repo; without `worktreeIds` any of its checkouts may have changed.
   | { type: 'gitStatusChanged'; repoId: string; worktreeIds?: string[] }
+  /** Top-level settings whose values changed; a phone re-reads only the settings it shows. */
+  | { type: 'settingsChanged'; keys: string[] }
+  /** The desktop Agents list's verdicts changed; worktree.ps carries them. */
+  | { type: 'agentListChanged' }
   | {
       type: 'worktreesChanged'
       repoId: string
@@ -34,6 +38,8 @@ export type RuntimeClientEvent =
     }
   /** An agent row changed (coalesced, no ids); phones re-read worktree.ps. Sent only while the sidebar feed is off. */
   | { type: 'worktreeRowsChanged' }
+  /** What mobileRelay.hosts.list answers changed; phones re-read it instead of polling. */
+  | { type: 'relayHostsChanged' }
   | ({ type: 'nativeChatLaunchDraftResolved' } & RuntimeNativeChatLaunchDraftResolution)
   | { type: 'terminalSideEffects'; batch: TerminalSideEffectBatch }
   /** Only while this host's own phone reads the sidebar feed; every other reader drops it. */

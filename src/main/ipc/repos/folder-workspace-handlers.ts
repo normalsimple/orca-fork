@@ -16,7 +16,7 @@ import {
   FolderWorkspaceUpdateArgs,
   parseProjectGroupIpcArgs
 } from './repo-ipc-arg-schemas'
-import { visibleFolderWorkspaces } from '../../ssh/orcad-retained-source'
+import { visibleFolderWorkspaces } from '../../persistence/migrating-orcad-catalog/orcad-source-visibility'
 import { applySidebarFieldClears } from '../../../shared/fork-hooks/sidebar-field-clear'
 import { createFolderWorkspaceWithPluginHooks } from '../../plugins/hooks/workspace-create-plugin-hook'
 import {

@@ -1,13 +1,9 @@
 import type SyncDatabase from '../sqlite/sync-database'
 import type { TranscriptMessage } from '../ai-vault/transcripts/session-transcript-consumers'
-import { sliceAtCodeUnitLimit } from '../ai-vault/session-scanner-text-normalization'
 import { identifierShadowText } from './session-search-identifier-split'
 import { readAiVaultToolIndexPolicy } from '../../shared/fork-hooks/ai-vault'
 
 const CHUNK_TARGET_CHARS = 8000
-
-// Cap tool-output prefixes to keep logs from dominating index size; retain all conversation text.
-const TOOL_ROW_CHARS = 3072
 
 // Folded diacritics remain inside tokens; see sqlite3Fts5UnicodeIsdiacritic in fts5_unicode2.c.
 const FOLDED_DIACRITIC =
@@ -44,18 +40,13 @@ function* textChunks(text: string): Generator<string> {
   }
 }
 
-/** Chunk conversation text for FTS ranking; tool output gets one capped row. */
+/** Chunk conversation text for FTS ranking; tool output is not indexed. */
 export function* searchMessageRows(
   messages: Iterable<TranscriptMessage>
 ): Generator<TranscriptMessage> {
   for (const message of messages) {
+    // fork: 登记了分块策略才索引工具输出；未登记时跟上游一样丢掉。
     if (message.role === 'tool' && readAiVaultToolIndexPolicy() !== 'chunk') {
-      const text = sliceAtCodeUnitLimit(message.text, TOOL_ROW_CHARS)
-      yield {
-        ...message,
-        text,
-        ...(text.length < message.text.length ? { textTruncated: true as const } : {})
-      }
       continue
     }
     for (const text of textChunks(message.text)) {

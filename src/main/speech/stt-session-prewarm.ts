@@ -43,6 +43,7 @@ export async function prewarmSttModel(
     return
   }
   const ready =
+    manifest !== undefined &&
     config !== null &&
     hasLocalSpeechRecognizer() &&
     (await state.modelManager.getModelState(modelId)).status === 'ready'

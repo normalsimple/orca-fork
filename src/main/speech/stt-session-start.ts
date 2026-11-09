@@ -1,8 +1,9 @@
+import { SPEECH_MODEL_NEEDS_UPDATE_ERROR } from '../../shared/speech-model-retirement'
 import { engineDictationLanguage } from '../../shared/dictation-language'
 import type { SpeechModelManifest } from '../../shared/speech-types'
 import { getCatalogModel } from './model-catalog'
 import { OpenAiTranscriptionSession } from './openai-transcription-client'
-import { readOpenAiSpeechApiKey } from './openai-api-key-store'
+import { resolveCloudTranscriptionTarget } from './cloud-transcription-target'
 import type { SttEventSink } from './stt-service'
 import {
   MAX_STT_SESSIONS,
@@ -19,7 +20,7 @@ import {
   teardownIdleSttEngine,
   teardownSttEngine
 } from './stt-session-stop'
-import { getSherpaModulePath, LOCAL_SPEECH_UNAVAILABLE_ERROR } from './stt-worker-paths'
+import { getSpeechEngineModulesDir, LOCAL_SPEECH_UNAVAILABLE_ERROR } from './stt-worker-paths'
 import {
   attachSttWorkerLifecycle,
   initializeSttWorker,
@@ -55,7 +56,7 @@ export async function startSttDictation(
     throw new Error(`Unknown model: ${modelId}`)
   }
   const config: SttRecognizerConfig | null =
-    manifest.provider === 'openai'
+    manifest.provider !== 'local'
       ? null
       : { modelId, hotwordsFilePath, language: engineDictationLanguage(manifest, language) }
   if (state.sessions.size >= MAX_STT_SESSIONS) {
@@ -90,8 +91,7 @@ export async function startSttDictation(
       // A cloud dictation needs no recognizer; free one nobody else uses.
       await teardownIdleSttEngine(state)
       session.cloud = new OpenAiTranscriptionSession(
-        modelId,
-        readOpenAiSpeechApiKey,
+        () => resolveCloudTranscriptionTarget(modelId),
         engineDictationLanguage(manifest, language)
       )
     }
@@ -124,7 +124,11 @@ async function requireModelReady(state: SttSessionState, modelId: string): Promi
   const modelState = await state.modelManager.getModelState(modelId)
   if (modelState.status !== 'ready') {
     await teardownIdleSttEngine(state, modelId)
-    throw new Error(`Model not ready: ${modelState.status}`)
+    throw new Error(
+      modelState.needsUpdate
+        ? SPEECH_MODEL_NEEDS_UPDATE_ERROR
+        : `Model not ready: ${modelState.status}`
+    )
   }
 }
 
@@ -166,8 +170,8 @@ export function spawnSttEngine(
   config: SttRecognizerConfig,
   manifest: SpeechModelManifest
 ): SttEngine {
-  const sherpaModulePath = getSherpaModulePath()
-  if (!sherpaModulePath) {
+  const speechModulesDir = getSpeechEngineModulesDir()
+  if (!speechModulesDir) {
     throw new Error(LOCAL_SPEECH_UNAVAILABLE_ERROR)
   }
   clearSttIdleTeardownTimer(state)
@@ -191,6 +195,7 @@ export function spawnSttEngine(
     worker,
     detach,
     retired: false,
+    onUnloaded: [],
     ready: readyPromise.catch((error: unknown) => {
       failSttEngine(state, engine, STT_WORKER_EXITED_ERROR)
       throw error
@@ -200,14 +205,11 @@ export function spawnSttEngine(
   engine.ready.catch(() => undefined)
   state.engine = engine
   initializeSttWorker(worker, {
-    sherpaModulePath,
+    speechModulesDir,
     modelDir: state.modelManager.getModelDir(config.modelId),
-    modelType: manifest.type,
-    streaming: manifest.streaming,
     sampleRate: manifest.sampleRate,
     files: manifest.files ?? [],
     hotwordsFilePath: config.hotwordsFilePath,
-    modelingUnit: manifest.modelingUnit,
     language: config.language
   })
   return engine
