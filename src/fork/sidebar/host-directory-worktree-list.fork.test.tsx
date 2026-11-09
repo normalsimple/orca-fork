@@ -29,6 +29,20 @@ import {
   PINNED_SECTION_KEY,
   hostDirectorySectionKey
 } from './section-keys'
+import { EMPTY_PENDING_VM_CHECKOUT_INDEX } from '../../shared/pending-vm-checkouts'
+import { registerHostSectionMenuExtra } from '../../shared/fork-hooks/sidebar-chrome'
+
+// 共享 worker 里别的用例会留下正在创建的虚拟机。服务端渲染读到那份快照会改掉行计划。
+vi.mock('@/lib/vm-create-hidden-checkouts', async () => {
+  const actual = await vi.importActual<typeof import('@/lib/vm-create-hidden-checkouts')>(
+    '@/lib/vm-create-hidden-checkouts'
+  )
+  return {
+    ...actual,
+    readHiddenVmCheckouts: () => EMPTY_PENDING_VM_CHECKOUT_INDEX,
+    subscribeHiddenVmCheckouts: () => () => {}
+  }
+})
 
 vi.mock('@/store', () => createAppStoreModuleMock())
 vi.mock('@tanstack/react-virtual', () => createReactVirtualModuleMock())
@@ -107,6 +121,8 @@ describe('WorktreeList host-directory sections', () => {
   }, 60_000)
 
   it('renders pinned and directory rows after startup in host-directory mode', async () => {
+    // 别的用例登记的主机菜单项用的是真实菜单组件，服务端渲染没有 Menu 上下文。
+    registerHostSectionMenuExtra(() => null)
     setLineageFixtureState('repo', { projectGrouped: true })
     mockStore.state.groupBy = HOST_DIRECTORY_GROUP_BY
     // host-directory 会留下主机标题，菜单渲染时要读这份列表。
