@@ -3,6 +3,12 @@ import { createPluginWorkerRuntime } from './plugin-host-runtime'
 import { registerPluginWorkerSourceHooks } from './plugin-worker-source-hooks'
 import { pluginWorkerFatal } from '../../../shared/plugins/workers/plugin-host-protocol'
 import type { PluginEnvelope } from '../../../shared/plugins/frames/plugin-protocol'
+import { PLUGIN_HOST_API } from '../../../shared/plugins/workers/plugin-host-api'
+import { registerPluginHostApiMethods } from '../../../shared/plugins/workers/plugin-host-api-registry'
+import { FORK_PLUGIN_HOST_API } from '../../../fork/plugins/host-api-spec'
+
+// worker 进程看不到主进程的登记。host.has 在 activate 之前就要认 fork.*。
+registerPluginHostApiMethods(FORK_PLUGIN_HOST_API, Object.keys(PLUGIN_HOST_API))
 
 function sendToParent(message: PluginEnvelope): void {
   process.send?.(message)

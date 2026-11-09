@@ -96,8 +96,6 @@ function addTo<T>(set: Set<T>, entry: T): PluginDisposable {
   return { dispose: () => void set.delete(entry) }
 }
 
-const WORKER_METHOD_NAMES: ReadonlySet<string> = new Set(pluginHostMethodsFor('worker'))
-
 /** The tables the runtime dispatches from; this module only fills them. */
 export type PluginWorkerApiTables = {
   commands: Map<string, (args: unknown, context: { signal: AbortSignal }) => unknown>
@@ -181,7 +179,8 @@ export function createPluginWorkerOrcaApi(input: {
     host: Object.freeze({
       call: (method: string, params?: unknown, options?: { signal?: AbortSignal }) =>
         hostCall(method, params, options),
-      has: (method: string) => WORKER_METHOD_NAMES.has(method)
+      // 每次查：fork.* 在本模块求值之后才登记。Set 接受任意字符串。
+      has: (method: string) => new Set<string>(pluginHostMethodsFor('worker')).has(method)
     }),
     panels: Object.freeze({
       handle(name: string, handler: PluginPanelRequestHandler) {

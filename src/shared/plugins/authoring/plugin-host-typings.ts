@@ -11,7 +11,7 @@ import {
   pluginHostMethodsFor
 } from '../workers/plugin-host-api'
 import { zodTypeText, type SchemaTypeTextOptions } from '../workers/plugin-schema-type-text'
-import { isForkPluginHostMethod } from '../../../fork/plugins/host-api-spec'
+import { isForkPluginHostMethod } from '../workers/plugin-host-method-spec'
 
 /** Checked-in output of `pnpm generate:plugin-author-typings`; `orca plugin types` copies it. */
 export const PLUGIN_HOST_TYPINGS_FILE = 'resources/plugins/types/orca-host.d.ts'

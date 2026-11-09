@@ -29,6 +29,11 @@ import {
   type ForkWorkspaceRow
 } from './plugin-host-catalog'
 import { FORK_WORKSPACE_EXEC_METHOD } from './workspace-exec-method'
+import { PLUGIN_HOST_API } from '../../shared/plugins/workers/plugin-host-api'
+import { registerPluginHostApiMethods } from '../../shared/plugins/workers/plugin-host-api-registry'
+
+// 主进程的 capability gate 和 dispatch 读登记表。worker 进程各自再登记一次。
+registerPluginHostApiMethods(FORK_PLUGIN_HOST_API, Object.keys(PLUGIN_HOST_API))
 
 const api = FORK_PLUGIN_HOST_API
 const LIST_TIMEOUT_MS = 15_000

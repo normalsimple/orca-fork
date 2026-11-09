@@ -36,6 +36,13 @@ export const spec = <P extends z.ZodType, R extends z.ZodType>(
   entry: PluginHostMethodSpec<P, R>
 ): PluginHostMethodSpec<P, R> => entry
 
+/** fork.* 不进上游生成的文档和 d.ts。放在 shared，生成脚本不必 import src/fork。 */
+export const FORK_PLUGIN_HOST_METHOD_PREFIX = 'fork.'
+
+export function isForkPluginHostMethod(name: string): boolean {
+  return name.startsWith(FORK_PLUGIN_HOST_METHOD_PREFIX)
+}
+
 /** The minor a surface first got the method. */
 export function pluginHostMethodSinceFor(
   entry: PluginHostMethodSpec,

@@ -1,4 +1,5 @@
 import {
+  getPluginHostMethodSpec,
   isPluginHostMethodName,
   PLUGIN_HOST_API,
   PLUGIN_HOST_METHOD_NAMES,
@@ -230,9 +231,7 @@ const HANDLERS: Record<PluginHostMethodName, BoundPluginHostMethod> = {
   }),
   ...PLUGIN_PANEL_BRIDGE_HANDLERS,
   ...PLUGIN_STATUS_BAR_HANDLERS,
-  ...PLUGIN_WORKSPACE_ACTION_HANDLERS,
-  // fork: specs and handlers are the same objects, so the identity check below still holds.
-  ...FORK_PLUGIN_HOST_HANDLERS
+  ...PLUGIN_WORKSPACE_ACTION_HANDLERS
 }
 
 function requireDesktop(services: PluginHostServices): PluginDesktopFrameServices {
@@ -268,7 +267,25 @@ for (const name of PLUGIN_HOST_METHOD_NAMES) {
     throw new Error(`plugin host API binding for ${name} uses another method's spec`)
   }
 }
+// fork: 规格在登记表里，和 handler 必须是同一个对象。
+for (const [name, handler] of Object.entries(FORK_PLUGIN_HOST_HANDLERS)) {
+  if (handler.spec !== getPluginHostMethodSpec(name)) {
+    throw new Error(`plugin host API binding for ${name} uses another method's spec`)
+  }
+}
+
+function forkPluginHostHandler(name: string): BoundPluginHostMethod | null {
+  for (const [method, handler] of Object.entries(FORK_PLUGIN_HOST_HANDLERS)) {
+    if (method === name) {
+      return handler
+    }
+  }
+  return null
+}
 
 export function getBoundPluginHostMethod(name: string): BoundPluginHostMethod | null {
-  return isPluginHostMethodName(name) ? HANDLERS[name] : null
+  if (isPluginHostMethodName(name)) {
+    return HANDLERS[name]
+  }
+  return getPluginHostMethodSpec(name) ? forkPluginHostHandler(name) : null
 }

@@ -1,5 +1,6 @@
-// fork: 插件主机 API（fork.*）。spread 进 PLUGIN_HOST_API 后 host.has 才认得到。
-// 生成的插件文档和类型表会滤掉 fork. 前缀，避免每天和上游的生成物冲突。
+// fork: 插件主机 API（fork.*）。桌面主进程和插件 worker 启动时登记，host.has 才认得到。
+// 不能写进 shared 的 PLUGIN_HOST_API：CLI 顺着 agent-hooks 会编到这里，打包却只有 out/cli 和 out/shared。
+// 生成的插件文档和类型表会滤掉 fork. 前缀，避免和上游生成物冲突。
 import { z } from 'zod'
 import { spec, WORKER_ONLY } from '../../shared/plugins/workers/plugin-host-method-spec'
 
@@ -60,11 +61,6 @@ const execResult = z.object({
   truncated: z.boolean(),
   timedOut: z.boolean()
 })
-
-/** 生成物不收录这些方法；运行时的 host.has 仍然看 PLUGIN_HOST_API。 */
-export function isForkPluginHostMethod(name: string): boolean {
-  return name.startsWith('fork.')
-}
 
 export const FORK_PLUGIN_HOST_API = {
   'fork.hosts.list': spec({

@@ -3,6 +3,7 @@ import type { PluginSurface } from '../frames/plugin-protocol'
 import * as stored from './plugin-host-api-storage-schemas'
 import { PLUGIN_PANEL_BRIDGE_API } from './plugin-host-api-panel-methods'
 import { PLUGIN_WORKER_ACTIONS_API } from './plugin-host-api-worker-actions'
+import { extraHostMethod, hostMethodsFor } from './plugin-host-api-registry'
 import {
   ALL_SURFACES,
   FRAMES_ONLY,
@@ -317,7 +318,7 @@ export function isPluginHostMethodName(name: string): name is PluginHostMethodNa
 }
 
 export function getPluginHostMethodSpec(name: string): PluginHostMethodSpec | null {
-  return isPluginHostMethodName(name) ? PLUGIN_HOST_API[name] : null
+  return isPluginHostMethodName(name) ? PLUGIN_HOST_API[name] : extraHostMethod(name)
 }
 
 /** The minor this host implements: the newest `since` in the table. */
@@ -327,7 +328,7 @@ export const PLUGIN_HOST_API_MINOR = Math.max(
 
 /** Methods a surface may call, for `hello` and `host.has`. */
 export function pluginHostMethodsFor(surface: PluginSurface): PluginHostMethodName[] {
-  return PLUGIN_HOST_METHOD_NAMES.filter((name) => PLUGIN_HOST_API[name].surfaces.includes(surface))
+  return hostMethodsFor(surface, PLUGIN_HOST_METHOD_NAMES, (name) => PLUGIN_HOST_API[name].surfaces)
 }
 
 /** A frame's methods: user-gesture methods only where Orca can verify the gesture (a guest). */
