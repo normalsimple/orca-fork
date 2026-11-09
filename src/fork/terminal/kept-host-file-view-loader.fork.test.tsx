@@ -5,10 +5,8 @@ import { act } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { OpenFile } from '@/store/slices/editor/types/open-file'
-import {
-  useEditorPanelFileContentLoader,
-  type EditorPanelFileContentLoader
-} from '@/components/editor/useEditorPanelFileContentLoader'
+import { useEditorPanelFileContentLoader } from '@/components/editor/useEditorPanelFileContentLoader'
+import type { EditorPanelFileContentLoader } from '@/components/editor/editor-panel-content-types'
 import {
   registerKeptHostFileViewHooks,
   releaseStaleKeptHostFileReadOnly
