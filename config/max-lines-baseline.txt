@@ -16,3 +16,5 @@ inline src/renderer/src/components/terminal-pane/pty-connection/connect-pane-pty
 inline src/shared/sidebar-list/sidebar-row-plan.ts
 inline src/renderer/src/components/sidebar/worktree-list/listing/use-section-rows.ts
 inline src/main/startup/main-process-ready-foundation.ts
+inline src/renderer/src/store/slices/worktrees/listing/fetched-worktree-merge.ts
+inline src/shared/plugins/workers/plugin-host-api.ts
