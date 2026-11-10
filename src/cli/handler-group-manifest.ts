@@ -7,6 +7,7 @@ import { SERVE_PAIRING_HANDLER_GROUPS } from './serve-pairing-handler-groups'
 import { PLUGIN_HANDLER_GROUPS } from './plugin-handler-groups'
 import { HOST_HANDLER_GROUPS } from './host-handler-groups'
 import { WORKTREE_HANDLER_GROUPS } from './worktree-handler-groups'
+import { FORK_REPO_HANDLER_KEYS } from '../shared/fork-hooks/cli-repo-remove'
 
 export type HandlerGroup = {
   name: string
@@ -85,6 +86,7 @@ export const HANDLER_GROUPS: readonly HandlerGroup[] = [
       'repo list',
       'repo add',
       'repo show',
+      ...FORK_REPO_HANDLER_KEYS,
       'repo set',
       'repo set-base-ref',
       'repo search-refs'

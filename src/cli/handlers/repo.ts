@@ -9,6 +9,7 @@ import {
 import { resolveRepoPathArgument } from '../repo-path-arguments'
 import { RuntimeClientError } from '../runtime/types'
 import { attachCliErrorData } from './worktree-setup-decision-recovery'
+import { forkRepoHandlers } from '../../shared/fork-hooks/cli-repo-remove'
 
 export const REPO_HANDLERS: Record<string, CommandHandler> = {
   'repo list': async ({ client, json }) => {
@@ -46,6 +47,7 @@ export const REPO_HANDLERS: Record<string, CommandHandler> = {
     })
     printResult(result, json, formatRepoShow)
   },
+  ...forkRepoHandlers(getRequiredStringFlag, printResult),
   'repo set': async ({ flags, client, json }) => {
     const repo = getRequiredStringFlag(flags, 'repo')
     const visibility = getRequiredStringFlag(flags, 'external-worktree-visibility')

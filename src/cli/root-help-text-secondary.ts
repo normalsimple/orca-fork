@@ -1,3 +1,5 @@
+import { FORK_REPO_HELP_USAGE } from '../shared/fork-hooks/cli-repo-remove'
+
 export const ROOT_HELP_TEXT_SECONDARY = [
   '  uncheck                   Uncheck a checkbox by --element ref',
   '  focus                     Focus an element by --element ref',
@@ -83,6 +85,7 @@ export const ROOT_HELP_TEXT_SECONDARY = [
   '  orca repo list [--json]',
   '  orca repo add --path <path> [--kind git|folder] [--json]',
   '  orca repo show --repo <selector> [--json]',
+  FORK_REPO_HELP_USAGE,
   '  orca repo set --repo <selector> --external-worktree-visibility show|hide|inherit [--json]',
   '  orca repo set-base-ref --repo <selector> --ref <ref> [--json]',
   '  orca repo search-refs --repo <selector> --query <text> [--limit <n>] [--json]',

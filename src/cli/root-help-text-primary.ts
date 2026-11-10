@@ -1,3 +1,5 @@
+import { FORK_REPO_HELP_SUMMARY } from '../shared/fork-hooks/cli-repo-remove'
+
 export const ROOT_HELP_TEXT_PRIMARY = [
   'orca',
   '',
@@ -102,6 +104,7 @@ export const ROOT_HELP_TEXT_PRIMARY = [
   '  repo list                 List repos registered in Orca',
   '  repo add                  Add a project to Orca by filesystem path',
   '  repo show                 Show one registered repo',
+  FORK_REPO_HELP_SUMMARY,
   '  repo set                  Set whether non-Orca worktrees are shown for a repo',
   "  repo set-base-ref         Set the repo's default base ref for future worktrees",
   '  repo search-refs          Search branch/tag refs within a repo',

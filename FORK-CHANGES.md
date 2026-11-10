@@ -325,3 +325,16 @@ Linux 上每次启动都在已有的 `--uid=` 后面加上 `--enforce_kernel_ipv
 - `card-identity-parts.tsx` 在标题后调用 `renderRegisteredCardTitleTrailing`。重命名时标题零件不画它。
 
 钩子在 `src/shared/fork-hooks/sidebar-card-identity.ts`，规则在 `src/fork/sidebar/single-checkout-card.ts`。`src/fork/sidebar/card-identity.tsx` 登记规则和淡色分支。子工作区的空前缀在 `host-directory-render.tsx`。测试是 `single-checkout-card.fork.test.ts`（规则）和 `single-checkout-card-template.fork.test.tsx`（真实的默认卡片模板和上游钩子）。
+
+## F055 `orca repo rm`
+
+`orca repo rm --repo <selector> [--json]` 调用已有的 RPC `repo.rm`，和设置页移除项目走同一条路径（`RuntimeRepositorySettingsController.remove`）。命令只注销这台主机上的登记，文件夹、Git worktree 和分支都留在磁盘上。Orca 同时停掉这个项目在这台主机上的终端、关掉它的智能体会话，并删除它的工作区元数据（名字、备注、链接）。帮助的 Notes 写明这两点。spec 标了 `destructive`，所以命令纠错不会推荐它。
+
+打包的 CLI 只带 `out/cli` 和 `out/shared`，所以命令写在 `src/shared/fork-hooks/cli-repo-remove.ts`，不引用 `src/cli`。调用方传入 CLI 的 `getRequiredStringFlag` 和 `printResult`。上游五个文件各加一行 import 和一行展开：
+
+- `specs/repo.ts`：`forkRepoCommandSpecs(GLOBAL_FLAGS)`
+- `handlers/repo.ts`：`forkRepoHandlers(getRequiredStringFlag, printResult)`
+- `handler-group-manifest.ts`：`FORK_REPO_HANDLER_KEYS`
+- `root-help-text-primary.ts`、`root-help-text-secondary.ts`：总帮助的两行
+
+`agent-context` 从 `COMMAND_SPECS` 生成，不需要另改。测试 `src/fork/cli/repo-remove.fork.test.ts` 用运行时拼出的路径加载真实的 CLI 模块（node 工程不收 `src/cli`），核对 spec、handler 清单、总帮助、agent-context 和参数校验。

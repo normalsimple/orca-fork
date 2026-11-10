@@ -1,5 +1,6 @@
 import type { CommandSpec } from '../args'
 import { GLOBAL_FLAGS } from '../args'
+import { forkRepoCommandSpecs } from '../../shared/fork-hooks/cli-repo-remove'
 
 export const REPO_COMMAND_SPECS: CommandSpec[] = [
   {
@@ -25,6 +26,7 @@ export const REPO_COMMAND_SPECS: CommandSpec[] = [
     usage: 'orca repo show --repo <selector> [--json]',
     allowedFlags: [...GLOBAL_FLAGS, 'repo']
   },
+  ...forkRepoCommandSpecs(GLOBAL_FLAGS),
   {
     path: ['repo', 'set'],
     summary: 'Set whether non-Orca worktrees are shown for a repo',
