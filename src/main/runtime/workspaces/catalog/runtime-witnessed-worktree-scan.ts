@@ -1,3 +1,4 @@
+import { filterRegisteredLiveGitWorktrees } from '../../../../shared/fork-hooks/missing-worktree-metadata'
 import type { Repo } from '../../../../shared/repo-types'
 import { scanUntilNotOvertaken } from '../../../ipc/worktrees/listing/overtaken-scan-rerun'
 import type { NativeLocalWorktreeMetadataScanExpectation } from '../../../persistence/tracking-repos/local-worktree-metadata-scan-expectation'
@@ -52,6 +53,7 @@ async function scanRuntimeWorktreesWithMutationWitness(
   }
   return {
     ...scan,
+    worktrees: filterRegisteredLiveGitWorktrees(scan.worktrees),
     // Failed scans are already non-authoritative.
     superseded: scan.ok && !isLocalWorktreeScanGenerationCurrent(repo.id, scanGeneration),
     scanGeneration,

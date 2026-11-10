@@ -5,6 +5,10 @@ import type {
   WorktreeCardIdentityInput,
   WorktreeCardIdentityOverrides
 } from '../../shared/fork-hooks/sidebar-card-identity'
+import type {
+  CardTemplate,
+  CardTemplateNode
+} from '../../shared/workspace-cards/card-template-schema'
 
 const DEFAULT_BRANCHES = new Set(['main', 'master'])
 const UNCHANGED: WorktreeCardIdentityOverrides = Object.freeze({})
@@ -76,4 +80,62 @@ function folderCardIdentity(
     directoryLabel: '',
     forkCardIdentity: { facts: { kind: 'git', isMain: false, identity: null } }
   }
+}
+
+const META_CONTENT_EXPR =
+  'vars.metaRepo || vars.hostBadge || vars.folderInMeta || vars.branch || vars.identityInMeta || vars.detachedInMeta || vars.conflict || git.cacheTimerActive'
+
+const transformedTemplates = new WeakMap<CardTemplate, CardTemplate>()
+
+function patchTitleIndicatorsNode(node: CardTemplateNode): CardTemplateNode {
+  if (node.el === 'Indicators' && !node.props?.hover) {
+    return {
+      ...node,
+      props: { ...node.props, hover: "=vars.classic ? 'meta' : ''" }
+    }
+  }
+  if (!node.children) {
+    return node
+  }
+  const nextChildren = node.children.map(patchTitleIndicatorsNode)
+  return nextChildren.every((child, idx) => child === node.children?.[idx])
+    ? node
+    : { ...node, children: nextChildren }
+}
+
+/**
+ * 经典样式下若第二行（meta-row）左侧没有任何徽标、分支或路径内容，
+ * 不应仅因为右侧有端口/PR 等指示器而撑出一整行空白：
+ * 将指示器上移到标题行右侧（titleIndicators），并收起 meta-row。
+ */
+export function singleCheckoutCardTemplate(template: CardTemplate): CardTemplate {
+  const cached = transformedTemplates.get(template)
+  if (cached) {
+    return cached
+  }
+  if (
+    template.vars?.metaIndicators !== 'vars.classic && vars.indicators' ||
+    template.vars?.titleIndicators !== '!vars.classic && vars.indicators'
+  ) {
+    return template
+  }
+  const identityBlock = template.defs?.IdentityBlock
+  const nextTemplate: CardTemplate = {
+    ...template,
+    vars: {
+      ...template.vars,
+      metaIndicators: `vars.classic && (${META_CONTENT_EXPR}) && vars.indicators`,
+      titleIndicators: '!vars.metaIndicators && vars.indicators'
+    },
+    ...(identityBlock
+      ? {
+          defs: {
+            ...template.defs,
+            IdentityBlock: patchTitleIndicatorsNode(identityBlock)
+          }
+        }
+      : {})
+  }
+  transformedTemplates.set(template, nextTemplate)
+  return nextTemplate
 }

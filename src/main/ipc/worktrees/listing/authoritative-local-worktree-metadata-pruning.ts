@@ -1,4 +1,10 @@
 import { getRepoExecutionHostId, LOCAL_EXECUTION_HOST_ID } from '../../../../shared/execution-host'
+import {
+  allowRegisteredEmptyScanMetadataPrune,
+  filterRegisteredLiveGitWorktrees,
+  prepareRegisteredMissingLocalWorktreeMetadataPrune,
+  selectRegisteredProbeableMetadataCandidates
+} from '../../../../shared/fork-hooks/missing-worktree-metadata'
 import { isWindowsAbsolutePathLike } from '../../../../shared/cross-platform-path'
 import { isFolderRepo } from '../../../../shared/repo-kind'
 import type { Repo } from '../../../../shared/repo-types'
@@ -80,6 +86,7 @@ export async function pruneMetadataMissingFromAuthoritativeLocalScan({
       scanGenerationCurrent
     }
   }
+  gitWorktrees = filterRegisteredLiveGitWorktrees(gitWorktrees)
   const generationCurrent = () => isLocalWorktreeScanGenerationCurrent(repo.id, scanGeneration)
   const repoOwners = store.getRepos().filter((candidate) => candidate.id === repo.id)
   // A WSL move can hide live paths temporarily; defer pruning until it settles.
@@ -87,7 +94,7 @@ export async function pruneMetadataMissingFromAuthoritativeLocalScan({
     isWslMoveRepoBlocked(repo) ||
     !generationCurrent() ||
     !isCallerCurrent() ||
-    gitWorktrees.length === 0 ||
+    (!allowRegisteredEmptyScanMetadataPrune() && gitWorktrees.length === 0) ||
     repoOwners.length !== 1 ||
     repo.id !== scan.repo.id ||
     repo.path !== scan.repo.path ||
@@ -102,12 +109,11 @@ export async function pruneMetadataMissingFromAuthoritativeLocalScan({
 
   const livePathKeys = new Set([
     // Retain the configured main path even if Git canonicalized its symlink.
-    worktreeRetentionPathComparisonKey(repo.path, platform),
+    ...(gitWorktrees.length > 0 ? [worktreeRetentionPathComparisonKey(repo.path, platform)] : []),
     ...gitWorktrees.map((worktree) => worktreeRetentionPathComparisonKey(worktree.path, platform))
   ])
   // Advisory eligibility shrinks stat fan-out; deletion still rechecks authoritatively (#17775).
-  const removableCandidates =
-    store.selectProbeableLocalWorktreeMetadataCandidates?.(scan) ?? scan.metadata
+  const removableCandidates = selectRegisteredProbeableMetadataCandidates(store, scan)
   const probeCandidates = removableCandidates.flatMap((metadata) => {
     const { worktreeId } = metadata
     const parsed = splitWorktreeId(worktreeId)
@@ -145,6 +151,7 @@ export async function pruneMetadataMissingFromAuthoritativeLocalScan({
   if (!generationCurrent() || !isCallerCurrent() || isWslMoveRepoBlocked(repo)) {
     return result([], generationCurrent())
   }
+  prepareRegisteredMissingLocalWorktreeMetadataPrune(store, missingMetadata)
   const removedIds = store.pruneSessionlessMissingLocalWorktreeMetadataForRepo(
     scan,
     missingMetadata

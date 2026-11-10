@@ -1,4 +1,5 @@
 import type React from 'react'
+import { registeredWorkspaceCardTemplate } from '../../../../../../shared/fork-hooks/sidebar-card-identity'
 import type { CardTemplate } from '../../../../../../shared/workspace-cards/card-template-schema'
 import type { WorktreeCardController } from '../controller/use-worktree-card-controller'
 import { buildWorkspaceCardFacts } from './build-workspace-card-facts'
@@ -14,6 +15,7 @@ type CompiledWorkspaceCard = CompiledCardTemplate<WorktreeCardController>
 const compiledTemplates = new WeakMap<CardTemplate, CompiledWorkspaceCard>()
 
 export function getCompiledWorkspaceCard(template: CardTemplate): CompiledWorkspaceCard {
+  template = registeredWorkspaceCardTemplate(template)
   let compiled = compiledTemplates.get(template)
   if (!compiled) {
     compiled = compileCardTemplate(template, WORKSPACE_CARD_ELEMENTS)

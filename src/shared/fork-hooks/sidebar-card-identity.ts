@@ -1,5 +1,6 @@
 // fork: 主机目录卡片的名字只画一次（F054）。未登记时每张卡片的标题、目录前缀、主要徽标和分支行都与上游相同。
 import type { ReactNode } from 'react'
+import type { CardTemplate } from '../workspace-cards/card-template-schema'
 import type { WorkspaceCardFacts } from '../workspace-cards/workspace-card-facts'
 import type { Worktree } from '../worktree/types'
 
@@ -34,19 +35,28 @@ export type WorktreeCardIdentityInput = {
 
 type ResolveCardIdentity = (input: WorktreeCardIdentityInput) => WorktreeCardIdentityOverrides
 type RenderTrailingBranch = (branch: string, tooltip: boolean) => ReactNode
+type TransformCardTemplate = (template: CardTemplate) => CardTemplate
 
 const NO_OVERRIDES: WorktreeCardIdentityOverrides = Object.freeze({})
 const NO_FACTS: CardIdentityFacts = Object.freeze({})
 
 let resolveIdentity: ResolveCardIdentity | undefined
 let renderTrailingBranch: RenderTrailingBranch | undefined
+let transformTemplate: TransformCardTemplate | undefined
 
 export function registerWorktreeCardIdentity(args: {
   resolve: ResolveCardIdentity
   renderTrailingBranch: RenderTrailingBranch
+  transformTemplate?: TransformCardTemplate
 }): void {
   resolveIdentity = args.resolve
   renderTrailingBranch = args.renderTrailingBranch
+  transformTemplate = args.transformTemplate
+}
+
+/** 在编译工作区卡片模板前应用已登记的模板改写；未登记时原样返回。 */
+export function registeredWorkspaceCardTemplate(template: CardTemplate): CardTemplate {
+  return transformTemplate ? transformTemplate(template) : template
 }
 
 /** 展开在卡片 controller 里上游字段的后面。 */

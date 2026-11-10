@@ -1,3 +1,4 @@
+import { resolveRegisteredMissingRepoWorktreeScan } from '../../../../shared/fork-hooks/missing-worktree-metadata'
 import type { GitWorktreeInfo } from '../../../../shared/worktree/types'
 import { listWorktreesStrict } from '../../../git/worktrees/catalog/worktree-listing'
 import type { LocalProjectWorktreeGitOptions } from '../../../workspaces/execution-host/project-runtime-git-options'
@@ -15,7 +16,12 @@ export async function scanLocalRepoWorktreesForResolution(
       ? await listWorktreesStrict(repoPath, options)
       : await listWorktreesStrict(repoPath)
     return { ok: true, worktrees }
-  } catch {
-    return { ok: false, worktrees: [] }
+  } catch (err) {
+    return (
+      (await resolveRegisteredMissingRepoWorktreeScan(repoPath, err)) ?? {
+        ok: false,
+        worktrees: []
+      }
+    )
   }
 }

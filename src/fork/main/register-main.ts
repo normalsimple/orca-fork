@@ -12,6 +12,7 @@ import { registerReusedPathUnarchive } from '../../shared/fork-hooks/reused-path
 import { registerAntigravityAcpLinuxArgs } from '../../shared/fork-hooks/antigravity-acp-args'
 import { antigravityAcpIpv6BypassArgs } from './antigravity-acp-ipv6'
 import { keepFolderWorkspacesOnGroupDelete } from './project-group-delete'
+import { registerMissingWorktreeMetadataCleanupInMain } from './missing-worktree-metadata-cleanup'
 import { registerEgoLiteCookieBrowser } from '../ego-lite-cookie-browser'
 import { registerEgoLiteCookieDetection } from './ego-lite-cookie-detection'
 
@@ -28,6 +29,7 @@ export function registerForkMainModules(): void {
   registerImportedWorktreePath(getGitRepoRoot)
   registerKeepFolderWorkspacesOnGroupDeleteInMain(keepFolderWorkspacesOnGroupDelete)
   registerReusedPathUnarchive()
+  registerMissingWorktreeMetadataCleanupInMain()
   // F052：没有 IPv6 的 Linux 内核不让 1.4.1 的 agy 在初始化时创建 AF_INET6。
   registerAntigravityAcpLinuxArgs(antigravityAcpIpv6BypassArgs())
 }

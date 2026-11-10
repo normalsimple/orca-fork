@@ -15,6 +15,7 @@ import { DEFAULT_WORKSPACE_CARD_TEMPLATE } from '../../renderer/src/components/s
 import type { CardTemplateNode } from '../../shared/workspace-cards/card-template-schema'
 import { registerWorktreeDirectoryPrefix } from '../../shared/fork-hooks/sidebar-chrome'
 import {
+  registeredWorkspaceCardTemplate,
   registeredWorktreeCardIdentity,
   registerWorktreeCardIdentity
 } from '../../shared/fork-hooks/sidebar-card-identity'
@@ -53,18 +54,62 @@ function markerRegistry(): CardElementRegistry<Card> {
   }
   collect(DEFAULT_WORKSPACE_CARD_TEMPLATE.root)
   Object.values(DEFAULT_WORKSPACE_CARD_TEMPLATE.defs ?? {}).forEach(collect)
+  // 改写后的标题行 Indicators 会额外传入 hover 属性，一并登记以校验传递值。
+  props.get('Indicators')?.add('hover')
   const registry: Record<string, CardElementRegistry<Card>[string]> = { ...CARD_PRIMITIVES }
   for (const [name, names] of props) {
     if (!(name in registry) && !Object.hasOwn(DEFAULT_WORKSPACE_CARD_TEMPLATE.defs ?? {}, name)) {
-      registry[name] = cardElement<Card>([...names], (_props, children) =>
-        React.createElement('i', { 'data-el': name }, ...children)
+      registry[name] = cardElement<Card>([...names], (elProps, children) =>
+        React.createElement(
+          'i',
+          {
+            'data-el': name,
+            ...(elProps.hover !== undefined ? { 'data-hover': String(elProps.hover) } : {}),
+            ...(elProps.tight !== undefined ? { 'data-tight': String(elProps.tight) } : {})
+          },
+          ...children
+        )
       )
     }
   }
   return registry
 }
 
-const TEMPLATE = compileCardTemplate(DEFAULT_WORKSPACE_CARD_TEMPLATE, markerRegistry())
+const REGISTRY = markerRegistry()
+
+function renderScenario(scenario: Scenario & { hasPort?: boolean; inlineAgents?: boolean }): {
+  html: string
+  parts: string[]
+  singleLine: boolean
+} {
+  const baseCard = cardFor(scenario)
+  const extraProps = [
+    ...(scenario.hasPort ? (['ports'] as const) : []),
+    ...(scenario.inlineAgents ? (['inline-agents'] as const) : [])
+  ]
+  const card = {
+    ...baseCard,
+    ...(scenario.hasPort
+      ? {
+          workspacePorts: [
+            { port: 3000, pid: 123, processName: 'node', worktreeId: baseCard.worktree.id }
+          ]
+        }
+      : {}),
+    ...(extraProps.length > 0 ? { cardProps: [...baseCard.cardProps, ...extraProps] } : {})
+  } as unknown as Card
+  const compiled = compileCardTemplate(
+    registeredWorkspaceCardTemplate(DEFAULT_WORKSPACE_CARD_TEMPLATE),
+    REGISTRY
+  )
+  const rendered = compiled.render(buildWorkspaceCardFacts(card), card)
+  const html = renderToStaticMarkup(<>{rendered.content}</>)
+  return {
+    html,
+    parts: [...html.matchAll(/data-el="([A-Za-z]+)"/g)].map((match) => match[1]),
+    singleLine: rendered.frame.singleLine
+  }
+}
 
 type Scenario = {
   isMainWorktree: boolean
@@ -147,11 +192,7 @@ function cardFor(scenario: Scenario): Card {
 }
 
 function drawnParts(scenario: Scenario): string[] {
-  const card = cardFor(scenario)
-  const html = renderToStaticMarkup(
-    <>{TEMPLATE.render(buildWorkspaceCardFacts(card), card).content}</>
-  )
-  return [...html.matchAll(/data-el="([A-Za-z]+)"/g)].map((match) => match[1])
+  return renderScenario(scenario).parts
 }
 
 function drawnTitle(scenario: Scenario, titleRenaming = false): string {
@@ -236,5 +277,44 @@ describe('host-directory card identity in the default card template', () => {
     registerCardIdentity()
     const plain = { ...MAIN_CHECKOUT, directoryLabel: undefined }
     expect(drawnParts(plain)).toEqual(expect.arrayContaining(['PrimaryBadge', 'Branch']))
+  })
+
+  it('hoists indicators to the title row and drops the empty meta-row when meta content is hidden', () => {
+    unregister()
+    const unregistered = renderScenario({
+      ...MAIN_CHECKOUT,
+      hasPort: true,
+      inlineAgents: true
+    })
+    expect(unregistered.html).toContain('data-worktree-card-meta-row=""')
+    expect(unregistered.html).toContain('data-el="Agents" data-tight="false"')
+
+    registerCardIdentity()
+    const single = renderScenario({
+      ...MAIN_CHECKOUT,
+      hasPort: true
+    })
+    expect(single.parts).toContain('Indicators')
+    expect(single.html).not.toContain('data-worktree-card-meta-row=""')
+    expect(single.html).toContain('data-el="Indicators" data-hover="meta"')
+    expect(single.singleLine).toBe(true)
+
+    const withAgents = renderScenario({
+      ...MAIN_CHECKOUT,
+      hasPort: true,
+      inlineAgents: true
+    })
+    expect(withAgents.html).not.toContain('data-worktree-card-meta-row=""')
+    expect(withAgents.html).toContain('data-el="Agents" data-tight="true"')
+
+    const withMetaBranch = renderScenario({
+      ...MAIN_CHECKOUT,
+      isMainWorktree: false,
+      displayName: 'custom-title',
+      displayNameMode: 'fixed',
+      hasPort: true
+    })
+    expect(withMetaBranch.html).toContain('data-worktree-card-meta-row=""')
+    expect(withMetaBranch.parts).toEqual(expect.arrayContaining(['Branch', 'Indicators']))
   })
 })

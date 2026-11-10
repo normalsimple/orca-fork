@@ -315,16 +315,18 @@ Linux 上每次启动都在已有的 `--uid=` 后面加上 `--enforce_kernel_ipv
 - 显示名等于短分支名时，详细样式不画分支行：经典样式读到空分支，新样式读到空 identity。紧凑样式在上游已经这样做。
 - 同项目的子工作区缩进在父卡片下面，不画目录前缀。这种行的 `directoryLabel` 是空串，空串仍标明这是主机目录行。
 - 文件夹项目的名字等于目录名时，名字只画一次。第二行只剩同名的文件夹路径（行上没有仓库徽标）时，第二行也去掉。
+- 经典样式卡片的第二行左侧没有内容时，端口和 PR 等指示器画在标题行右侧（仍带 `hover="meta"`）。卡片不画空的第二行，内联智能体行紧贴标题行（`tight: true`）。
 
 原地重命名从卡片上的标题开始。保存另一个名字后名字固定，卡片回到上游的样子。卡片的 `worktree` 不变，菜单和删除仍按真实的 `isMainWorktree` 判断。
 
-上游三个文件各加一行钩子和一行 import：
+上游四个文件各加一行钩子和一行 import：
 
 - `use-worktree-card-controller.ts` 在 `...secondary` 前展开 `registeredWorktreeCardIdentity(props, review, linked)`。规则换掉 `visibleCardTitle` 和 `directoryLabel`，并加上 `forkCardIdentity`。
 - `build-workspace-card-facts.ts` 在 `isMain` 后展开 `registeredCardIdentityFacts(card)`。模板读到空分支、空 identity 和 `isMain: false`。文件夹项目改报 `kind: 'git'`，因为模板只给 `kind: 'folder'` 的卡片画路径行。
 - `card-identity-parts.tsx` 在标题后调用 `renderRegisteredCardTitleTrailing`。重命名时标题零件不画它。
+- `render-workspace-card-template.ts` 在编译卡片模板前调用 `registeredWorkspaceCardTemplate(template)`。
 
-钩子在 `src/shared/fork-hooks/sidebar-card-identity.ts`，规则在 `src/fork/sidebar/single-checkout-card.ts`。`src/fork/sidebar/card-identity.tsx` 登记规则和淡色分支。子工作区的空前缀在 `host-directory-render.tsx`。测试是 `single-checkout-card.fork.test.ts`（规则）和 `single-checkout-card-template.fork.test.tsx`（真实的默认卡片模板和上游钩子）。
+钩子在 `src/shared/fork-hooks/sidebar-card-identity.ts`，规则在 `src/fork/sidebar/single-checkout-card.ts`。`src/fork/sidebar/card-identity.tsx` 登记规则、淡色分支和模板变换。子工作区的空前缀在 `host-directory-render.tsx`。测试是 `single-checkout-card.fork.test.ts`（规则）和 `single-checkout-card-template.fork.test.tsx`（真实的默认卡片模板和上游钩子）。
 
 ## F055 `orca repo rm`
 
@@ -338,3 +340,13 @@ Linux 上每次启动都在已有的 `--uid=` 后面加上 `--enforce_kernel_ipv
 - `root-help-text-primary.ts`、`root-help-text-secondary.ts`：总帮助的两行
 
 `agent-context` 从 `COMMAND_SPECS` 生成，不需要另改。测试 `src/fork/cli/repo-remove.fork.test.ts` 用运行时拼出的路径加载真实的 CLI 模块（node 工程不收 `src/cli`），核对 spec、handler 清单、总帮助、agent-context 和参数校验。
+
+## F056 缺失目录工作区元数据自动清理
+
+权威本地扫描发现工作区或仓库目录在磁盘上已不存在（`ENOENT` 或 `ENOTDIR`）时，自动清掉残留的会话引用和工作区元数据。未登记时保持上游行为。
+
+- 仓库根目录已删除或不再是 Git 仓库时，`scanLocalRepoWorktreesForResolution` 返回权威空列表（`ok: true, worktrees: []`），客户端刷新后移除侧栏里的残留卡片。
+- `git worktree list` 标为 `prunable`（目录已删除但还没跑 `git worktree prune`）且没有 `removalError` 的条目不再算存活路径。
+- 磁盘探测确认路径缺失后，清理前先释放该工作区在本机的空壳 `workspaceSession`、`ui.lastActiveWorktreeId` 和 `mobileClientTabSelections` 引用，避免残留会话键挡住 `pruneSessionlessMissingLocalWorktreeMetadataForRepo`。删除中或删除失败的工作区不清理。
+
+钩子在 `src/shared/fork-hooks/missing-worktree-metadata.ts`，实现在 `src/fork/main/missing-worktree-metadata-cleanup.ts`，由 `register-main.ts` 登记（桌面和 orcad 都生效）。测试是 `src/fork/main/missing-worktree-metadata-cleanup.fork.test.ts`。
