@@ -41,17 +41,23 @@ export async function readRemoteFileContent(
       expectedEnvironmentPairingRevision: remote.expectedEnvironmentPairingRevision
     })
   } catch (err) {
-    const largeFile = readLargeGrantedHostFile(remote, err)
-    if (largeFile) {
-      return largeFile
+    // Why: a growing log stales its grant; fork pages the snapshot without renewing.
+    // file_too_large stays here so upstream #38742 can page via files.statTerminalArtifact.
+    const staleGrant = readLargeGrantedHostFile(remote, err)
+    if (staleGrant) {
+      return staleGrant
     }
     // Typed binary_file refusal permits base64 preview for PDFs/images; unrelated errors cannot spoof this fallback.
     if (isRpcRefusal(err, 'binary_file')) {
-      const pagedPreview = pageLargeGrantedHostPreview(remote, () =>
-        readRemoteFilePreview(remote, { pageOversized: false })
-      )
-      if (pagedPreview) {
-        return pagedPreview
+      // Why: the editor passes pageOversizedBinary, so #38742 pages the grant (range URL or
+      // files.readTerminalArtifactChunk). Chat-image previews do not, and still need the fork.
+      if (!pageOversizedBinary) {
+        const pagedPreview = pageLargeGrantedHostPreview(remote, () =>
+          readRemoteFilePreview(remote, { pageOversized: false })
+        )
+        if (pagedPreview) {
+          return pagedPreview
+        }
       }
       // Why: baseline checks call this too and discard binary content, so paging is opt-in.
       return readRemoteBinaryFile(remote, { pageOversized: pageOversizedBinary })
@@ -67,10 +73,6 @@ export async function readRemoteFileContent(
     return { content: '', isBinary: true }
   }
   if (!result || result.truncated) {
-    const pagedByHost = result?.truncated ? readLargeGrantedHostFile(remote, result) : null
-    if (pagedByHost) {
-      return pagedByHost
-    }
     // Replies stop at 512KiB; page the whole file or later editable saves truncate it.
     const paged = await readRemoteFileInChunks(remote)
     if (paged.kind === 'ok') {

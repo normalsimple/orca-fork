@@ -1,6 +1,7 @@
 // fork: F046. A paired host's files outside the clicked workspace: HTML renders in the doc preview,
-// read by absolute path on the host, and the editor reads files past a terminal grant's one reply
-// in ranges. Unregistered, previews and reads stay upstream.
+// read by absolute path on the host, and the editor pages a grant that went stale because the file
+// is still being written. file_too_large and truncated stay with upstream #38742. Unregistered,
+// previews and reads stay upstream.
 import type { DocPreviewFileFailureReason } from '../document-preview/doc-preview-scheme'
 import type { LocalFileAccess } from '../file-access/local-file-access'
 import type { RuntimeClientTarget } from '../runtime-client-target'
@@ -60,8 +61,8 @@ export type GrantedHostFile = {
   expectedEnvironmentPairingRevision?: number
 }
 
-/** A grant read's refusal: its error, or a text reply cut short at the reply cap. */
-export type LargeHostFileRefusal = Error | { byteLength: number }
+/** A grant read's refusal. Only a stale grant still needs the fork's absolute-path page. */
+export type LargeHostFileRefusal = Error
 
 type LargeHostFileReader = (
   file: GrantedHostFile,
@@ -73,8 +74,8 @@ type LargeHostPreviewReader = (
   refusal: unknown
 ) => Promise<RuntimeFilePreviewResult>
 
-// Text the grant will not send whole: past 512 KiB, or a log that changed since its grant.
-const PAGED_REFUSALS = new Set(['file_too_large', 'terminal_file_grant_stale'])
+// A log still being written stales its grant; file_too_large and truncated page upstream (#38742).
+const PAGED_REFUSALS = new Set(['terminal_file_grant_stale'])
 
 let renderer: HostFileDocPreviewRenderer | null = null
 let reader: HostFileDocPreviewReader | null = null
@@ -90,7 +91,7 @@ export function registerHostFileDocPreviewRead(next: HostFileDocPreviewReader): 
   reader = next
 }
 
-/** Renderer: reads what a terminal grant refuses to send in one reply. */
+/** Renderer: pages a grant that went stale because the file changed (a log still being written). */
 export function registerLargeHostFileReader(next: LargeHostFileReader): void {
   largeFileReader = next
 }
@@ -141,26 +142,19 @@ export function readHostDocPreview(
 }
 
 /**
- * Renderer, where a grant read refuses text: past 512 KiB, changed since its grant, or a reply cut
- * short (`truncated`). Binaries stay with upstream. Null keeps upstream's handling.
+ * Renderer, where a grant read refuses text because the file changed since its grant
+ * (`terminal_file_grant_stale`). file_too_large and truncated stay with upstream's
+ * files.statTerminalArtifact / readTerminalArtifactChunk paging (#38742). Null keeps
+ * upstream's handling.
  */
 export function readLargeHostFile(
   file: GrantedHostFile,
   refusal: unknown
 ): Promise<RuntimeFilePreviewResult> | null {
-  if (!largeFileReader) {
+  if (!largeFileReader || !(refusal instanceof Error) || !PAGED_REFUSALS.has(refusal.message)) {
     return null
   }
-  if (refusal instanceof Error) {
-    return PAGED_REFUSALS.has(refusal.message) ? largeFileReader(file, refusal) : null
-  }
-  if (typeof refusal !== 'object' || refusal === null) {
-    return null
-  }
-  const reply: Partial<Record<'truncated' | 'byteLength', unknown>> = refusal
-  return reply.truncated === true && typeof reply.byteLength === 'number'
-    ? largeFileReader(file, { byteLength: reply.byteLength })
-    : null
+  return largeFileReader(file, refusal)
 }
 
 /**
@@ -199,7 +193,7 @@ function grantedHostFile(remote: GrantedRemoteRead): GrantedHostFile | null {
   }
 }
 
-/** Grant refusals (too large, stale, truncated). Null keeps upstream's own paging. */
+/** A stale-grant refusal. file_too_large and truncated return null so upstream can page. */
 export function readLargeGrantedHostFile(
   remote: GrantedRemoteRead,
   refusal: unknown

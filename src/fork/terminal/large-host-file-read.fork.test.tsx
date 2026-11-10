@@ -1,6 +1,9 @@
-// F046: text outside every workspace that a terminal grant will not send opens in the editor, paged
-// by absolute path. A log that only grew while it loads opens as it was; a rewrite is refused. An
-// image or PDF past the grant preview's reply is paged the same way; any other binary shows as one.
+// F046: text outside every workspace whose grant went stale (a log still being written) opens in
+// the editor, paged by absolute path. file_too_large and truncated go through upstream #38742
+// (files.statTerminalArtifact / readTerminalArtifactChunk). A log that only grew while it loads
+// opens as it was; a rewrite is refused. An image or PDF past the grant preview's reply, on a
+// path that does not ask upstream to page (chat-image), is paged the same way; any other binary
+// shows as one.
 import { beforeEach, describe, expect, it } from 'vitest'
 import { useAppStore } from '@/store'
 import type { OpenFile } from '@/store/slices/editor/types/open-file'
@@ -31,6 +34,8 @@ type HostFile = {
 
 let host = new Map<string, HostFile>()
 let legacyHost = false
+/** Upstream #38742 paging for a still-valid grant (file_too_large / truncated). */
+let artifactPaging = false
 let readChunks = 0
 /** Runs after each ranged read, so a test can change the file while it loads. */
 let afterChunk: (file: HostFile, count: number) => void = () => {}
@@ -41,6 +46,19 @@ function ok(result: unknown): unknown {
 
 function fail(message: string, code = 'runtime_error'): unknown {
   return { id: 'call', ok: false, error: { code, message } }
+}
+
+function pageFile(file: HostFile, args: Partial<Record<'offset' | 'length', unknown>>): unknown {
+  const offset = Number(args.offset)
+  const slice = file.bytes.subarray(offset, offset + Number(args.length))
+  const reply = ok({
+    contentBase64: slice.toString('base64'),
+    bytesRead: slice.length,
+    eof: offset + slice.length >= file.bytes.length
+  })
+  readChunks += 1
+  afterChunk(file, readChunks)
+  return reply
 }
 
 function respond(method: string, params: unknown): unknown {
@@ -62,21 +80,19 @@ function respond(method: string, params: unknown): unknown {
   if (legacyHost) {
     return fail(method, 'method_not_found')
   }
+  if (artifactPaging && method === 'files.statTerminalArtifact') {
+    const { bytes, mtime } = file
+    return ok({ size: bytes.length, isDirectory: false, mtime, ctime: mtime })
+  }
+  if (artifactPaging && method === 'files.readTerminalArtifactChunk') {
+    return pageFile(file, args)
+  }
   if (method === 'files.hostFile.stat') {
     const { bytes, fileId, mtime } = file
     return ok({ size: bytes.length, isDirectory: false, mtime, ctime: mtime, fileId })
   }
   if (method === 'files.hostFile.readChunk') {
-    const offset = Number(args.offset)
-    const slice = file.bytes.subarray(offset, offset + Number(args.length))
-    const reply = ok({
-      contentBase64: slice.toString('base64'),
-      bytesRead: slice.length,
-      eof: offset + slice.length >= file.bytes.length
-    })
-    readChunks += 1
-    afterChunk(file, readChunks)
-    return reply
+    return pageFile(file, args)
   }
   return fail(method, 'method_not_found')
 }
@@ -109,9 +125,14 @@ function methodsCalled(): string[] {
   return runtimeEnvironmentCall.mock.calls.map(([request]) => request.method)
 }
 
+function staleLog(bytes = LOG_BYTES, fileId = '1:7'): HostFile {
+  return { bytes, fileId, mtime: 1, refusal: 'terminal_file_grant_stale' }
+}
+
 beforeEach(() => {
   host = new Map([[LOG, { bytes: LOG_BYTES, fileId: '1:7', mtime: 1, refusal: 'file_too_large' }]])
   legacyHost = false
+  artifactPaging = false
   readChunks = 0
   afterChunk = () => {}
   runtimeEnvironmentCall.mockImplementation(({ method, params }) =>
@@ -143,7 +164,41 @@ describe('text a grant will not send', () => {
     registerLargeHostFileReads()
   })
 
-  it('opens a log past 512 KiB whole, as a read-only tab', async () => {
+  it('lets upstream page text past one grant reply, without files.hostFile.*', async () => {
+    artifactPaging = true
+
+    await expect(read(LOG)).resolves.toEqual({
+      content: LOG_BYTES.toString('utf8'),
+      isBinary: false,
+      readOnly: true,
+      terminalArtifactGrantId: 'g-1'
+    })
+    expect(methodsCalled()).toContain('files.statTerminalArtifact')
+    expect(methodsCalled()).toContain('files.readTerminalArtifactChunk')
+    expect(methodsCalled()).not.toContain('files.hostFile.stat')
+    expect(methodsCalled()).not.toContain('files.hostFile.readChunk')
+    // Why: keepReadOnly runs only on the stale-grant path; grantCanSave already marked the result.
+    expect(useAppStore.getState().openFiles[0]?.readOnly).toBeUndefined()
+  })
+
+  it('lets upstream page a truncated grant reply, without files.hostFile.*', async () => {
+    artifactPaging = true
+    const small = Buffer.from('tail -f me\n')
+    host.set('/var/log/latin1.log', {
+      bytes: small,
+      fileId: '1:10',
+      mtime: 1,
+      refusal: 'truncated'
+    })
+
+    await expect(read('/var/log/latin1.log')).resolves.toMatchObject({ content: 'tail -f me\n' })
+    expect(methodsCalled()).toContain('files.statTerminalArtifact')
+    expect(methodsCalled()).not.toContain('files.hostFile.stat')
+  })
+
+  it('opens a log whose grant went stale as a read-only tab when it is past 512 KiB', async () => {
+    host.set(LOG, staleLog())
+
     await expect(read(LOG)).resolves.toEqual({
       content: LOG_BYTES.toString('utf8'),
       isBinary: false,
@@ -151,10 +206,13 @@ describe('text a grant will not send', () => {
       terminalArtifactGrantId: 'g-1'
     })
     expect(useAppStore.getState().openFiles[0]?.readOnly).toBe(true)
+    expect(methodsCalled()).toContain('files.hostFile.stat')
     expect(methodsCalled()).not.toContain('files.resolveTerminalPath')
+    expect(methodsCalled()).not.toContain('files.statTerminalArtifact')
   })
 
   it('opens a log that grows while it loads, as it was when the read began', async () => {
+    host.set(LOG, staleLog())
     afterChunk = (file, count) => {
       if (count === 2) {
         file.bytes = Buffer.concat([file.bytes, Buffer.from('epoch 2 loss 0.4\n')])
@@ -166,6 +224,7 @@ describe('text a grant will not send', () => {
   })
 
   it('refuses a file rewritten in place, or replaced, while it loads', async () => {
+    host.set(LOG, staleLog())
     afterChunk = (file, count) => {
       if (count === 2) {
         file.bytes = Buffer.alloc(LOG_BYTES.length, 0x7a)
@@ -175,7 +234,7 @@ describe('text a grant will not send', () => {
     await expect(read(LOG)).rejects.toThrow(REMOTE_FILE_CHANGED_DURING_READ_MESSAGE)
 
     readChunks = 0
-    host.set(LOG, { bytes: LOG_BYTES, fileId: '1:7', mtime: 1, refusal: 'file_too_large' })
+    host.set(LOG, staleLog())
     afterChunk = (file, count) => {
       if (count === 2) {
         file.bytes = Buffer.concat([LOG_BYTES, Buffer.from('new file\n')])
@@ -186,27 +245,15 @@ describe('text a grant will not send', () => {
     await expect(read(LOG)).rejects.toThrow(REMOTE_FILE_CHANGED_DURING_READ_MESSAGE)
   })
 
-  it('reads a log whose grant went stale, and a reply cut short, without renewing', async () => {
+  it('reads a small log whose grant went stale without renewing', async () => {
     const small = Buffer.from('tail -f me\n')
-    host.set('/var/log/small.log', {
-      bytes: small,
-      fileId: '1:9',
-      mtime: 1,
-      refusal: 'terminal_file_grant_stale'
-    })
-    host.set('/var/log/latin1.log', {
-      bytes: small,
-      fileId: '1:10',
-      mtime: 1,
-      refusal: 'truncated'
-    })
+    host.set('/var/log/small.log', staleLog(small, '1:9'))
 
     await expect(read('/var/log/small.log')).resolves.toEqual({
       content: 'tail -f me\n',
       isBinary: false,
       terminalArtifactGrantId: 'g-1'
     })
-    await expect(read('/var/log/latin1.log')).resolves.toMatchObject({ content: 'tail -f me\n' })
     expect(methodsCalled()).not.toContain('files.resolveTerminalPath')
     // Small enough to save through the grant, so the tabs stay writable.
     expect(useAppStore.getState().openFiles[0]?.readOnly).toBeUndefined()
@@ -217,7 +264,7 @@ describe('text a grant will not send', () => {
       bytes: Buffer.concat([Buffer.from([0x7b, 0, 0, 0]), Buffer.alloc(2 * 1024 * 1024, 1)]),
       fileId: '1:11',
       mtime: 1,
-      refusal: 'file_too_large'
+      refusal: 'terminal_file_grant_stale'
     })
 
     await expect(read('/data/model.safetensors')).resolves.toEqual({
@@ -243,7 +290,9 @@ describe('text a grant will not send', () => {
     })
 
     legacyHost = true
-    await expect(read(LOG)).rejects.toThrow('file_too_large')
+    await expect(read(LOG)).rejects.toThrow(
+      'Remote file is larger than the 512 KB this Orca server can send. Update the server to open it.'
+    )
   })
 
   it('pages an image or PDF past the grant preview reply, and shows any other binary as one', async () => {

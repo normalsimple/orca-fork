@@ -1,9 +1,9 @@
-// F046: the editor opens a file outside every workspace that its terminal grant will not send in one
-// reply: text past 512 KiB, past the reply once decoded, or a log that changed since its grant; an
-// image or PDF past the grant preview's reply (about 3 MB). It pages the file by absolute path
-// through upstream's loop, up to the 50 MiB upstream pages (a desktop workspace PDF streams by range
-// instead). Any other binary shows as one, as inside a workspace. .tsx because it imports renderer
-// aliases.
+// F046: the editor opens a file outside every workspace whose terminal grant went stale because the
+// file changed (a log still being written). file_too_large and truncated page through upstream
+// #38742 (files.statTerminalArtifact / readTerminalArtifactChunk). A chat-image preview that does
+// not ask upstream to page an image or PDF past one reply (about 3 MB) still pages here by absolute
+// path, up to the 50 MiB upstream pages. Any other binary shows as one, as inside a workspace.
+// .tsx because it imports renderer aliases.
 import { useAppStore } from '@/store'
 import { decodeBase64Bytes } from '@/lib/base64-bytes'
 import { callRuntimeRpc } from '@/runtime/rpc/calls/runtime-rpc-call'
@@ -141,11 +141,6 @@ function tooLargeError(size: number): Error {
   return new Error(`Remote file is too large to open in the editor (${size} bytes)`)
 }
 
-/** What upstream would have thrown, for a host without files.hostFile.*. */
-function upstreamRefusal(refusal: LargeHostFileRefusal): Error {
-  return refusal instanceof Error ? refusal : tooLargeError(refusal.byteLength)
-}
-
 /** No save of this size can reach the host, so the tab says so instead of failing at save time. */
 function keepReadOnly(file: HostFile): void {
   const { openFiles } = useAppStore.getState()
@@ -166,7 +161,7 @@ async function readLargeHostFile(
   try {
     probe = await readHostRange(file, 0, BINARY_PROBE_BYTES)
   } catch (error) {
-    throw isMissingMethod(error) ? upstreamRefusal(refusal) : error
+    throw isMissingMethod(error) ? refusal : error
   }
   // A binary without an image or PDF extension: say so without paging megabytes first.
   if (decodeBase64Bytes(probe.contentBase64).includes(0)) {
@@ -174,7 +169,7 @@ async function readLargeHostFile(
   }
   const paged = await readFileInChunks(snapshotHostFileReader(file))
   if (paged.kind === 'unsupported') {
-    throw upstreamRefusal(refusal)
+    throw refusal
   }
   if (paged.kind === 'too_large') {
     throw tooLargeError(paged.size)

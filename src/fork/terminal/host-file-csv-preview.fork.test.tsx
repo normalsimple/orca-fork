@@ -11,7 +11,6 @@ import {
   runtimeEnvironmentCall
 } from '@/runtime/files/runtime-file-client-test-harness'
 import { registerHostCsvPreviews } from './host-file-csv-preview'
-import { registerLargeHostFileReads } from './large-host-file-read'
 
 installRuntimeFileClientEnvironment()
 
@@ -62,10 +61,16 @@ function respond(method: string, params: unknown): unknown {
   if (legacyHost) {
     return fail(method, 'method_not_found')
   }
-  if (method === 'files.hostFile.stat') {
-    return ok({ size: bytes.length, isDirectory: false, mtime: 1, ctime: 1, fileId: '1:2' })
+  if (method === 'files.hostFile.stat' || method === 'files.statTerminalArtifact') {
+    return ok({
+      size: bytes.length,
+      isDirectory: false,
+      mtime: 1,
+      ctime: 1,
+      ...(method === 'files.hostFile.stat' ? { fileId: '1:2' } : {})
+    })
   }
-  if (method === 'files.hostFile.readChunk') {
+  if (method === 'files.hostFile.readChunk' || method === 'files.readTerminalArtifactChunk') {
     const offset = Number(args.offset)
     const slice = bytes.subarray(offset, offset + Number(args.length))
     const eof = offset + slice.length >= bytes.length
@@ -100,27 +105,27 @@ beforeEach(() => {
 })
 
 describe('before the fork registers', () => {
-  it('reads a host CSV whole through its grant, and refuses one past the reply cap', async () => {
+  it('reads a host CSV whole through its grant, and lets upstream page one past the reply cap', async () => {
     await expect(readEditorCsvFileContent(hostCsv(SUMMARY))).resolves.toEqual({
       content: SUMMARY_TEXT,
       isBinary: false,
       terminalArtifactGrantId: 'g-1'
     })
-    await expect(readEditorCsvFileContent(hostCsv(RESULTS))).rejects.toThrow(
-      'Remote file is larger than the 512 KB this Orca server can send. Update the server to open it.'
-    )
-    expect(methodsCalled()).toEqual([
-      'files.readTerminalArtifact',
-      'files.readTerminalArtifact',
-      'files.statTerminalArtifact'
-    ])
+    await expect(readEditorCsvFileContent(hostCsv(RESULTS))).resolves.toEqual({
+      content: RESULTS_BYTES.toString('utf8'),
+      isBinary: false,
+      readOnly: true,
+      terminalArtifactGrantId: 'g-1'
+    })
+    expect(methodsCalled()).toContain('files.statTerminalArtifact')
+    expect(methodsCalled()).toContain('files.readTerminalArtifactChunk')
+    expect(methodsCalled()).not.toContain('files.hostFile.stat')
   })
 })
 
 describe('a host CSV outside every workspace', () => {
   beforeEach(() => {
     registerHostCsvPreviews()
-    registerLargeHostFileReads()
   })
 
   it('opens past the paging threshold in the paged preview, its ranges read by path', async () => {
@@ -171,7 +176,9 @@ describe('a host CSV outside every workspace', () => {
       terminalArtifactGrantId: 'g-2'
     })
     expect(methodsCalled()).toContain('files.resolveTerminalPath')
-    await expect(readEditorCsvFileContent(hostCsv(RESULTS))).rejects.toThrow('file_too_large')
+    await expect(readEditorCsvFileContent(hostCsv(RESULTS))).rejects.toThrow(
+      'Remote file is larger than the 512 KB this Orca server can send. Update the server to open it.'
+    )
   })
 
   it("keeps upstream's refusal for a direct SSH connection's tab on a changed host", async () => {
