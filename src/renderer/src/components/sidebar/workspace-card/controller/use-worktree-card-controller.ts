@@ -11,6 +11,7 @@ import { useWorktreeCardLinkedDetails } from '../details/use-worktree-card-linke
 import { useWorktreeCardReviewDetails } from '../details/use-worktree-card-review-details'
 import { useWorktreeCardSecondaryDetails } from '../details/use-worktree-card-secondary-details'
 import { useWorktreeCardWorkspaceActions } from './use-worktree-card-workspace-actions'
+import { registeredWorktreeCardIdentity } from '../../../../../../shared/fork-hooks/sidebar-card-identity'
 
 export function useWorktreeCardController(props: ResolvedWorktreeCardProps) {
   const { worktree, repo } = props
@@ -177,6 +178,7 @@ export function useWorktreeCardController(props: ResolvedWorktreeCardProps) {
     ...activation,
     showDeleteQuickAction,
     ...workspaceActions,
+    ...registeredWorktreeCardIdentity(props, review, linked),
     ...secondary
   }
 }

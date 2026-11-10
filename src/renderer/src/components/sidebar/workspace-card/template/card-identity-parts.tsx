@@ -3,6 +3,7 @@ import { DetachedHeadBadge } from '@/components/DetachedHeadBadge'
 import { useWslHostDistro, WslHostMark } from '@/components/wsl-host-mark/WslHostMark'
 import { getWorktreeExecutionHostId } from '../../../../../../shared/execution-host'
 import { renderWorktreeDirectoryPrefix } from '../../../../../../shared/fork-hooks/sidebar-chrome'
+import { renderRegisteredCardTitleTrailing } from '../../../../../../shared/fork-hooks/sidebar-card-identity'
 import CacheTimer from '../activity/CacheTimer'
 import { TruncatedSidebarLabel } from '../../truncated-sidebar-label'
 import type { WorktreeCardController } from '../controller/use-worktree-card-controller'
@@ -63,6 +64,7 @@ function title(props: Readonly<Record<string, unknown>>, card: Card): React.Reac
     <>
       {renderWorktreeDirectoryPrefix(card.directoryLabel, worktree.path)}
       {titleField}
+      {renderRegisteredCardTitleTrailing(card, props.tooltip)}
     </>
   )
 }

@@ -25,6 +25,11 @@ FORK_ROOT = re.compile(r'^(src/fork/|src/shared/fork-hooks/|fork/|docs/fork/|FOR
 
 # Ordered: the first matching substring names the feature.
 FEATURES = [
+    ('sidebar-card-identity', 'F054 主机目录卡片名字'),
+    ('sidebar/card-identity.tsx', 'F054 主机目录卡片名字'),
+    ('single-checkout-card', 'F054 主机目录卡片名字'),
+    ('use-worktree-card-controller.ts', 'F054 主机目录卡片名字'),
+    ('build-workspace-card-facts.ts', 'F054 主机目录卡片名字'),
     ('antigravity-acp', 'F052 无 IPv6 的 Antigravity'),
     ('acp-launch-specs.ts', 'F052 无 IPv6 的 Antigravity'),
     ('ego-lite', 'F049 Cookie 导入'),

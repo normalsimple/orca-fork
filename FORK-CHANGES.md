@@ -13,7 +13,7 @@
   - `register.ts`（主进程和界面都调用，不静态引入 electron、node:fs 或界面组件）：fork 构建标记、host-directory 分组模式和删除项目组的「仅取消分组」选项、保留旧主机漏发的 `sidebarGroupId`、Ego Lite 的设置行名字和导入提示。
   - `register-main.ts`（桌面主进程和 orcad）：fork 构建标记、Ego Lite（名字、导入提示和追加进上游 `CHROMIUM_BROWSERS` 的浏览器定义）、历史会话扫描进程的堆内存和扫描策略、启动时不等浏览器分区代理、运行时导入的 git 根、删除项目组时保留文件夹工作区、在软删除过的路径上新建时清掉归档、Linux 上 Antigravity ACP 跳过内核 IPv6 检查。
   - `register-electron.ts`（只在 Electron 主进程）：macOS 文件密钥库、权限助手参数、F046 工作区外文档预览的读取、F051 文档预览免授权、F053 插件 `fork.*` 主机桥。
-  - `register-renderer.tsx`（仅界面）：fork 语言包、侧栏行计划和各个插槽、跨组拖放、删除工作区和软删除归档、创建弹窗的种子、导入后的回调、SSH 重连重绘、聊天盖层的画布样式、F046 工作区外的主机文件和大文件分段读、端口 Forward、历史会话的列表呈现和默认主机。
+  - `register-renderer.tsx`（仅界面）：fork 语言包、侧栏行计划和各个插槽、F054 主机目录卡片的名字规则、跨组拖放、删除工作区和软删除归档、创建弹窗的种子、导入后的回调、SSH 重连重绘、聊天盖层的画布样式、F046 工作区外的主机文件和大文件分段读、端口 Forward、历史会话的列表呈现和默认主机。
 - 目录约定：只在主进程运行的 fork 代码放 `src/fork/main/`；引用渲染进程的 fork 代码用 `.tsx`；`*.fork.test.ts` 是 node 测试，渲染进程测试用 `.fork.test.tsx`。tsconfig 只按这三条通配：node 工程收 `src/fork/**/*.ts`，web 工程收 `src/fork/**/*.ts` 和 `*.tsx`，排除 `src/fork/main/**` 和 `src/fork/**/*.fork.test.ts`。fork 文件引用了所在工程不包含的文件时 tsc 自己报 TS6307；`src/fork/tsconfig-boundaries.mjs` 只在 fork 测试（`src/fork/tsconfig-boundaries.fork.test.ts`）里跑，不挂在 `pnpm tc` 前面。用到真实 SQLite 的 fork 测试由上游的 `findSqliteRuntimeTests()` 按 import 找到，`config/scripts/vitest-node-runtime-files.mjs` 与上游一致。
 
 ## 上游文件规则
@@ -306,3 +306,22 @@ Linux 上每次启动都在已有的 `--uid=` 后面加上 `--enforce_kernel_ipv
 生成的插件参考、技能和 `orca/host` 方法表滤掉 `fork.*`，不跟上游生成物冲突。`HostCallError` 多一个可选 `reason`。错误能穿过 worker 的 envelope。
 
 实现：`src/fork/plugins/host-api-spec.ts`、`src/fork/main/plugin-host-catalog.ts`、`src/fork/main/plugin-host-workspaces.ts`、`src/fork/main/plugin-host-methods.ts`、`src/fork/main/plugin-host-desktop.ts`、`src/fork/main/workspace-exec.ts`、`src/fork/main/workspace-exec-method.ts`。桌面由 `register-electron.ts` 登记 bridge。测试是 `src/fork/main/workspace-exec.fork.test.ts` 和 `src/fork/main/plugin-host-methods.fork.test.ts`。
+
+## F054 主机目录卡片只画一次名字
+
+主机目录分组里，卡片去掉只重复名字的部分。规则只作用于主机目录行（行上有 `directoryLabel`）。其他分组方式的卡片，以及没有登记时的所有卡片，与上游相同。
+
+- 主检出用自动名时，标题换成目录名，用正常字号，占满一行。卡片去掉目录前缀、「 · 显示名」、主要徽标、紧凑样式的星标和分支行。分支不是 `main` 或 `master` 时，分支淡色画在同一行的标题后面；分支和目录名相同时不画。自动名指 `displayNameMode` 为 `automatic`。配对服务器的行没有这个字段，名字等于分支时按自动名算。新样式把标题换成议题或 PR 的标题时，卡片保持上游的样子。文件夹项目不算主检出。
+- 显示名等于短分支名时，详细样式不画分支行：经典样式读到空分支，新样式读到空 identity。紧凑样式在上游已经这样做。
+- 同项目的子工作区缩进在父卡片下面，不画目录前缀。这种行的 `directoryLabel` 是空串，空串仍标明这是主机目录行。
+- 文件夹项目的名字等于目录名时，名字只画一次。第二行只剩同名的文件夹路径（行上没有仓库徽标）时，第二行也去掉。
+
+原地重命名从卡片上的标题开始。保存另一个名字后名字固定，卡片回到上游的样子。卡片的 `worktree` 不变，菜单和删除仍按真实的 `isMainWorktree` 判断。
+
+上游三个文件各加一行钩子和一行 import：
+
+- `use-worktree-card-controller.ts` 在 `...secondary` 前展开 `registeredWorktreeCardIdentity(props, review, linked)`。规则换掉 `visibleCardTitle` 和 `directoryLabel`，并加上 `forkCardIdentity`。
+- `build-workspace-card-facts.ts` 在 `isMain` 后展开 `registeredCardIdentityFacts(card)`。模板读到空分支、空 identity 和 `isMain: false`。文件夹项目改报 `kind: 'git'`，因为模板只给 `kind: 'folder'` 的卡片画路径行。
+- `card-identity-parts.tsx` 在标题后调用 `renderRegisteredCardTitleTrailing`。重命名时标题零件不画它。
+
+钩子在 `src/shared/fork-hooks/sidebar-card-identity.ts`，规则在 `src/fork/sidebar/single-checkout-card.ts`。`src/fork/sidebar/card-identity.tsx` 登记规则和淡色分支。子工作区的空前缀在 `host-directory-render.tsx`。测试是 `single-checkout-card.fork.test.ts`（规则）和 `single-checkout-card-template.fork.test.tsx`（真实的默认卡片模板和上游钩子）。

@@ -28,6 +28,7 @@ import { registerHostDirectorySortReader } from './sidebar/section-keys'
 import { registerSettingsProjectBulkSlot } from './sidebar/settings-project-bulk'
 import { registerSidebarMenuSlots } from './sidebar/sidebar-menu-slots'
 import { registerDirectoryPrefix } from './sidebar/directory-prefix'
+import { registerCardIdentity } from './sidebar/card-identity'
 import { registerDeleteProjectGroupOptionCheckbox } from './sidebar/project-group-delete-option'
 import { registerWorkspaceChoice } from './sidebar/workspace-choice'
 import { registerWorkspaceGroupDropHandler } from './sidebar/workspace-group-drop'
@@ -61,6 +62,7 @@ export function registerForkRendererModules(): void {
   registerHostDirectorySortReader(() => useAppStore.getState().sortBy)
   registerSidebarMenuSlots()
   registerDirectoryPrefix()
+  registerCardIdentity()
   registerDeleteProjectGroupOptionCheckbox()
   registerArchivedWorkspaceSlot()
   registerWorkspaceChoice()

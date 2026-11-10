@@ -5,6 +5,7 @@ import type {
   WorkspaceCardShowOptions
 } from '../../../../../../shared/workspace-cards/workspace-card-facts'
 import type { WorktreeCardController } from '../controller/use-worktree-card-controller'
+import { registeredCardIdentityFacts } from '../../../../../../shared/fork-hooks/sidebar-card-identity'
 
 const showOptionsCache = new WeakMap<readonly WorktreeCardProperty[], WorkspaceCardShowOptions>()
 
@@ -49,6 +50,7 @@ export function buildWorkspaceCardFacts(card: WorktreeCardController): Workspace
       branch: card.branch,
       identity: card.identityDisplay ?? null,
       isMain: worktree.isMainWorktree,
+      ...registeredCardIdentityFacts(card),
       isSparse: worktree.isSparse === true,
       detachedHead: card.detachedHeadDisplay !== null,
       isPinned: worktree.isPinned,

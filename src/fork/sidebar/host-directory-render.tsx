@@ -240,15 +240,19 @@ function pushItemRow(
   const { args } = context
   const worktree = occurrence.row
   const repo = args.repoOf(worktree)
-  const directoryLabel = groupedCardDirectoryLabel({
-    repo,
-    worktreePath: worktree.path,
-    labels: context.labels,
-    hostId: workspaceHost(worktree, args),
-    parentPath: context.group?.parentPath,
-    sameRepoCount: context.repoCounts.get(worktree.repoId) ?? 0,
-    pending: context.pendingRepoIds.has(worktree.repoId)
-  })
+  // 同项目的子工作区缩进在父卡片下面，目录前缀只是重复父卡片（F054）。空串仍标明这是主机目录行。
+  const directoryLabel =
+    occurrence.parent?.row.repoId === worktree.repoId
+      ? ''
+      : groupedCardDirectoryLabel({
+          repo,
+          worktreePath: worktree.path,
+          labels: context.labels,
+          hostId: workspaceHost(worktree, args),
+          parentPath: context.group?.parentPath,
+          sameRepoCount: context.repoCounts.get(worktree.repoId) ?? 0,
+          pending: context.pendingRepoIds.has(worktree.repoId)
+        })
   rows.push({
     type: 'item',
     occurrence,
@@ -261,7 +265,7 @@ function pushItemRow(
     isLastLineageChild: occurrence.isLastChild,
     lineageChildCount: occurrence.childCount,
     showProjectName: occurrence.showProjectName,
-    ...(directoryLabel ? { directoryLabel } : {}),
+    ...(directoryLabel !== undefined ? { directoryLabel } : {}),
     ...(occurrence.childCount > 0
       ? {
           lineageGroupKey: lineageKey(worktree),
