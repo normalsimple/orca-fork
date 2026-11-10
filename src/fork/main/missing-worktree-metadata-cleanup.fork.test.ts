@@ -117,6 +117,7 @@ describe('missing worktree directory metadata cleanup', () => {
       'device-1': {
         [sessionOwnedMissingId]: {
           activeTabId: 'tab-1',
+          activeGroupId: null,
           activeTabIdByGroupId: {},
           recentTabIds: []
         }
@@ -136,7 +137,7 @@ describe('missing worktree directory metadata cleanup', () => {
     expect(store.getWorktreeMeta(sessionOwnedMissingId)).toBeUndefined()
     expect(store.getWorktreeMeta(prunableMissingId)).toBeUndefined()
     expect(
-      store.getWorkspaceSession().activeFileIdByWorktree[sessionOwnedMissingId]
+      store.getWorkspaceSession().activeFileIdByWorktree?.[sessionOwnedMissingId]
     ).toBeUndefined()
     expect(store.getUI().lastActiveWorktreeId).toBeNull()
     expect(store.getMobileClientTabSelections()['device-1']).toBeUndefined()
@@ -163,6 +164,6 @@ describe('missing worktree directory metadata cleanup', () => {
     expect(result.authoritative).toBe(true)
     expect(result.worktrees).toEqual([])
     expect(store.getWorktreeMeta(mainWorktreeId)).toBeUndefined()
-    expect(store.getWorkspaceSession().activeFileIdByWorktree[mainWorktreeId]).toBeUndefined()
+    expect(store.getWorkspaceSession().activeFileIdByWorktree?.[mainWorktreeId]).toBeUndefined()
   })
 })

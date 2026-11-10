@@ -1,9 +1,9 @@
 /* oxlint-disable max-lines -- fork: hook call only */
 import { useCallback, useRef } from 'react'
 import { toast } from 'sonner'
-import { track } from '@/lib/telemetry'
+import { track } from '@/diagnostics/telemetry/telemetry'
 import { useAppStore } from '@/store/index'
-import { getSelectedNestedRepoPathsInScanOrder } from '@/lib/nested-repo-selected-paths'
+import { getSelectedNestedRepoPathsInScanOrder } from '@/lib/workspace/creation/nested-repo-selected-paths'
 import {
   buildNestedRepoImportActionTelemetry,
   buildNestedRepoImportResultTelemetry,

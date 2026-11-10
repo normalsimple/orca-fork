@@ -28,7 +28,7 @@ function setState(partial: Partial<DemotionState>): void {
 
 const findRoute = vi.hoisted(() => vi.fn())
 
-vi.mock('@/lib/runtime-workspace-file-route', () => ({
+vi.mock('@/lib/files/access/runtime-workspace-file-route', () => ({
   findWorkspaceFileRoute: findRoute
 }))
 

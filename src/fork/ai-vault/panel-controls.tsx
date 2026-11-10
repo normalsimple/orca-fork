@@ -8,7 +8,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger
 } from '@/components/ui/dropdown-menu'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/class-names'
 import { normalizeExecutionHostScope, type ExecutionHostScope } from '../../shared/execution-host'
 import type { AiVaultSessionGroup } from '../../shared/ai-vault/session-display/ai-vault-session-filters'
 import { forkTranslate } from '../i18n/fork-translate'

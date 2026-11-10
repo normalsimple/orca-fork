@@ -46,7 +46,7 @@ vi.mock('@/lib/file-owner-runtime-target', () => {
     getRuntimeTargetForWorktreeOwner: () => target()
   }
 })
-vi.mock('@/lib/runtime-workspace-file-route', () => ({
+vi.mock('@/lib/files/access/runtime-workspace-file-route', () => ({
   findWorkspaceFileRoute: mocks.findWorkspaceFileRoute
 }))
 vi.mock('@/components/editor/migrate-restored-editor-file-owner', () => ({

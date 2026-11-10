@@ -26,14 +26,15 @@ import {
   initializeSttWorker,
   waitForSttWorkerReady
 } from './stt-worker-startup'
-import { START_DICTATION_TIMEOUT_MS } from './stt-session-timeouts'
+import { START_DICTATION_TIMEOUT_MS } from '../../shared/dictation-finish-deadlines'
 import { STT_WORKER_EXITED_ERROR } from './stt-worker-process'
+import { sileroVadModelPath } from './speech-vad-model'
 
 export async function startSttDictation(
   state: SttSessionState,
   modelId: string,
   sink: SttEventSink,
-  hotwordsFilePath?: string,
+  vocabulary: string[] = [],
   owner = 'desktop',
   language?: string
 ): Promise<void> {
@@ -48,7 +49,7 @@ export async function startSttDictation(
   }
   if (existing?.phase === 'stopping') {
     await existing.stopPromise
-    return startSttDictation(state, modelId, sink, hotwordsFilePath, owner, language)
+    return startSttDictation(state, modelId, sink, vocabulary, owner, language)
   }
 
   const manifest = getCatalogModel(modelId)
@@ -58,7 +59,7 @@ export async function startSttDictation(
   const config: SttRecognizerConfig | null =
     manifest.provider !== 'local'
       ? null
-      : { modelId, hotwordsFilePath, language: engineDictationLanguage(manifest, language) }
+      : { modelId, language: engineDictationLanguage(manifest, language) }
   if (state.sessions.size >= MAX_STT_SESSIONS) {
     throw new Error('dictation_session_limit')
   }
@@ -72,6 +73,7 @@ export async function startSttDictation(
     sink,
     config,
     modelId,
+    vocabulary,
     engine: null,
     cloud: null,
     phase: 'starting',
@@ -152,17 +154,32 @@ async function acquireSttEngine(
     const current = state.engine
     // Bound in the same step it is chosen, so an idle teardown never sees it unused.
     if (current && sameSttRecognizerConfig(current, config)) {
+      if (current.draining) {
+        await current.draining
+        continue
+      }
       clearSttIdleTeardownTimer(state)
-      session.engine = current
-      return current
+      return bindSttEngine(session, current)
     }
     if (!current) {
-      session.engine = spawnSttEngine(state, config, manifest)
-      return session.engine
+      return bindSttEngine(session, spawnSttEngine(state, config, manifest))
     }
     // No session uses a recognizer with another config, so it is idle.
     await teardownSttEngine(state, current)
   }
+}
+
+// The stream opens before this session can feed it, so all of its audio decodes with its vocabulary.
+function bindSttEngine(session: SttSession, engine: SttEngine): SttEngine {
+  session.engine = engine
+  if (session.vocabulary.length > 0) {
+    engine.worker.postMessage({
+      type: 'open',
+      streamId: session.streamId,
+      vocabulary: session.vocabulary
+    })
+  }
+  return engine
 }
 
 export function spawnSttEngine(
@@ -174,6 +191,8 @@ export function spawnSttEngine(
   if (!speechModulesDir) {
     throw new Error(LOCAL_SPEECH_UNAVAILABLE_ERROR)
   }
+  // A VAD fetched now reloads this engine once it is idle (SttService).
+  const vadModelPath = sileroVadModelPath(state.modelManager)
   clearSttIdleTeardownTimer(state)
   const worker = state.spawnWorker()
   const readyPromise = waitForSttWorkerReady(worker, START_DICTATION_TIMEOUT_MS)
@@ -195,7 +214,9 @@ export function spawnSttEngine(
     worker,
     detach,
     retired: false,
+    vadModelPath,
     onUnloaded: [],
+    draining: null,
     ready: readyPromise.catch((error: unknown) => {
       failSttEngine(state, engine, STT_WORKER_EXITED_ERROR)
       throw error
@@ -209,8 +230,8 @@ export function spawnSttEngine(
     modelDir: state.modelManager.getModelDir(config.modelId),
     sampleRate: manifest.sampleRate,
     files: manifest.files ?? [],
-    hotwordsFilePath: config.hotwordsFilePath,
-    language: config.language
+    language: config.language,
+    vadModelPath
   })
   return engine
 }

@@ -1,7 +1,7 @@
 // F046: documents a paired host keeps outside the clicked workspace render in the doc preview.
 // .tsx because it imports renderer aliases; the node project only includes src/fork/**/*.ts.
 import { dirname } from '@/lib/path'
-import { findWorkspaceFileRoute } from '@/lib/runtime-workspace-file-route'
+import { findWorkspaceFileRoute } from '@/lib/files/access/runtime-workspace-file-route'
 import { readHostFilePreview } from '@/runtime/files/grants/runtime-terminal-artifact-read'
 import { toRuntimeWorktreeSelector } from '@/runtime/rpc/targets/runtime-worktree-selector'
 import { useAppStore } from '@/store'

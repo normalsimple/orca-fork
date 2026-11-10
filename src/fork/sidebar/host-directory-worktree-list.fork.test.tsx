@@ -31,12 +31,12 @@ import {
 } from './section-keys'
 import { EMPTY_PENDING_VM_CHECKOUT_INDEX } from '../../shared/pending-vm-checkouts'
 import { registerHostSectionMenuExtra } from '../../shared/fork-hooks/sidebar-chrome'
-import type * as VmCreateHiddenCheckouts from '@/lib/vm-create-hidden-checkouts'
+import type * as VmCreateHiddenCheckouts from '@/runtime/ephemeral-vm/vm-create-hidden-checkouts'
 
 // 共享 worker 里别的用例会留下正在创建的虚拟机。服务端渲染读到那份快照会改掉行计划。
-vi.mock('@/lib/vm-create-hidden-checkouts', async () => {
+vi.mock('@/runtime/ephemeral-vm/vm-create-hidden-checkouts', async () => {
   const actual = await vi.importActual<typeof VmCreateHiddenCheckouts>(
-    '@/lib/vm-create-hidden-checkouts'
+    '@/runtime/ephemeral-vm/vm-create-hidden-checkouts'
   )
   return {
     ...actual,

@@ -2,13 +2,16 @@ import { toast } from 'sonner'
 import { useAppStore } from '@/store'
 import { forkTranslate } from '../i18n/fork-translate'
 import { normalizeRuntimePathForComparison } from '../../shared/cross-platform-path'
-import { LOCAL_EXECUTION_HOST_ID, type ExecutionHostId } from '../../shared/execution-host'
+import {
+  getRepoExecutionHostId,
+  LOCAL_EXECUTION_HOST_ID,
+  type ExecutionHostId
+} from '../../shared/execution-host'
 import { composeWorktreeId } from '../../shared/worktree/id'
 import type { ForkPostImportDetails } from '../../shared/fork-hooks/post-import'
 // 文件夹主机解析在 folder-workspace-host-id，签名仍是工作区加项目组列表。
 import { getFolderWorkspaceHostId } from '../../shared/folder-workspaces/folder-workspace-host-id'
 import { findRepoForHost } from '@/store/repos/repo-host-identity'
-import { getProjectGroupHostId } from '@/store/project-groups/project-group-owner-routing'
 import {
   PARENT_FOLDER_IMPORT_FAILED,
   PARENT_FOLDER_IMPORT_WARNING,
@@ -78,7 +81,7 @@ async function ensureParentFolder(details: ForkPostImportDetails): Promise<void>
   const parentKey = normalizeRuntimePathForComparison(parentPath)
   const group = store.projectGroups.find(
     (entry) =>
-      getProjectGroupHostId(entry) === hostId &&
+      getRepoExecutionHostId(entry) === hostId &&
       entry.parentPath !== null &&
       normalizeRuntimePathForComparison(entry.parentPath) === parentKey
   )

@@ -2,7 +2,7 @@
 import { useAppStore } from '@/store'
 import type { AppState } from '@/store/types'
 import type { OpenFile } from '@/store/slices/editor/types/open-file'
-import { findWorkspaceFileRoute } from '@/lib/runtime-workspace-file-route'
+import { findWorkspaceFileRoute } from '@/lib/files/access/runtime-workspace-file-route'
 import { getOpenFileExecutionHostId } from '@/lib/workspace/ownership/unified-tab-host-ownership'
 import {
   demoteShallowerWritableCopies,
