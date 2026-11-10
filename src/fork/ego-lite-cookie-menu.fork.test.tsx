@@ -75,7 +75,7 @@ describe('Import Cookie menu — Ego Lite', () => {
 
     expect(screen.getByRole('button', { name: 'From Google Chrome' })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'From Ego Lite' })).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'From File…' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'From file…' })).toBeTruthy()
     expect(screen.getByText('Ego Lite (Personal)')).toBeTruthy()
     expect(screen.getByText("Google logins aren't imported")).toBeTruthy()
   })
@@ -100,7 +100,7 @@ describe('Import Cookie menu — Ego Lite', () => {
 
     expect(screen.getByRole('button', { name: 'From Google Chrome' })).toBeTruthy()
     expect(screen.queryByRole('button', { name: 'From Ego Lite' })).toBeNull()
-    expect(screen.getByRole('button', { name: 'From File…' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'From file…' })).toBeTruthy()
   })
 
   it('imports the chosen Ego Lite profile through the Chromium menu action', () => {

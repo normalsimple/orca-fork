@@ -88,8 +88,8 @@ describe('fork host API', () => {
       expect.arrayContaining(['fork.hosts.list', 'fork.workspaces.list', 'fork.host.exec'])
     )
     expect(pluginHostMethodsFor('panel')).not.toContain('fork.host.exec')
-    // 上游 minor 已到 5。fork 方法 since 仍是 4，不能再把 minor 顶高。
-    expect(PLUGIN_HOST_API_MINOR).toBe(5)
+    // 上游 minor 已到 6（editor.readTypography）。fork 方法 since 仍是 4，不能再把 minor 顶高。
+    expect(PLUGIN_HOST_API_MINOR).toBe(6)
   })
 
   it('lists both alias rows and keeps exec on the runtime row only', async () => {
