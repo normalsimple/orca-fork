@@ -177,8 +177,7 @@ describe('text a grant will not send', () => {
     expect(methodsCalled()).toContain('files.readTerminalArtifactChunk')
     expect(methodsCalled()).not.toContain('files.hostFile.stat')
     expect(methodsCalled()).not.toContain('files.hostFile.readChunk')
-    // Why: keepReadOnly runs only on the stale-grant path; grantCanSave already marked the result.
-    expect(useAppStore.getState().openFiles[0]?.readOnly).toBeUndefined()
+    expect(useAppStore.getState().openFiles[0]?.readOnly).toBe(true)
   })
 
   it('lets upstream page a truncated grant reply, without files.hostFile.*', async () => {
@@ -191,9 +190,16 @@ describe('text a grant will not send', () => {
       refusal: 'truncated'
     })
 
-    await expect(read('/var/log/latin1.log')).resolves.toMatchObject({ content: 'tail -f me\n' })
+    useAppStore.setState({ openFiles: [tab('/var/log/latin1.log')] })
+    await expect(read('/var/log/latin1.log')).resolves.toEqual({
+      content: 'tail -f me\n',
+      isBinary: false,
+      terminalArtifactGrantId: 'g-1'
+    })
     expect(methodsCalled()).toContain('files.statTerminalArtifact')
     expect(methodsCalled()).not.toContain('files.hostFile.stat')
+    // Small enough to save through the grant, so the tab stays writable.
+    expect(useAppStore.getState().openFiles[0]?.readOnly).toBeUndefined()
   })
 
   it('opens a log whose grant went stale as a read-only tab when it is past 512 KiB', async () => {

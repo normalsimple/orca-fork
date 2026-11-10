@@ -74,6 +74,9 @@ type LargeHostPreviewReader = (
   refusal: unknown
 ) => Promise<RuntimeFilePreviewResult>
 
+/** Marks the open editor tab read-only after upstream pages a grant past the save cap. */
+type LargeHostFileReadOnlyKeeper = (file: GrantedHostFile, byteLength: number) => void
+
 // A log still being written stales its grant; file_too_large and truncated page upstream (#38742).
 const PAGED_REFUSALS = new Set(['terminal_file_grant_stale'])
 
@@ -81,6 +84,7 @@ let renderer: HostFileDocPreviewRenderer | null = null
 let reader: HostFileDocPreviewReader | null = null
 let largeFileReader: LargeHostFileReader | null = null
 let largePreviewReader: LargeHostPreviewReader | null = null
+let keepReadOnlyKeeper: LargeHostFileReadOnlyKeeper | null = null
 
 export function registerHostFileDocPreview(next: HostFileDocPreviewRenderer): void {
   renderer = next
@@ -99,6 +103,11 @@ export function registerLargeHostFileReader(next: LargeHostFileReader): void {
 /** Renderer: answers a grant's binary preview refusal (an image or PDF past one reply, any other binary). */
 export function registerLargeHostPreviewReader(next: LargeHostPreviewReader): void {
   largePreviewReader = next
+}
+
+/** Renderer: after upstream pages a granted file, mark its tab read-only past the grant save cap. */
+export function registerLargeHostFileReadOnlyKeeper(next: LargeHostFileReadOnlyKeeper): void {
+  keepReadOnlyKeeper = next
 }
 
 /** Whether a paired host's preview plan and HTML links cover files outside the workspace. */
@@ -215,4 +224,16 @@ export function pageLargeGrantedHostPreview(
     return null
   }
   return pageLargeHostPreview(file, preview())
+}
+
+/** After upstream pages a granted file, mark its editor tab read-only when it exceeds the grant save cap. */
+export function keepLargeGrantedHostFileReadOnly(
+  remote: GrantedRemoteRead,
+  byteLength: number
+): void {
+  const file = grantedHostFile(remote)
+  if (!file || !keepReadOnlyKeeper) {
+    return
+  }
+  keepReadOnlyKeeper(file, byteLength)
 }

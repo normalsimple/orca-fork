@@ -28,6 +28,7 @@ import {
   HOST_FILE_READ_CHUNK_METHOD,
   HOST_FILE_STAT_METHOD,
   registerLargeHostFileReader,
+  registerLargeHostFileReadOnlyKeeper,
   registerLargeHostPreviewReader,
   type GrantedHostFile,
   type LargeHostFileRefusal
@@ -232,7 +233,14 @@ async function readRefusedHostPreview(
   return pagedFilePreviewResult(file.absolutePath, paged.bytes)
 }
 
+function keepReadOnlyPastGrantWrite(file: GrantedHostFile, byteLength: number): void {
+  if (byteLength > GRANT_WRITE_MAX_BYTES) {
+    keepReadOnly(file)
+  }
+}
+
 export function registerLargeHostFileReads(): void {
   registerLargeHostFileReader(readLargeHostFile)
   registerLargeHostPreviewReader(readRefusedHostPreview)
+  registerLargeHostFileReadOnlyKeeper(keepReadOnlyPastGrantWrite)
 }

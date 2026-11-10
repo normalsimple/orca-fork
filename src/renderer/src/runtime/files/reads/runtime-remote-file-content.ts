@@ -14,6 +14,7 @@ import {
 import { callRuntimeRpc } from '../../rpc/calls/runtime-rpc-call'
 import { RuntimeRpcCallError } from '../../rpc/calls/runtime-rpc-result'
 import {
+  keepLargeGrantedHostFileReadOnly,
   pageLargeGrantedHostPreview,
   readLargeGrantedHostFile
 } from '../../../../../shared/fork-hooks/host-file-doc-preview'
@@ -76,6 +77,8 @@ export async function readRemoteFileContent(
     // Replies stop at 512KiB; page the whole file or later editable saves truncate it.
     const paged = await readRemoteFileInChunks(remote)
     if (paged.kind === 'ok') {
+      // Why: a grant cannot save past 512 KiB; mark the open tab the way the old hostFile pager did.
+      keepLargeGrantedHostFileReadOnly(remote, paged.bytes.length)
       return pagedTextFileResult(paged.bytes)
     }
     throw new Error(
