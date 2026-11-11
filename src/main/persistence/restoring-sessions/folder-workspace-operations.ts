@@ -1,3 +1,4 @@
+import { FOLDER_WORKSPACE_REMOVAL_DOMAINS, type ProfileSaveDomains } from '../profile-save-domains'
 import { randomUUID } from 'node:crypto'
 import type { FolderWorkspace } from '../../../shared/folder-workspaces/folder-workspace-types'
 import type { PersistedState } from '../../../shared/persisted-state-types'
@@ -20,7 +21,7 @@ import { applyFolderSidebarFieldUpdate } from '../../../shared/fork-hooks/sideba
 
 export type FolderWorkspaceMutationOperations = {
   state: PersistedState
-  scheduleSave: () => void
+  scheduleSave: (domains: ProfileSaveDomains) => void
   removeWorkspaceLineageForRemovedFolder: (folderWorkspaceId: string) => void
   pruneMobileClientTabSelections: (matchesWorktreeId: (worktreeId: string) => boolean) => void
   hydrateRepo: (repo: Repo) => Repo
@@ -33,8 +34,8 @@ export class FolderWorkspacePersistenceOperations {
     return this.operations.state
   }
 
-  private scheduleSave(): void {
-    this.operations.scheduleSave()
+  private scheduleSave(domains: ProfileSaveDomains): void {
+    this.operations.scheduleSave(domains)
   }
 
   private removeWorkspaceLineageForRemovedFolder(folderWorkspaceId: string): void {
@@ -122,7 +123,7 @@ export class FolderWorkspacePersistenceOperations {
       updatedAt: now
     }
     this.state.folderWorkspaces = [workspace, ...(this.state.folderWorkspaces ?? [])]
-    this.scheduleSave()
+    this.scheduleSave(['folderWorkspaces'])
     return workspace
   }
 
@@ -269,7 +270,7 @@ export class FolderWorkspacePersistenceOperations {
       workspace.externalConversations = updates.externalConversations
     }
     workspace.updatedAt = Date.now()
-    this.scheduleSave()
+    this.scheduleSave(['folderWorkspaces'])
     return workspace
   }
 
@@ -284,7 +285,7 @@ export class FolderWorkspacePersistenceOperations {
     removeWorkspaceSessionOwnerEverywhere(this.state, folderWorkspaceKey(id))
     this.removeWorkspaceLineageForRemovedFolder(id)
     this.pruneMobileClientTabSelections((worktreeId) => worktreeId === folderWorkspaceKey(id))
-    this.scheduleSave()
+    this.scheduleSave(FOLDER_WORKSPACE_REMOVAL_DOMAINS)
     return true
   }
 
@@ -307,7 +308,7 @@ export class FolderWorkspacePersistenceOperations {
       typeof order === 'number' && Number.isFinite(order)
         ? order
         : getNextProjectGroupOrder(siblingRepos, normalizedGroupId)
-    this.scheduleSave()
+    this.scheduleSave(['repos'])
     return this.hydrateRepo(repo)
   }
 }

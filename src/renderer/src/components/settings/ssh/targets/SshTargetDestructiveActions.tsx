@@ -164,7 +164,10 @@ export function SshTargetDestructiveActions({
           'This will remove the target and end any active remote terminals.'
         )}
         targetLabel={pendingRemove?.label}
-        {...sshTargetRemoveLabels({ actionLabel: 'Remove', busyLabel: 'Removing' })}
+        {...sshTargetRemoveLabels({
+          actionLabel: t('auto.components.settings.SshTargetDestructiveActions.remove', 'Remove'),
+          busyLabel: t('auto.components.settings.SshTargetDestructiveActions.removing', 'Removing')
+        })}
         isBusy={pendingRemoveIsBusy}
         onOpenChange={(open) => {
           if (pendingRemoveIsBusy) {

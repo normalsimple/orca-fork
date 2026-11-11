@@ -2,7 +2,7 @@
 import { cleanup, render } from '@testing-library/react'
 import { createPortal } from 'react-dom'
 import { afterEach, describe, expect, it } from 'vitest'
-import type { ManagedPane } from '@/lib/pane-manager/pane-manager'
+import type { ManagedPane } from '@/lib/pane-manager/pane-manager-types'
 import { NativeChatPaneCover } from '../../renderer/src/components/terminal-pane/chat/NativeChatPaneCover'
 import { RetainedPaneHost } from '../../renderer/src/components/tab-group/RetainedPaneHost'
 import {

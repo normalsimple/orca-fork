@@ -7,7 +7,7 @@ import { findRepoForHost } from '../../renderer/src/store/repos/repo-host-identi
 import {
   clearWorktreeSleepIntent,
   markWorktreeSleepIntent
-} from '../../renderer/src/lib/worktree-sleep-intent'
+} from '../../renderer/src/lib/workspace/sleep/worktree-sleep-intent'
 import { showWorkspaceListChangedToast } from '../../renderer/src/components/sidebar/worktree-list/listing/stale-workspace-list-toast'
 import type { WorktreeDeleteIdentity } from '../../renderer/src/components/sidebar/workspace-actions/deletion/worktree-delete-request'
 import { useAppStore } from '../../renderer/src/store'

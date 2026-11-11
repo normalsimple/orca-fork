@@ -11,8 +11,8 @@ import {
   writeDataFile
 } from '../../main/persistence/persistence-test-harness'
 import { makeTerminalTab } from '../../main/persistence/persistence-session-fixtures'
-import { manifest } from '../../main/persistence/migrating-orcad-catalog/persistence-orcad-migration-catalog-fixture'
-import { collectOrcadMigrationSourceCatalog } from '../../main/persistence/migrating-orcad-catalog/orcad-source-catalog'
+import { manifest } from '../../main/persistence/migrating-orcad-catalog/catalog-commit/persistence-orcad-migration-catalog-fixture'
+import { collectOrcadMigrationSourceCatalog } from '../../main/persistence/migrating-orcad-catalog/source/catalog/orcad-source-catalog'
 import { resolveAgentWorkspaceExecutionHostId } from '../../main/agent-hooks/observations/restored-status-dead-terminal-sweep'
 import { getDefaultPersistedState, getDefaultWorkspaceSession } from '../../shared/constants'
 import type { FolderWorkspace } from '../../shared/folder-workspaces/folder-workspace-types'

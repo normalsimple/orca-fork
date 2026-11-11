@@ -16,13 +16,13 @@ import {
   FolderWorkspaceUpdateArgs,
   parseProjectGroupIpcArgs
 } from './repo-ipc-arg-schemas'
-import { visibleFolderWorkspaces } from '../../persistence/migrating-orcad-catalog/orcad-source-visibility'
+import { visibleFolderWorkspaces } from '../../persistence/migrating-orcad-catalog/source/catalog/orcad-source-visibility'
 import { applySidebarFieldClears } from '../../../shared/fork-hooks/sidebar-field-clear'
 import { createFolderWorkspaceWithPluginHooks } from '../../plugins/hooks/workspace-create-plugin-hook'
 import {
   isLocalWslMoveRow,
   shouldDropWslMoveProjectUpdate
-} from '../../persistence/moving-wsl-projects/wsl-move-scope-guard'
+} from '../../persistence/moving-wsl-projects/quiescence/wsl-move-scope-guard'
 
 export function registerFolderWorkspaceHandlers(
   mainWindow: BrowserWindow,

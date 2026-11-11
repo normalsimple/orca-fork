@@ -2,7 +2,7 @@
 // preview, its stat and ranges read by absolute path; a smaller one, one with a draft, or one on an
 // older host reads whole as before.
 import { beforeEach, describe, expect, it } from 'vitest'
-import { readEditorCsvFileContent } from '@/components/editor/csv/csv-file-content'
+import { readEditorCsvFileContent } from '@/components/editor/csv/preview/csv-file-content'
 import { CSV_PAGED_PREVIEW_BYTES } from '@/components/editor/csv/csv-file-limits'
 import { readRuntimeFileRange, statRuntimeReadTarget } from '@/runtime/files/reads/runtime-file-range-client'
 import type { RuntimeFileReadArgs } from '@/runtime/files/runtime-file-client-types'

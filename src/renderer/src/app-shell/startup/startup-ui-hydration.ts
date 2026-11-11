@@ -44,6 +44,7 @@ export function getStartupErrorFallbackUI(uiHydrated: boolean): PersistedUIState
     rightSidebarTab: 'explorer',
     rightSidebarExplorerView: 'files',
     rightSidebarWidth: 350,
+    activityBarPosition: 'top',
     markdownTocPanelWidth: 240,
     combinedDiffFileTreeWidth: 256,
     // fork: follow the registered default so a failed read does not open Project headers.

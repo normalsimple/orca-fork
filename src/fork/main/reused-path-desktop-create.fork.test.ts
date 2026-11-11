@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { listWorktreesMock } from '../../main/ipc/worktrees-test-module-mocks'
 import { handlers, setupWorktreeHandlers, store } from '../../main/ipc/worktrees-test-harness'
-import { mergeWorktreeMetaForWrite } from '../../main/persistence/loading-store/worktree-meta-write-normalization'
+import { mergeWorktreeMetaForWrite } from '../../main/persistence/loading-store/worktree-metadata/worktree-meta-write-normalization'
 import { registerReusedPathUnarchive } from '../../shared/fork-hooks/reused-path-unarchive'
 import type { WorktreeMeta } from '../../shared/worktree/meta-types'
 import {

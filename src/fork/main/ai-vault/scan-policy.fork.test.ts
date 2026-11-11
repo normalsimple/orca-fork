@@ -2,11 +2,11 @@ import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { searchMessageRows } from '../../../main/ai-vault-search/session-search-message-rows'
+import { searchMessageRows } from '../../../main/ai-vault-search/storage/session-search-message-rows'
 import {
   openSessionSearchDatabase,
   SESSION_SEARCH_SCHEMA_VERSION
-} from '../../../main/ai-vault-search/session-search-schema'
+} from '../../../main/ai-vault-search/storage/session-search-schema'
 import {
   readAiVaultServiceHeapMiB,
   registerAiVaultServiceHeap,
