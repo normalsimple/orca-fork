@@ -167,7 +167,7 @@ REASONS = {
     'src/main/antigravity/antigravity-acp-launch-spec.ts': 'F052：Linux 会话启动（含登录）在 --uid= 后展开 antigravityAcpLinuxArgs()；未登记时仍只有 --uid=',
     'src/shared/runtime-rpc-call-queue.ts': 'F046：分段读 files.hostDocPreview.readChunk、files.hostFile.readChunk 和上游 files.readDocPreviewChunk 一样走 bulk 通道',
     'src/renderer/src/runtime/files/reads/runtime-remote-file-content.ts': 'F046：授权因文件仍在写入而失效（terminal_file_grant_stale）时交给 readLargeGrantedHostFile；file_too_large / truncated 走上游 #38742 分页，读完后 keepLargeGrantedHostFileReadOnly 把超过 512 KiB 的标签标成只读；对话图片等未开 pageOversizedBinary 的预览仍用 pageLargeGrantedHostPreview',
-    'src/renderer/src/components/editor/csv/csv-file-content.ts': 'F046：开头先问 readHostCsv，工作区外的主机 CSV 过了分页阈值用上游的分页预览，否则整份读',
+    'src/renderer/src/components/editor/csv/preview/csv-file-content.ts': 'F046：开头先问 readHostCsv，工作区外的主机 CSV 过了分页阈值用上游的分页预览，否则整份读',
     'src/renderer/src/runtime/files/reads/runtime-file-range-client.ts': 'F046：分页 CSV 预览的 stat 和按段读各在开头一行，工作区外的主机文件按绝对路径读（files.hostFile.*）',
     'src/renderer/src/components/terminal-pane/host-files/terminal-host-workspace-file.ts': 'F046：只有别的工作区的 HTML 才留在点击时的工作区做文档预览；其余文件走上游',
 }
