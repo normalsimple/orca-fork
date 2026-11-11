@@ -71,8 +71,12 @@ describe('fork mode labels and the SSH remove dialog', () => {
       join(process.cwd(), 'src/renderer/src/components/settings/ssh/targets/SshTargetDestructiveActions.tsx'),
       'utf8'
     )
+    expect(source).toContain('{...sshTargetRemoveLabels({')
     expect(source).toContain(
-      "sshTargetRemoveLabels({ actionLabel: 'Remove', busyLabel: 'Removing' })"
+      "actionLabel: t('auto.components.settings.SshTargetDestructiveActions.remove', 'Remove')"
+    )
+    expect(source).toContain(
+      "busyLabel: t('auto.components.settings.SshTargetDestructiveActions.removing', 'Removing')"
     )
   })
 })

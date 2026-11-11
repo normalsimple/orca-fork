@@ -55,7 +55,7 @@ vi.mock('@/components/editor/migrate-restored-editor-file-owner', () => ({
 vi.mock('@/components/editor/restored-editor-workspace-runtime-owner', () => ({
   findRestoredEditorWorkspaceRuntimeOwner: () => null
 }))
-vi.mock('@/components/editor/csv/csv-file-content', () => ({
+vi.mock('@/components/editor/csv/preview/csv-file-content', () => ({
   readEditorCsvFileContent: mocks.readEditorCsvFileContent
 }))
 
