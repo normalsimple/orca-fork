@@ -1,7 +1,6 @@
-// Translations for fork labels registered from node-safe code (register-mode.ts) and for the
-// English upstream hardcodes in the "Remove SSH Target" dialog. register-mode.ts keeps the English:
-// it runs where no translator exists. Here, in the renderer, the same registrations get getters,
-// so the label follows the current language each time it is rendered.
+// Translations for fork labels registered from node-safe code (register-mode.ts). register-mode.ts
+// keeps the English: it runs where no translator exists. Here, in the renderer, the same
+// registrations get getters, so the label follows the current language each time it is rendered.
 import { useSyncExternalStore } from 'react'
 import { i18n } from '../../renderer/src/i18n/i18n'
 import { forkTranslate } from '../i18n/fork-translate'
@@ -19,15 +18,7 @@ import {
   getDeleteProjectGroupDialogOption,
   registerDeleteProjectGroupDialogOption
 } from '../../shared/fork-hooks/project-group-delete'
-import { registerSshTargetRemoveLabels } from '../../shared/fork-hooks/ssh-target-remove-labels'
 import { HOST_DIRECTORY_GROUP_BY, UNGROUP_ONLY_OPTION_ID } from './section-keys'
-
-export function sshTargetRemoveLabelsForLocale(): { actionLabel: string; busyLabel: string } {
-  return {
-    actionLabel: forkTranslate('fork.settings.sshTargetRemove', 'Remove'),
-    busyLabel: forkTranslate('fork.settings.sshTargetRemoving', 'Removing')
-  }
-}
 
 // The group-by menu reads the getter only when it renders; this makes a language switch render it.
 function onLanguageChanged(): void {
@@ -68,7 +59,6 @@ export function registerForkModeLabels(): void {
       }
     })
   }
-  registerSshTargetRemoveLabels(sshTargetRemoveLabelsForLocale)
 }
 
 /** Changes when a registered mode label changes language; constant while unregistered. */

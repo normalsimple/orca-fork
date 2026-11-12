@@ -8,9 +8,7 @@
       "confirmRemove": "Confirm",
       "removeProjects": "Remove {{value0}}",
       "selectAllProjects": "Select all projects",
-      "selectProject": "Select project",
-      "sshTargetRemove": "Remove",
-      "sshTargetRemoving": "Removing"
+      "selectProject": "Select project"
     },
     "sidebar": {
       "archivedWorkspaces": "Removed from Orca ({{value0}})",

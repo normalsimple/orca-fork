@@ -78,7 +78,7 @@
 
 fork 新增的界面文字（从 Orca 移除、已移除和隐藏的工作区、设置里批量移除项目、跨组拖放的提示、「主机」分组模式和「仅取消分组」、删除工作区的「同时删除文件夹」和保留文件夹的文案、历史会话的「其他已配置主机」和「全部收起」、父目录导入提示）的英文在 `src/fork/i18n/en.json`，中文在 `src/fork/i18n/zh.json`。渲染进程登记时（`src/fork/i18n/locale-overlay.ts`）把两份分别合进 en 和 zh 语言包：只补缺少的键，上游已有的条目优先；其他语言经 i18next 的英文回退拿到英文。上游的 `en.json`、`en-runtime-required.json` 和 `zh.json` 都与上游一致，上游文件不翻译任何 fork 键。
 
-工作区右键菜单的「休眠」「删除所选」和数量写法由上游翻译（`auto.components.sidebar.workspaceBatchActionLabels.*`），SSH 连接状态名用上游 #34680 的 `settings.ssh.status.*`，fork 不再另做标签层。删除 SSH 目标对话框里上游写死的 `Remove` / `Removing` 仍经钩子 `ssh-target-remove-labels.ts` 翻译成“删除”/“正在删除”；没有登记时原样用上游的英文。
+工作区右键菜单的「休眠」「删除所选」和数量写法由上游翻译（`auto.components.sidebar.workspaceBatchActionLabels.*`），SSH 连接状态名用上游 #34680 的 `settings.ssh.status.*`，fork 不再另做标签层。删除 SSH 目标对话框的确认和进行中按钮用上游 #40456 的 `auto.components.settings.SshTargetDestructiveActions.remove` / `removing`，fork 不再另做钩子。
 
 fork 代码统一用 `src/fork/i18n/fork-translate.tsx` 的 `forkTranslate` 翻译。上游的提取检查（`config/i18next.config.ts`，与上游一致）只认 `translate` 等函数名，看不到 fork 键。`src/fork/i18n/fork-keys-catalog.fork.test.ts` 检查：键是字面量，或来自测试读取的带类型常量表（目前没有），不能是模板字符串；每个键都有英文和中文；fork 代码不直接调用 `translate`；上游文件不引用 fork 键。
 

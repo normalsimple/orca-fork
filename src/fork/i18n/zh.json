@@ -8,9 +8,7 @@
       "confirmRemove": "确认",
       "removeProjects": "移除 {{value0}}",
       "selectAllProjects": "选择所有项目",
-      "selectProject": "选择项目",
-      "sshTargetRemove": "删除",
-      "sshTargetRemoving": "正在删除"
+      "selectProject": "选择项目"
     },
     "sidebar": {
       "archivedWorkspaces": "已从 Orca 移除（{{value0}}）",

@@ -4,7 +4,6 @@ import { useMountedRef } from '@/hooks/useMountedRef'
 import { SshDestructiveActionDialog } from './SshDestructiveActionDialog'
 import type { SshTargetBusyAction } from './ssh-target-action-state'
 import { useTranslate } from '@/i18n/use-translate'
-import { sshTargetRemoveLabels } from '../../../../../../shared/fork-hooks/ssh-target-remove-labels'
 
 type PendingTargetAction = { id: string; label: string }
 
@@ -164,10 +163,8 @@ export function SshTargetDestructiveActions({
           'This will remove the target and end any active remote terminals.'
         )}
         targetLabel={pendingRemove?.label}
-        {...sshTargetRemoveLabels({
-          actionLabel: t('auto.components.settings.SshTargetDestructiveActions.remove', 'Remove'),
-          busyLabel: t('auto.components.settings.SshTargetDestructiveActions.removing', 'Removing')
-        })}
+        actionLabel={t('auto.components.settings.SshTargetDestructiveActions.remove', 'Remove')}
+        busyLabel={t('auto.components.settings.SshTargetDestructiveActions.removing', 'Removing')}
         isBusy={pendingRemoveIsBusy}
         onOpenChange={(open) => {
           if (pendingRemoveIsBusy) {
